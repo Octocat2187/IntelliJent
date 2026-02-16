@@ -2,7 +2,7 @@ package edu.gcc.intellijent;
 
 public class Account {
 
-    //THIS IS IAN BRANCH BECAUSE I SAID SO
+    //THIS IS NOT IAN BRANCH BECAUSE I ALSO SAID SO
 
     // STUB VARIABLES
     private Schedule courseSchedule;
