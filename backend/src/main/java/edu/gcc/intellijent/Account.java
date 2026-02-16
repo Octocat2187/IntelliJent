@@ -2,6 +2,8 @@ package edu.gcc.intellijent;
 
 public class Account {
 
+    //THIS IS IAN BRANCH BECAUSE I SAID SO
+
     // STUB VARIABLES
     private Schedule courseSchedule;
     private Search currentSearch; // Suggested by Dr. Hutchins
