@@ -1,4 +1,7 @@
 package edu.gcc.intellijent;
+
+import java.sql.Time;
+
 public class Course {
     //Class Variables
     private int courseCode;
@@ -8,6 +11,25 @@ public class Course {
     private String professor;
     private int numCredits;
     private boolean full;
+
+    private Time startTime;
+    private Time endTime;
+
+    public Time getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Time startTime) {
+        this.startTime = startTime;
+    }
+
+    public Time getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Time endTime) {
+        this.endTime = endTime;
+    }
 
     //Getters and setters
     public int getCourseCode() {
