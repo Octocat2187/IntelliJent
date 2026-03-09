@@ -11,7 +11,7 @@ public class DateTimeFilter extends Filter {
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
         ArrayList<Course> filteredResults = new ArrayList<>();
         for (Course course : searchResults) {
-            if(course.GetStartTime().equals(beginTime) && course.GetEndTime().equals(endTime) && course.GetDays().equals(days)){
+            if(course.getStartTime().equals(beginTime) && course.getEndTime().equals(endTime) && course.getDaysOfWeek().equals(days)){
                 filteredResults.add(course);
             }
         }

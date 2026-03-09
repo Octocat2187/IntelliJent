@@ -8,7 +8,7 @@ public class ProfFilter extends Filter {
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
         ArrayList<Course> filteredResults = new ArrayList<>();
         for (Course course : searchResults) {
-            if(course.GetProf().equals(prof)){
+            if(course.getProfessor().equals(prof)){
                 filteredResults.add(course);
             }
         }

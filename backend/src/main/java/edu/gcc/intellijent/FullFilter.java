@@ -9,7 +9,7 @@ public class FullFilter extends Filter {
 
         ArrayList<Course> filteredResults = new ArrayList<>();
         for (Course course : searchResults) {
-            if(course.isAvailable() == courseIsFull) {
+            if(course.isFull() == courseIsFull) {
                 filteredResults.add(course);
             }
         }
