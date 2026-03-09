@@ -22,15 +22,15 @@ public class Schedule {
      * @param course the to be Added course checked for scheduling conflicts
      * @return true if the course can be scheduled (no overlap), false otherwise
      */
-    public boolean isCourseSchedulable(Course course){
-        for (int i = 0; i < Schedule.size(); i++) {
-           Course schCor = Schedule.get(i);
-            if (course.getStartTime() < schCor.getEndTime() &&
-                    course.getEndTime() > schCor.getStartTime()) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    public boolean isCourseSchedulable(Course course){
+//        for (int i = 0; i < Schedule.size(); i++) {
+//           Course schCor = Schedule.get(i);
+//            if (course.getStartTime() < schCor.getEndTime() &&
+//                    course.getEndTime() > schCor.getStartTime()) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
 }
