@@ -4,7 +4,7 @@ import java.sql.Time;
 
 public class Course {
     //Class Variables
-    private int courseCode;
+    private String courseCode;
     private String name;
     private int courseNumber;
     private String department;
@@ -41,11 +41,11 @@ public class Course {
     }
 
     //Getters and setters
-    public int getCourseCode() {
+    public String getCourseCode() {
         return courseCode;
     }
 
-    public void setCourseCode(int courseCode) {
+    public void setCourseCode(String courseCode) {
         this.courseCode = courseCode;
     }
 
