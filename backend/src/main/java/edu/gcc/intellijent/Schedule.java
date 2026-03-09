@@ -1,4 +1,7 @@
 package edu.gcc.intellijent;
+
+import java.util.ArrayList;
+
 public class Schedule {
     ArrayList<Course> Schedule = new ArrayList<Course>();
     public void AddCourse(Course course){
@@ -11,8 +14,8 @@ public class Schedule {
         }
     }
 
-    public void RemoveCourse(Course course){
-
+    public boolean RemoveCourse(Course course){
+        return false;
     }
 
     /**

@@ -13,6 +13,10 @@ public class Search {
         return;
     }
 
+    public ArrayList<Course> GetResultList(){
+        return resultList;
+    }
+
     private void CourseSearch() {
         resultList = new ArrayList<Course>();
     }
