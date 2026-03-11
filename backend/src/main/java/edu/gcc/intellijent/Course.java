@@ -12,8 +12,17 @@ public class Course {
     private int numCredits;
     private boolean full;
 
+    private String daysOfWeek;
     private Time startTime;
     private Time endTime;
+
+    public String getDaysOfWeek() {
+        return daysOfWeek;
+    }
+
+    public void setDaysOfWeek(String daysOfWeek) {
+        this.daysOfWeek = daysOfWeek;
+    }
 
     public Time getStartTime() {
         return startTime;

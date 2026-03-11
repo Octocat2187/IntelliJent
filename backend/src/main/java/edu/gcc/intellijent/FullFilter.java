@@ -2,10 +2,17 @@ package edu.gcc.intellijent;
 import java.util.ArrayList;
 
 public class FullFilter extends Filter {
-    Boolean courseIsFull;
+    public Boolean courseIsFull;
 
     @Override
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
-        return null;
+
+        ArrayList<Course> filteredResults = new ArrayList<>();
+        for (Course course : searchResults) {
+            if(course.isFull() == courseIsFull) {
+                filteredResults.add(course);
+            }
+        }
+        return filteredResults;
     }
 }
