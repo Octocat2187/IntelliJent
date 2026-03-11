@@ -9,7 +9,7 @@ public class Schedule {
     ArrayList<Course> Schedule = new ArrayList<Course>();
     public void AddCourse(Course course){
         //TODO: Change this from true to the schedulable check when implemented
-        if (true) {
+        if (isCourseSchedulable(course)) {
             Schedule.add(course);
         }
         else {
