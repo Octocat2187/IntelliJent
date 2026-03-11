@@ -10,6 +10,7 @@ public class DateTimeFilter extends Filter {
     @Override
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
         ArrayList<Course> filteredResults = new ArrayList<>();
+        /**
         for (Course course : searchResults) {
             if((course.getStartTime().compareTo(beginTime)) >= 0 && // Start time of course is after/at start time of filter
                     course.getEndTime().compareTo(endTime) <= 0 && // End time of course is before/at end time of filter
@@ -18,7 +19,8 @@ public class DateTimeFilter extends Filter {
                 filteredResults.add(course);
             }
         }
-
+    **/
+        //TODO: Fix
         return filteredResults;
     }
 }

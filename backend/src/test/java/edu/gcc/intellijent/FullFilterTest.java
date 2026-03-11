@@ -11,7 +11,7 @@ class FullFilterTest {
     @Test
     void filterFail(){
         Course course = new Course();
-        course.setFull(true);
+        course.setIs_open(true);
 
         ArrayList<Course> courses = new ArrayList<>();
         courses.add(course);
@@ -26,7 +26,7 @@ class FullFilterTest {
     @Test
     void filterSuccess(){
         Course course = new Course();
-        course.setFull(true);
+        course.setIs_open(true);
 
         ArrayList<Course> courses = new ArrayList<>();
         courses.add(course);

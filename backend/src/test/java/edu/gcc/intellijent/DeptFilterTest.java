@@ -11,7 +11,7 @@ class DeptFilterTest {
     @Test
     void filterFail() {
         Course course = new Course();
-        course.setDepartment("WEAV");
+        course.setSubject("WEAV");
 
         ArrayList<Course> courses = new ArrayList<Course>();
         courses.add(course);
@@ -26,7 +26,7 @@ class DeptFilterTest {
     @Test
     void filterSuccess() {
         Course course = new Course();
-        course.setDepartment("WEAV");
+        course.setSubject("WEAV");
 
         ArrayList<Course> courses = new ArrayList<Course>();
         courses.add(course);

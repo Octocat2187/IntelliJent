@@ -11,13 +11,14 @@ class CourseCodeFilterTest {
     @Test
     void filterFail() {
         Course basketWeaving = new Course();
-        basketWeaving.setCourseCode(111);
+        basketWeaving.setNumber(111);
+        basketWeaving.setSubject("WEAV");
 
         ArrayList<Course> testCourses = new ArrayList<>();
         testCourses.add(basketWeaving);
 
         CourseCodeFilter filter = new CourseCodeFilter();
-        filter.courseCode =  -1;
+        filter.courseCode =  "Sneebs";
         ArrayList<Course> filteredResults = filter.ApplyFilter(testCourses);
 
         Assertions.assertNotEquals(testCourses, filteredResults);
@@ -26,13 +27,14 @@ class CourseCodeFilterTest {
     @Test
     void filterApply(){
         Course basketWeaving = new Course();
-        basketWeaving.setCourseCode(111);
+        basketWeaving.setNumber(111);
+        basketWeaving.setSubject("WEAV");
 
         ArrayList<Course> testCourses = new ArrayList<>();
         testCourses.add(basketWeaving);
 
         CourseCodeFilter filter = new CourseCodeFilter();
-        filter.courseCode = 111;
+        filter.courseCode = basketWeaving.getCourseCode();
         ArrayList<Course> filteredResults = filter.ApplyFilter(testCourses);
 
         Assertions.assertEquals(testCourses, filteredResults);

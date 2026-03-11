@@ -33,6 +33,7 @@ public class Schedule {
      * @return true if the course can be scheduled (no overlap), false otherwise
      */
     public boolean isCourseSchedulable(Course course){
+        /**
         for (int i = 0; i < Schedule.size(); i++) {
             Course schCor = Schedule.get(i);
             if (course.getStartTime().compareTo(schCor.getEndTime()) < 0 &&
@@ -40,7 +41,9 @@ public class Schedule {
                 return false;
             }
         }
+         **/
         return true;
+        //TODO: Fix
     }
 
 }

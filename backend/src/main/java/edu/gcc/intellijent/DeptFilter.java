@@ -8,7 +8,7 @@ public class DeptFilter extends Filter {
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
         ArrayList<Course> filteredResults = new ArrayList<>();
         for (Course course : searchResults) {
-            if(course.getDepartment().equals(deptCode)){
+            if(course.getSubject().equals(deptCode)){
                 filteredResults.add(course);
             }
         }
