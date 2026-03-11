@@ -11,7 +11,7 @@ class CreditsFilterTest {
     @Test
     void filterFail(){
         Course basketWeaving = new Course();
-        basketWeaving.setNumCredits(1);
+        basketWeaving.setCredits(1);
 
         ArrayList<Course> testCourses = new ArrayList<>();
         testCourses.add(basketWeaving);
@@ -27,7 +27,7 @@ class CreditsFilterTest {
     @Test
     void filterPass(){
         Course basketWeaving = new Course();
-        basketWeaving.setNumCredits(1);
+        basketWeaving.setCredits(1);
 
         ArrayList<Course> testCourses = new ArrayList<>();
         testCourses.add(basketWeaving);

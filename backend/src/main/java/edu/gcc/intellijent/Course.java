@@ -1,6 +1,8 @@
 package edu.gcc.intellijent;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.sql.Time;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,16 +21,11 @@ public class Course {
     private List<ClassTime> times;
     private String daysOfWeek;
 
-    private String daysOfWeek;
     private Time startTime;
     private Time endTime;
 
     public String getDaysOfWeek() {
         return daysOfWeek;
-    }
-
-    public void setDaysOfWeek(String daysOfWeek) {
-        this.daysOfWeek = daysOfWeek;
     }
 
     public Time getStartTime() {
@@ -140,4 +137,5 @@ public class Course {
     public String getCourseCode()   {
         return subject + number;
     }
+
 }

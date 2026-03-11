@@ -8,7 +8,7 @@ public class CreditsFilter extends Filter{
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
         ArrayList<Course> filteredResults = new ArrayList<>();
         for(Course course : searchResults){
-            if(course.getNumCredits() == credits){
+            if(course.getCredits() == credits){
                 filteredResults.add(course);
             }
         }
