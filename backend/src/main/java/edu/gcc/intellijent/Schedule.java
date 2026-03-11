@@ -1,9 +1,15 @@
 package edu.gcc.intellijent;
 import java.util.ArrayList;
 public class Schedule {
+    /**
+     * TODO: Change name of this var. It matches the name of the public class Schedule
+     * This means to call it we'd have to do something like Schedule.Schedule.add(Course)
+     * Which is silly
+     */
     ArrayList<Course> Schedule = new ArrayList<Course>();
     public void AddCourse(Course course){
-        if (isCourseSchedulable(course)) {
+        //TODO: Change this from true to the schedulable check when implemented
+        if (true) {
             Schedule.add(course);
         }
         else {
@@ -13,8 +19,11 @@ public class Schedule {
     }
 
     public void RemoveCourse(Course course){
-
+        if(Schedule.contains(course)){
+            Schedule.remove(course);
+        }
     }
+
 
     /**
      * Checks whether the given course can be added to the schedule without any time overlap.
