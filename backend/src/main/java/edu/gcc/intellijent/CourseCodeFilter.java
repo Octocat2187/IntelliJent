@@ -9,7 +9,7 @@ public class CourseCodeFilter extends Filter{
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
         ArrayList<Course> filteredResults = new ArrayList<>();
         for (Course course : searchResults) {
-            if(course.getCourseCode().equals(courseCode)){
+            if(course.getCourseCode() == courseCode){
                 filteredResults.add(course);
             }
         }

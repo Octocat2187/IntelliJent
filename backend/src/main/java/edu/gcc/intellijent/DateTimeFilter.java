@@ -11,7 +11,10 @@ public class DateTimeFilter extends Filter {
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
         ArrayList<Course> filteredResults = new ArrayList<>();
         for (Course course : searchResults) {
-            if(course.getStartTime().equals(beginTime) && course.getEndTime().equals(endTime) && course.getDaysOfWeek().equals(days)){
+            if((course.getStartTime().compareTo(beginTime)) >= 0 && // Start time of course is after/at start time of filter
+                    course.getEndTime().compareTo(endTime) <= 0 && // End time of course is before/at end time of filter
+                    course.getDaysOfWeek().equals(days))
+            {
                 filteredResults.add(course);
             }
         }
