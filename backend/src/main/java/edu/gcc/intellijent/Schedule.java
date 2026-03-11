@@ -9,7 +9,7 @@ public class Schedule {
     ArrayList<Course> Schedule = new ArrayList<Course>();
     public void AddCourse(Course course){
         //TODO: Change this from true to the schedulable check when implemented
-        if (true) {
+        if (isCourseSchedulable(course)) {
             Schedule.add(course);
         }
         else {
@@ -32,15 +32,15 @@ public class Schedule {
      * @param course the to be Added course checked for scheduling conflicts
      * @return true if the course can be scheduled (no overlap), false otherwise
      */
-//    public boolean isCourseSchedulable(Course course){
-//        for (int i = 0; i < Schedule.size(); i++) {
-//           Course schCor = Schedule.get(i);
-//            if (course.getStartTime() < schCor.getEndTime() &&
-//                    course.getEndTime() > schCor.getStartTime()) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
+    public boolean isCourseSchedulable(Course course){
+        for (int i = 0; i < Schedule.size(); i++) {
+            Course schCor = Schedule.get(i);
+            if (course.getStartTime().compareTo(schCor.getEndTime()) < 0 &&
+                    course.getEndTime().compareTo(schCor.getStartTime()) > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }
