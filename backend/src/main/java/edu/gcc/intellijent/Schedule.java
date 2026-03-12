@@ -1,5 +1,7 @@
 package edu.gcc.intellijent;
 import java.util.ArrayList;
+import java.sql.Time;
+
 public class Schedule {
     /**
      * TODO: Change name of this var. It matches the name of the public class Schedule
@@ -62,7 +64,6 @@ public class Schedule {
             }
         }
         return true;
-        //TODO: Fix
     }
 
 }
