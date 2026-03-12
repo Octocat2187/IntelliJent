@@ -9,7 +9,9 @@ public class SearchController {
             String dept = ctx.queryParam("dept");
             String credits = ctx.queryParam("credits");
             String prof = ctx.queryParam("prof");
-            String time = ctx.queryParam("time");
+            String startTime = ctx.queryParam("startTime");
+            String endTime = ctx.queryParam("endTime");
+            String days = ctx.queryParam("days");
             String full = ctx.queryParam("isFull");
 
             Search search = new Search(query);
@@ -17,28 +19,40 @@ public class SearchController {
             ArrayList<Course> results = search.GetResultList();
 
             if (dept != null) {
-                DeptFilter filter = new DeptFilter(dept);
+                DeptFilter filter = new DeptFilter();
+                filter.deptCode = dept;
                 results = filter.ApplyFilter(results);
             }
 
             if (credits != null) {
-                CreditsFilter filter = new CreditsFilter(Integer.parseInt(credits));
+                CreditsFilter filter = new CreditsFilter();
+                filter.credits = Integer.parseInt(credits);
                 results = filter.ApplyFilter(results);
             }
 
             if (prof != null) {
-                ProfFilter filter = new ProfFilter(prof);
+                ProfFilter filter = new ProfFilter();
+                filter.prof = prof;
                 results = filter.ApplyFilter(results);
             }
 
-            if (time != null) {
-                //TODO: the time variable will undoubtedly require some weird parsing
-                ProfFilter filter = new DateTimeFilter(time);
+            if (days != null || startTime != null || endTime != null){
+                DateTimeFilter filter = new DateTimeFilter();
+                if (days != null){
+                    filter.days = days;
+                }
+                if (startTime != null){
+                    filter.beginTime = startTime;
+                }
+                if (endTime != null){
+                    filter.endTime = endTime;
+                }
                 results = filter.ApplyFilter(results);
             }
 
             if (full != null) {
-                FullFilter filter = new FullFilter(Boolean.parseBoolean(full));
+                FullFilter filter = new FullFilter();
+                filter.courseIsFull = Boolean.parseBoolean(full);
                 results = filter.ApplyFilter(results);
             }
 

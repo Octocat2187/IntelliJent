@@ -16,13 +16,13 @@ public class ScheduleController {
 
         app.get("/schedule", ctx -> ctx.json(schedule.Schedule));
 
-        app.post("/courses", ctx -> {
+        app.post("/schedule", ctx -> {
             Course course = ctx.bodyAsClass(Course.class);
             schedule.AddCourse(course);
             ctx.status(201);  // 201 means “created”
         });
 
-        app.delete("/courses", ctx -> {
+        app.delete("/schedule", ctx -> {
             Course course = ctx.bodyAsClass(Course.class);
             boolean removed = schedule.RemoveCourse(course);
 
