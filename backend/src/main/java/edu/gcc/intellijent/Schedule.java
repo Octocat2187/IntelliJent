@@ -64,7 +64,6 @@ public class Schedule {
             }
         }
         return true;
-        //TODO: Fix
     }
 
 }

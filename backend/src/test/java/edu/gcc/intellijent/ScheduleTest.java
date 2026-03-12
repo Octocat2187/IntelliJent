@@ -2,7 +2,8 @@ package edu.gcc.intellijent;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -30,7 +31,7 @@ class ScheduleTest {
         schedule.RemoveCourse(course);
         Assertions.assertEquals(0, schedule.Schedule.size());
     }
-/**
+
     // Test cases for isCourseSchedulable method
 
     @Test
@@ -38,8 +39,13 @@ class ScheduleTest {
         // A course should be schedulable when schedule is empty
         Schedule schedule = new Schedule();
         Course course = new Course();
-        course.setStartTime(Time.valueOf("09:00:00"));
-        course.setEndTime(Time.valueOf("10:30:00"));
+        ClassTime time = new ClassTime();
+        time.setDay("Monday");
+        time.setStart_time("09:00:00");
+        time.setEnd_time("10:30:00");
+        List<ClassTime> times = new ArrayList<>();
+        times.add(time);
+        course.setTimes(times);
 
         Assertions.assertTrue(schedule.isCourseSchedulable(course));
     }
@@ -49,13 +55,23 @@ class ScheduleTest {
         // Course scheduled after existing course (with gap)
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
-        existingCourse.setStartTime(Time.valueOf("09:00:00"));
-        existingCourse.setEndTime(Time.valueOf("10:00:00"));
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:00:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("11:00:00"));
-        newCourse.setEndTime(Time.valueOf("12:00:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("11:00:00");
+        newTime.setEnd_time("12:00:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertTrue(schedule.isCourseSchedulable(newCourse));
     }
@@ -65,13 +81,23 @@ class ScheduleTest {
         // Back-to-back courses should be allowed (one ends exactly when another starts)
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
-        existingCourse.setStartTime(Time.valueOf("09:00:00"));
-        existingCourse.setEndTime(Time.valueOf("10:00:00"));
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:00:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("10:00:00"));
-        newCourse.setEndTime(Time.valueOf("11:00:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("10:00:00");
+        newTime.setEnd_time("11:00:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertTrue(schedule.isCourseSchedulable(newCourse));
     }
@@ -81,13 +107,23 @@ class ScheduleTest {
         // Course overlaps completely with existing course
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
-        existingCourse.setStartTime(Time.valueOf("09:00:00"));
-        existingCourse.setEndTime(Time.valueOf("10:00:00"));
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:00:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("09:00:00"));
-        newCourse.setEndTime(Time.valueOf("10:00:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("09:00:00");
+        newTime.setEnd_time("10:00:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertFalse(schedule.isCourseSchedulable(newCourse));
     }
@@ -97,13 +133,23 @@ class ScheduleTest {
         // New course starts before existing course ends
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
-        existingCourse.setStartTime(Time.valueOf("09:00:00"));
-        existingCourse.setEndTime(Time.valueOf("10:00:00"));
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:00:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("08:30:00"));
-        newCourse.setEndTime(Time.valueOf("09:30:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("08:30:00");
+        newTime.setEnd_time("09:30:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertFalse(schedule.isCourseSchedulable(newCourse));
     }
@@ -113,13 +159,23 @@ class ScheduleTest {
         // New course ends after existing course starts
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
-        existingCourse.setStartTime(Time.valueOf("10:00:00"));
-        existingCourse.setEndTime(Time.valueOf("11:00:00"));
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("10:00:00");
+        existingTime.setEnd_time("11:00:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("09:30:00"));
-        newCourse.setEndTime(Time.valueOf("10:30:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("09:30:00");
+        newTime.setEnd_time("10:30:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertFalse(schedule.isCourseSchedulable(newCourse));
     }
@@ -129,13 +185,23 @@ class ScheduleTest {
         // New course is completely inside existing course
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
-        existingCourse.setStartTime(Time.valueOf("09:00:00"));
-        existingCourse.setEndTime(Time.valueOf("12:00:00"));
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("12:00:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("10:00:00"));
-        newCourse.setEndTime(Time.valueOf("11:00:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("10:00:00");
+        newTime.setEnd_time("11:00:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertFalse(schedule.isCourseSchedulable(newCourse));
     }
@@ -145,13 +211,23 @@ class ScheduleTest {
         // New course completely contains existing course
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
-        existingCourse.setStartTime(Time.valueOf("10:00:00"));
-        existingCourse.setEndTime(Time.valueOf("11:00:00"));
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("10:00:00");
+        existingTime.setEnd_time("11:00:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("09:00:00"));
-        newCourse.setEndTime(Time.valueOf("12:00:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("09:00:00");
+        newTime.setEnd_time("12:00:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertFalse(schedule.isCourseSchedulable(newCourse));
     }
@@ -162,18 +238,33 @@ class ScheduleTest {
         Schedule schedule = new Schedule();
 
         Course course1 = new Course();
-        course1.setStartTime(Time.valueOf("09:00:00"));
-        course1.setEndTime(Time.valueOf("10:00:00"));
+        ClassTime time1 = new ClassTime();
+        time1.setDay("Monday");
+        time1.setStart_time("09:00:00");
+        time1.setEnd_time("10:00:00");
+        List<ClassTime> times1 = new ArrayList<>();
+        times1.add(time1);
+        course1.setTimes(times1);
         schedule.AddCourse(course1);
 
         Course course2 = new Course();
-        course2.setStartTime(Time.valueOf("11:00:00"));
-        course2.setEndTime(Time.valueOf("12:00:00"));
+        ClassTime time2 = new ClassTime();
+        time2.setDay("Monday");
+        time2.setStart_time("11:00:00");
+        time2.setEnd_time("12:00:00");
+        List<ClassTime> times2 = new ArrayList<>();
+        times2.add(time2);
+        course2.setTimes(times2);
         schedule.AddCourse(course2);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("13:00:00"));
-        newCourse.setEndTime(Time.valueOf("14:00:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("13:00:00");
+        newTime.setEnd_time("14:00:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertTrue(schedule.isCourseSchedulable(newCourse));
     }
@@ -184,18 +275,33 @@ class ScheduleTest {
         Schedule schedule = new Schedule();
 
         Course course1 = new Course();
-        course1.setStartTime(Time.valueOf("09:00:00"));
-        course1.setEndTime(Time.valueOf("10:00:00"));
+        ClassTime time1 = new ClassTime();
+        time1.setDay("Monday");
+        time1.setStart_time("09:00:00");
+        time1.setEnd_time("10:00:00");
+        List<ClassTime> times1 = new ArrayList<>();
+        times1.add(time1);
+        course1.setTimes(times1);
         schedule.AddCourse(course1);
 
         Course course2 = new Course();
-        course2.setStartTime(Time.valueOf("11:00:00"));
-        course2.setEndTime(Time.valueOf("12:00:00"));
+        ClassTime time2 = new ClassTime();
+        time2.setDay("Monday");
+        time2.setStart_time("11:00:00");
+        time2.setEnd_time("12:00:00");
+        List<ClassTime> times2 = new ArrayList<>();
+        times2.add(time2);
+        course2.setTimes(times2);
         schedule.AddCourse(course2);
 
         Course newCourse = new Course();
-        newCourse.setStartTime(Time.valueOf("11:30:00"));
-        newCourse.setEndTime(Time.valueOf("12:30:00"));
+        ClassTime newTime = new ClassTime();
+        newTime.setDay("Monday");
+        newTime.setStart_time("11:30:00");
+        newTime.setEnd_time("12:30:00");
+        List<ClassTime> newTimes = new ArrayList<>();
+        newTimes.add(newTime);
+        newCourse.setTimes(newTimes);
 
         Assertions.assertFalse(schedule.isCourseSchedulable(newCourse));
     }
