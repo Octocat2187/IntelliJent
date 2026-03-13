@@ -8,12 +8,22 @@ public class Search {
     private Filter currFilter;
     private String searchQuery;
 
+    ArrayList<Filter> filterList;
 
-    public Search(String query){
-        return;
+    public Search(String query) {
+        searchQuery = query;
+    }
+
+    public Search(String query, ArrayList<Filter> filterList) {
+        searchQuery = query;
+        this.filterList = filterList;
+
+        CourseSearch();
     }
 
     private void CourseSearch() {
         resultList = new ArrayList<Course>();
+
+
     }
 }
