@@ -6,6 +6,13 @@ public class CreditsFilter extends Filter{
 
     @Override
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
-        return null;
+        ArrayList<Course> filteredResults = new ArrayList<>();
+        for(Course course : searchResults){
+            if(course.getCredits() == credits){
+                filteredResults.add(course);
+            }
+        }
+
+        return filteredResults;
     }
 }

@@ -2,10 +2,17 @@ package edu.gcc.intellijent;
 import java.util.ArrayList;
 
 public class DeptFilter extends Filter {
-    String deptCode;
+    public String deptCode;
 
     @Override
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
-        return null;
+        ArrayList<Course> filteredResults = new ArrayList<>();
+        for (Course course : searchResults) {
+            if(course.getSubject().equals(deptCode)){
+                filteredResults.add(course);
+            }
+        }
+
+        return filteredResults;
     }
 }
