@@ -54,9 +54,6 @@ public class Search {
                 resultList.add(c);
             }
         }
-
-
-
     }
 
     public ArrayList<Course> FilterResults(ArrayList<Filter> filterList) {
