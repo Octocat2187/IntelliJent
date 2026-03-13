@@ -1,26 +1,52 @@
 package edu.gcc.intellijent;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DateTimeFilter extends Filter {
-    public Time beginTime;
-    public Time endTime;
-    String days;
+    List<ClassTime> schedule = new ArrayList<>();
 
     @Override
     public ArrayList<Course> ApplyFilter(ArrayList<Course> searchResults) {
         ArrayList<Course> filteredResults = new ArrayList<>();
-        /**
+
         for (Course course : searchResults) {
-            if((course.getStartTime().compareTo(beginTime)) >= 0 && // Start time of course is after/at start time of filter
-                    course.getEndTime().compareTo(endTime) <= 0 && // End time of course is before/at end time of filter
-                    course.getDaysOfWeek().equals(days))
-            {
+            boolean shouldAddCourse = true;
+            List<ClassTime> classTimeList = course.getTimes();
+
+            try {
+                for (int i=0; i<classTimeList.size(); i++) {
+                    String classDay = classTimeList.get(i).getDay();
+                    Time classBeginTime = Time.valueOf(classTimeList.get(i).getStart_time());
+                    Time classEndTime = Time.valueOf(classTimeList.get(i).getEnd_time());
+
+                    String filterDay = schedule.get(i).getDay();
+                    Time filterBeginTime = Time.valueOf(schedule.get(i).getStart_time());
+                    Time filterEndTime = Time.valueOf(schedule.get(i).getEnd_time());
+
+                    if(!classDay.equals(filterDay)) {
+                        shouldAddCourse = false;
+                    }
+
+                    if(classBeginTime.before(filterBeginTime)){
+                        shouldAddCourse = false;
+                    }
+
+                    if(classEndTime.after(filterEndTime)){
+                        shouldAddCourse = false;
+                    }
+                }
+            }
+            catch (IndexOutOfBoundsException e) {
+                //Class times of class were more than the size of the filter's list
+                //Do not add to results
+                shouldAddCourse = false;
+            }
+
+            if(shouldAddCourse) {
                 filteredResults.add(course);
             }
         }
-    **/
-        //TODO: Fix
         return filteredResults;
     }
 }
