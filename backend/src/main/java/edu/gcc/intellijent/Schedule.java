@@ -1,5 +1,7 @@
 package edu.gcc.intellijent;
 import java.util.ArrayList;
+import java.sql.Time;
+
 public class Schedule {
     /**
      * TODO: Change name of this var. It matches the name of the public class Schedule
@@ -27,23 +29,41 @@ public class Schedule {
 
     /**
      * Checks whether the given course can be added to the schedule without any time overlap.
+     * Compares ClassTime objects based on days and times using Time objects.
      * Back-to-back courses (one ends exactly when another starts) are allowed.
      *
-     * @param course the to be Added course checked for scheduling conflicts
+     * @param course the course to be added, checked for scheduling conflicts
      * @return true if the course can be scheduled (no overlap), false otherwise
      */
     public boolean isCourseSchedulable(Course course){
-        /**
-        for (int i = 0; i < Schedule.size(); i++) {
-            Course schCor = Schedule.get(i);
-            if (course.getStartTime().compareTo(schCor.getEndTime()) < 0 &&
-                    course.getEndTime().compareTo(schCor.getStartTime()) > 0) {
-                return false;
+        // If course has no class times, it's schedulable
+        if (course.getTimes() == null || course.getTimes().isEmpty()) {
+            return true;
+        }
+        // Check against each course already in the schedule
+        for (Course scheduledCourse : Schedule) {
+            // Compare each ClassTime of the new course with each ClassTime of scheduled courses
+            for (ClassTime newTime : course.getTimes()) {
+                for (ClassTime scheduledTime : scheduledCourse.getTimes()) {
+                    // Check if the classes are on the same day
+                    if (newTime.getDay().equals(scheduledTime.getDay())) {
+                        // Convert string times to Time objects
+                        Time newStart = Time.valueOf(newTime.getStart_time());
+                        Time newEnd = Time.valueOf(newTime.getEnd_time());
+                        Time scheduledStart = Time.valueOf(scheduledTime.getStart_time());
+                        Time scheduledEnd = Time.valueOf(scheduledTime.getEnd_time());
+
+                        // Check if times overlap
+                        // Overlap occurs if: new starts before scheduled ends AND new ends after scheduled starts
+                        // Back-to-back is allowed, so we use < and > (not <= and >=)
+                        if (newStart.compareTo(scheduledEnd) < 0 && newEnd.compareTo(scheduledStart) > 0) {
+                            return false;
+                        }
+                    }
+                }
             }
         }
-         **/
         return true;
-        //TODO: Fix
     }
 
 }
