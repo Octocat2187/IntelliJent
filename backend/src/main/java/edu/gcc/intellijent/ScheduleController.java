@@ -24,13 +24,14 @@ public class ScheduleController {
 
         app.delete("/schedule", ctx -> {
             Course course = ctx.bodyAsClass(Course.class);
-            boolean removed = schedule.RemoveCourse(course);
-
-            if (removed) {
-                ctx.status(204); // success, no body
-            } else {
-                ctx.status(404);
-            }
+            //boolean removed = schedule.RemoveCourse(course);
+            schedule.RemoveCourse(course);
+            ctx.status(204);
+//            if (removed) {
+//                ctx.status(204); // success, no body
+//            } else {
+//                ctx.status(404);
+//            }
         });
 
     }

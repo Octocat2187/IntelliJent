@@ -1,8 +1,20 @@
 package edu.gcc.intellijent;
 import io.javalin.Javalin;
+
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SearchController {
+
+    private static Search search;
+
+    public SearchController(Search search) {
+        this.search = search;
+    }
+
+
     public static void registerRoutes(Javalin app) {
         app.get("/search", ctx -> {
             String query = ctx.queryParam("query");
@@ -14,7 +26,7 @@ public class SearchController {
             String days = ctx.queryParam("days");
             String full = ctx.queryParam("isFull");
 
-            Search search = new Search(query);
+            search.CourseSearch(query);
             // Get results arraylist from search
             ArrayList<Course> results = search.GetResultList();
 
@@ -32,7 +44,9 @@ public class SearchController {
 
             if (prof != null) {
                 ProfFilter filter = new ProfFilter();
-                filter.prof = prof;
+                //TODO add logic here to fit with the goofy way we're doing this
+                filter.prof = new ArrayList<>();
+                filter.prof.add(prof);
                 results = filter.ApplyFilter(results);
             }
 
@@ -42,10 +56,14 @@ public class SearchController {
                     filter.days = days;
                 }
                 if (startTime != null){
-                    filter.beginTime = startTime;
+                    LocalTime localTime = LocalTime.parse(startTime);
+                    Time start = Time.valueOf(localTime);
+                    filter.beginTime = start;
                 }
                 if (endTime != null){
-                    filter.endTime = endTime;
+                    LocalTime localTime = LocalTime.parse(endTime);
+                    Time end = Time.valueOf(localTime);
+                    filter.endTime = end;
                 }
                 results = filter.ApplyFilter(results);
             }
