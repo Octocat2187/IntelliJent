@@ -17,7 +17,7 @@ class FullFilterTest {
         courses.add(course);
 
         FullFilter filter = new FullFilter();
-        filter.courseIsFull = false;
+        filter.courseIsFull = true;
         ArrayList<Course> filteredResults = filter.ApplyFilter(courses);
 
         Assertions.assertNotEquals(filteredResults, courses);
@@ -32,7 +32,7 @@ class FullFilterTest {
         courses.add(course);
 
         FullFilter filter = new FullFilter();
-        filter.courseIsFull = true;
+        filter.courseIsFull = false;
         ArrayList<Course> filteredResults = filter.ApplyFilter(courses);
 
         Assertions.assertEquals(filteredResults, courses);
