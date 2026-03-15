@@ -23,7 +23,7 @@ public class Main {
             // Convert JSON into CourseCatalog object
             CourseCatalog catalog = mapper.readValue(input, CourseCatalog.class);
 
-            Search search = new Search(catalog);
+            Search search = new Search(catalog, "");
 
             SearchController controller = new SearchController(search);
 
