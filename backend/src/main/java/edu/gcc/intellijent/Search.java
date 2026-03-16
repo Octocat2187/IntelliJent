@@ -1,4 +1,7 @@
 package edu.gcc.intellijent;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Search {
@@ -13,6 +16,18 @@ public class Search {
 
     public Search(String query) {
         searchQuery = query;
+
+        try{
+            // Create Jackson mapper
+            ObjectMapper mapper = new ObjectMapper();
+
+            // Load Course JSON
+            InputStream courseInput = Main.class.getClassLoader().getResourceAsStream("allCourseInfo.json");
+
+            courseCatalog = mapper.readValue(courseInput, CourseCatalog.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Search(CourseCatalog catalog, String query) {
