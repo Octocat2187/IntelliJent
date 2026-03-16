@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.sql.Time;
 import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Course {
@@ -20,6 +21,18 @@ public class Course {
     private boolean is_open;
     private List<ClassTime> times;
     private String daysOfWeek;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return getNumber() == course.getNumber() && getCredits() == course.getCredits() && getOpen_seats() == course.getOpen_seats() && getTotal_seats() == course.getTotal_seats() && isIs_open() == course.isIs_open() && Objects.equals(getSubject(), course.getSubject()) && Objects.equals(getName(), course.getName()) && Objects.equals(getSection(), course.getSection()) && Objects.equals(getLocation(), course.getLocation()) && Objects.equals(getFaculty(), course.getFaculty());
+    }
+
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(getSubject(), getNumber(), getName(), getSection(), getLocation(), getFaculty(), getCredits(), getOpen_seats(), getTotal_seats(), isIs_open());
+//    }
 
     private Time startTime;
     private Time endTime;
