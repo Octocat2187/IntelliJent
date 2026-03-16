@@ -532,4 +532,463 @@ class ScheduleTest {
 
         Assertions.assertTrue(schedule.isCourseSchedulable(newCourse));
     }
+
+    @Test
+    void findAlternativeCourses_NoAlternativeSections() {
+        // Only one section of the course exists, so no alternatives available
+        Schedule schedule = new Schedule();
+        Course targetCourse = new Course();
+        targetCourse.setSubject("CS");
+        targetCourse.setNumber(101);
+        targetCourse.setName("Intro to CS");
+        targetCourse.setSection("01");
+        targetCourse.setFaculty(new ArrayList<>()); // Initialize faculty list
+        ClassTime time = new ClassTime();
+        time.setDay("Monday");
+        time.setStart_time("09:00:00");
+        time.setEnd_time("10:30:00");
+        List<ClassTime> times = new ArrayList<>();
+        times.add(time);
+        targetCourse.setTimes(times);
+
+        CourseCatalog catalog = new CourseCatalog();
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(targetCourse);
+        catalog.setClasses(courses);
+
+        ArrayList<Course> alternatives = schedule.findAlternativeCourses(targetCourse, catalog);
+
+        Assertions.assertEquals(0, alternatives.size());
+    }
+
+    @Test
+    void findAlternativeCourses_OneSchedulableAlternative() {
+        // Multiple sections exist, but only one is schedulable
+        Schedule schedule = new Schedule();
+
+        // Add existing course to schedule
+        Course existingCourse = new Course();
+        existingCourse.setSubject("CS");
+        existingCourse.setNumber(101);
+        existingCourse.setName("Intro to CS");
+        existingCourse.setSection("01");
+        existingCourse.setFaculty(new ArrayList<>());
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:30:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
+        schedule.AddCourse(existingCourse);
+
+        // Target course (section 02 - conflicts with existing)
+        Course targetCourse = new Course();
+        targetCourse.setSubject("CS");
+        targetCourse.setNumber(101);
+        targetCourse.setName("Intro to CS");
+        targetCourse.setSection("02");
+        targetCourse.setFaculty(new ArrayList<>());
+        ClassTime targetTime = new ClassTime();
+        targetTime.setDay("Monday");
+        targetTime.setStart_time("09:00:00");
+        targetTime.setEnd_time("10:30:00");
+        List<ClassTime> targetTimes = new ArrayList<>();
+        targetTimes.add(targetTime);
+        targetCourse.setTimes(targetTimes);
+
+        // Alternative section 03 (no conflict)
+        Course alternativeCourse = new Course();
+        alternativeCourse.setSubject("CS");
+        alternativeCourse.setNumber(101);
+        alternativeCourse.setName("Intro to CS");
+        alternativeCourse.setSection("03");
+        alternativeCourse.setFaculty(new ArrayList<>());
+        ClassTime altTime = new ClassTime();
+        altTime.setDay("Tuesday");
+        altTime.setStart_time("11:00:00");
+        altTime.setEnd_time("12:30:00");
+        List<ClassTime> altTimes = new ArrayList<>();
+        altTimes.add(altTime);
+        alternativeCourse.setTimes(altTimes);
+
+        CourseCatalog catalog = new CourseCatalog();
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(targetCourse);
+        courses.add(alternativeCourse);
+        catalog.setClasses(courses);
+
+        ArrayList<Course> alternatives = schedule.findAlternativeCourses(targetCourse, catalog);
+
+        Assertions.assertEquals(1, alternatives.size());
+        Assertions.assertEquals("03", alternatives.get(0).getSection());
+    }
+
+    @Test
+    void findAlternativeCourses_MultipleSchedulableAlternatives() {
+        // Multiple schedulable alternatives available
+        Schedule schedule = new Schedule();
+
+        // Add existing course to schedule
+        Course existingCourse = new Course();
+        existingCourse.setSubject("CS");
+        existingCourse.setNumber(101);
+        existingCourse.setName("Intro to CS");
+        existingCourse.setSection("01");
+        existingCourse.setFaculty(new ArrayList<>());
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:30:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
+        schedule.AddCourse(existingCourse);
+
+        // Target course (section 02 - conflicts)
+        Course targetCourse = new Course();
+        targetCourse.setSubject("CS");
+        targetCourse.setNumber(101);
+        targetCourse.setName("Intro to CS");
+        targetCourse.setSection("02");
+        targetCourse.setFaculty(new ArrayList<>());
+        ClassTime targetTime = new ClassTime();
+        targetTime.setDay("Monday");
+        targetTime.setStart_time("09:00:00");
+        targetTime.setEnd_time("10:30:00");
+        List<ClassTime> targetTimes = new ArrayList<>();
+        targetTimes.add(targetTime);
+        targetCourse.setTimes(targetTimes);
+
+        // Alternative section 03
+        Course alternative1 = new Course();
+        alternative1.setSubject("CS");
+        alternative1.setNumber(101);
+        alternative1.setName("Intro to CS");
+        alternative1.setSection("03");
+        alternative1.setFaculty(new ArrayList<>());
+        ClassTime alt1Time = new ClassTime();
+        alt1Time.setDay("Tuesday");
+        alt1Time.setStart_time("11:00:00");
+        alt1Time.setEnd_time("12:30:00");
+        List<ClassTime> alt1Times = new ArrayList<>();
+        alt1Times.add(alt1Time);
+        alternative1.setTimes(alt1Times);
+
+        // Alternative section 04
+        Course alternative2 = new Course();
+        alternative2.setSubject("CS");
+        alternative2.setNumber(101);
+        alternative2.setName("Intro to CS");
+        alternative2.setSection("04");
+        alternative2.setFaculty(new ArrayList<>());
+        ClassTime alt2Time = new ClassTime();
+        alt2Time.setDay("Wednesday");
+        alt2Time.setStart_time("14:00:00");
+        alt2Time.setEnd_time("15:30:00");
+        List<ClassTime> alt2Times = new ArrayList<>();
+        alt2Times.add(alt2Time);
+        alternative2.setTimes(alt2Times);
+
+        CourseCatalog catalog = new CourseCatalog();
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(targetCourse);
+        courses.add(alternative1);
+        courses.add(alternative2);
+        catalog.setClasses(courses);
+
+        ArrayList<Course> alternatives = schedule.findAlternativeCourses(targetCourse, catalog);
+
+        Assertions.assertEquals(2, alternatives.size());
+    }
+
+    @Test
+    void findAlternativeCourses_NoSchedulableAlternatives() {
+        // Multiple alternatives exist, but none are schedulable
+        Schedule schedule = new Schedule();
+
+        // Add existing course to schedule
+        Course existingCourse = new Course();
+        existingCourse.setSubject("CS");
+        existingCourse.setNumber(101);
+        existingCourse.setName("Intro to CS");
+        existingCourse.setSection("01");
+        existingCourse.setFaculty(new ArrayList<>());
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:30:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
+        schedule.AddCourse(existingCourse);
+
+        // Target course (section 02 - conflicts)
+        Course targetCourse = new Course();
+        targetCourse.setSubject("CS");
+        targetCourse.setNumber(101);
+        targetCourse.setName("Intro to CS");
+        targetCourse.setSection("02");
+        targetCourse.setFaculty(new ArrayList<>());
+        ClassTime targetTime = new ClassTime();
+        targetTime.setDay("Monday");
+        targetTime.setStart_time("09:00:00");
+        targetTime.setEnd_time("10:30:00");
+        List<ClassTime> targetTimes = new ArrayList<>();
+        targetTimes.add(targetTime);
+        targetCourse.setTimes(targetTimes);
+
+        // Alternative section 03 - also conflicts
+        Course alternative1 = new Course();
+        alternative1.setSubject("CS");
+        alternative1.setNumber(101);
+        alternative1.setName("Intro to CS");
+        alternative1.setSection("03");
+        alternative1.setFaculty(new ArrayList<>());
+        ClassTime alt1Time = new ClassTime();
+        alt1Time.setDay("Monday");
+        alt1Time.setStart_time("09:30:00");
+        alt1Time.setEnd_time("11:00:00");
+        List<ClassTime> alt1Times = new ArrayList<>();
+        alt1Times.add(alt1Time);
+        alternative1.setTimes(alt1Times);
+
+        // Alternative section 04 - also conflicts
+        Course alternative2 = new Course();
+        alternative2.setSubject("CS");
+        alternative2.setNumber(101);
+        alternative2.setName("Intro to CS");
+        alternative2.setSection("04");
+        alternative2.setFaculty(new ArrayList<>());
+        ClassTime alt2Time = new ClassTime();
+        alt2Time.setDay("Monday");
+        alt2Time.setStart_time("08:30:00");
+        alt2Time.setEnd_time("09:45:00");
+        List<ClassTime> alt2Times = new ArrayList<>();
+        alt2Times.add(alt2Time);
+        alternative2.setTimes(alt2Times);
+
+        CourseCatalog catalog = new CourseCatalog();
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(targetCourse);
+        courses.add(alternative1);
+        courses.add(alternative2);
+        catalog.setClasses(courses);
+
+        ArrayList<Course> alternatives = schedule.findAlternativeCourses(targetCourse, catalog);
+
+        Assertions.assertEquals(0, alternatives.size());
+    }
+
+    @Test
+    void findAlternativeCourses_AlternativeWithMultipleDays() {
+        // Find alternative section that meets on multiple days
+        Schedule schedule = new Schedule();
+
+        // Add existing course to schedule
+        Course existingCourse = new Course();
+        existingCourse.setSubject("MATH");
+        existingCourse.setNumber(201);
+        existingCourse.setName("Calculus I");
+        existingCourse.setSection("01");
+        existingCourse.setFaculty(new ArrayList<>());
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:30:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
+        schedule.AddCourse(existingCourse);
+
+        // Target course (section 01 - conflicts on Monday)
+        Course targetCourse = new Course();
+        targetCourse.setSubject("MATH");
+        targetCourse.setNumber(201);
+        targetCourse.setName("Calculus I");
+        targetCourse.setSection("01");
+        targetCourse.setFaculty(new ArrayList<>());
+        ClassTime targetTime = new ClassTime();
+        targetTime.setDay("Monday");
+        targetTime.setStart_time("09:00:00");
+        targetTime.setEnd_time("10:30:00");
+        List<ClassTime> targetTimes = new ArrayList<>();
+        targetTimes.add(targetTime);
+        targetCourse.setTimes(targetTimes);
+
+        // Alternative section 02 - meets Tue/Thu
+        Course alternative = new Course();
+        alternative.setSubject("MATH");
+        alternative.setNumber(201);
+        alternative.setName("Calculus I");
+        alternative.setSection("02");
+        alternative.setFaculty(new ArrayList<>());
+        ClassTime tuesdayTime = new ClassTime();
+        tuesdayTime.setDay("Tuesday");
+        tuesdayTime.setStart_time("11:00:00");
+        tuesdayTime.setEnd_time("12:30:00");
+        ClassTime thursdayTime = new ClassTime();
+        thursdayTime.setDay("Thursday");
+        thursdayTime.setStart_time("11:00:00");
+        thursdayTime.setEnd_time("12:30:00");
+        List<ClassTime> altTimes = new ArrayList<>();
+        altTimes.add(tuesdayTime);
+        altTimes.add(thursdayTime);
+        alternative.setTimes(altTimes);
+
+        CourseCatalog catalog = new CourseCatalog();
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(targetCourse);
+        courses.add(alternative);
+        catalog.setClasses(courses);
+
+        ArrayList<Course> alternatives = schedule.findAlternativeCourses(targetCourse, catalog);
+
+        Assertions.assertEquals(1, alternatives.size());
+        Assertions.assertEquals("02", alternatives.get(0).getSection());
+    }
+
+    @Test
+    void findAlternativeCourses_MixedResults() {
+        // Catalog has some schedulable and some non-schedulable alternatives
+        Schedule schedule = new Schedule();
+
+        // Add existing course to schedule
+        Course existingCourse = new Course();
+        existingCourse.setSubject("PHYS");
+        existingCourse.setNumber(150);
+        existingCourse.setName("Physics I");
+        existingCourse.setSection("01");
+        existingCourse.setFaculty(new ArrayList<>());
+        ClassTime existingTime = new ClassTime();
+        existingTime.setDay("Monday");
+        existingTime.setStart_time("09:00:00");
+        existingTime.setEnd_time("10:30:00");
+        List<ClassTime> existingTimes = new ArrayList<>();
+        existingTimes.add(existingTime);
+        existingCourse.setTimes(existingTimes);
+        schedule.AddCourse(existingCourse);
+
+        // Target course
+        Course targetCourse = new Course();
+        targetCourse.setSubject("PHYS");
+        targetCourse.setNumber(150);
+        targetCourse.setName("Physics I");
+        targetCourse.setSection("02");
+        targetCourse.setFaculty(new ArrayList<>());
+        ClassTime targetTime = new ClassTime();
+        targetTime.setDay("Monday");
+        targetTime.setStart_time("09:00:00");
+        targetTime.setEnd_time("10:30:00");
+        List<ClassTime> targetTimes = new ArrayList<>();
+        targetTimes.add(targetTime);
+        targetCourse.setTimes(targetTimes);
+
+        // Alternative 03 - conflicts
+        Course alt1 = new Course();
+        alt1.setSubject("PHYS");
+        alt1.setNumber(150);
+        alt1.setName("Physics I");
+        alt1.setSection("03");
+        alt1.setFaculty(new ArrayList<>());
+        ClassTime alt1Time = new ClassTime();
+        alt1Time.setDay("Monday");
+        alt1Time.setStart_time("09:15:00");
+        alt1Time.setEnd_time("10:45:00");
+        List<ClassTime> alt1Times = new ArrayList<>();
+        alt1Times.add(alt1Time);
+        alt1.setTimes(alt1Times);
+
+        // Alternative 04 - no conflict
+        Course alt2 = new Course();
+        alt2.setSubject("PHYS");
+        alt2.setNumber(150);
+        alt2.setName("Physics I");
+        alt2.setSection("04");
+        alt2.setFaculty(new ArrayList<>());
+        ClassTime alt2Time = new ClassTime();
+        alt2Time.setDay("Tuesday");
+        alt2Time.setStart_time("14:00:00");
+        alt2Time.setEnd_time("15:30:00");
+        List<ClassTime> alt2Times = new ArrayList<>();
+        alt2Times.add(alt2Time);
+        alt2.setTimes(alt2Times);
+
+        // Alternative 05 - no conflict
+        Course alt3 = new Course();
+        alt3.setSubject("PHYS");
+        alt3.setNumber(150);
+        alt3.setName("Physics I");
+        alt3.setSection("05");
+        alt3.setFaculty(new ArrayList<>());
+        ClassTime alt3Time = new ClassTime();
+        alt3Time.setDay("Wednesday");
+        alt3Time.setStart_time("11:00:00");
+        alt3Time.setEnd_time("12:30:00");
+        List<ClassTime> alt3Times = new ArrayList<>();
+        alt3Times.add(alt3Time);
+        alt3.setTimes(alt3Times);
+
+        CourseCatalog catalog = new CourseCatalog();
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(targetCourse);
+        courses.add(alt1);
+        courses.add(alt2);
+        courses.add(alt3);
+        catalog.setClasses(courses);
+
+        ArrayList<Course> alternatives = schedule.findAlternativeCourses(targetCourse, catalog);
+
+        Assertions.assertEquals(2, alternatives.size());
+        Assertions.assertTrue(alternatives.stream().anyMatch(c -> c.getSection().equals("04")));
+        Assertions.assertTrue(alternatives.stream().anyMatch(c -> c.getSection().equals("05")));
+    }
+
+    @Test
+    void findAlternativeCourses_ExcludesOriginalSection() {
+        // Ensures the original course section is not included in alternatives
+        Schedule schedule = new Schedule();
+
+        // Target course
+        Course targetCourse = new Course();
+        targetCourse.setSubject("ENG");
+        targetCourse.setNumber(101);
+        targetCourse.setName("English Composition");
+        targetCourse.setSection("01");
+        targetCourse.setFaculty(new ArrayList<>());
+        ClassTime targetTime = new ClassTime();
+        targetTime.setDay("Monday");
+        targetTime.setStart_time("09:00:00");
+        targetTime.setEnd_time("10:30:00");
+        List<ClassTime> targetTimes = new ArrayList<>();
+        targetTimes.add(targetTime);
+        targetCourse.setTimes(targetTimes);
+
+        // Alternative section
+        Course alternative = new Course();
+        alternative.setSubject("ENG");
+        alternative.setNumber(101);
+        alternative.setName("English Composition");
+        alternative.setSection("02");
+        alternative.setFaculty(new ArrayList<>());
+        ClassTime altTime = new ClassTime();
+        altTime.setDay("Tuesday");
+        altTime.setStart_time("11:00:00");
+        altTime.setEnd_time("12:30:00");
+        List<ClassTime> altTimes = new ArrayList<>();
+        altTimes.add(altTime);
+        alternative.setTimes(altTimes);
+
+        CourseCatalog catalog = new CourseCatalog();
+        ArrayList<Course> courses = new ArrayList<>();
+        courses.add(targetCourse);
+        courses.add(alternative);
+        catalog.setClasses(courses);
+
+        ArrayList<Course> alternatives = schedule.findAlternativeCourses(targetCourse, catalog);
+
+        Assertions.assertEquals(1, alternatives.size());
+        Assertions.assertNotEquals("01", alternatives.get(0).getSection());
+        Assertions.assertEquals("02", alternatives.get(0).getSection());
+    }
 }
