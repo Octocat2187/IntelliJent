@@ -1,0 +1,24 @@
+{
+  "majors": [
+    {
+      "name": "Physics",
+      "requiredCourses": [
+        "PHYS101",
+        "PHYS102",
+        "MATH161",
+        "MATH162",
+        "COMP141"
+      ]
+    },
+    {
+      "name": "Computer Science",
+      "requiredCourses": [
+        "COMP141",
+        "COMP201",
+        "COMP202",
+        "COMP301",
+        "MATH161"
+      ]
+    }
+  ]
+}
