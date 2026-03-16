@@ -9,8 +9,13 @@ public class Account {
     private Search currentSearch; // Suggested by Dr. Hutchins
     private String username;
     private String password;
+    private Major major;
 
-    //----------------------------------------
+    public Account(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.courseSchedule = new Schedule();
+    }
 
     // STUB METHODS
     private void login(String username, String password){
@@ -35,5 +40,25 @@ public class Account {
 
     private Schedule ViewSchedule(){
         return courseSchedule;
+    }
+
+    // Set student's major
+    public void setMajor(Major major){
+        this.major = major;
+    }
+
+    // Display required courses for the major
+    public void viewMajorRequirements(){
+
+        if(major == null){
+            System.out.println("No major selected.");
+            return;
+        }
+
+        System.out.println("Major: " + major.getName());
+
+        for(String course : major.getRequiredCourses()){
+            System.out.println(course);
+        }
     }
 }
