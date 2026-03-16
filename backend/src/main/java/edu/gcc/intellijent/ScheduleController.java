@@ -5,12 +5,7 @@ import java.util.Map;
 
 public class ScheduleController {
     private static final Schedule schedule = new Schedule();
-    private static final Course example = new Course();
 
-    static {
-        // starter data so GET shows something
-        schedule.AddCourse(example);
-    }
 
     public static void registerRoutes(Javalin app) {
 

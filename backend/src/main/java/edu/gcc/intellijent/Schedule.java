@@ -21,7 +21,9 @@ public class Schedule {
     }
 
     public void RemoveCourse(Course course){
+        System.out.println("remove triggered");
         if(Schedule.contains(course)){
+            System.out.println("it contains the course");
             Schedule.remove(course);
         }
     }

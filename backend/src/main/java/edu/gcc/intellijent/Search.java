@@ -67,4 +67,14 @@ public class Search {
         return filteredResults;
     }
 
+    public ArrayList<Course> GetResultList(){
+        return resultList;
+    }
+
+    public void SetNewQuery(String query){
+        searchQuery = query;
+
+        CourseSearch();
+    }
+
 }

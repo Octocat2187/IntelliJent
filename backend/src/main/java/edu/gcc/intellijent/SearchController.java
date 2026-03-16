@@ -26,7 +26,11 @@ public class SearchController {
             String days = ctx.queryParam("days");
             String full = ctx.queryParam("isFull");
 
-            search.CourseSearch(query);
+            if (query == null){
+                query = "";
+            }
+            search.SetNewQuery(query);
+
             // Get results arraylist from search
             ArrayList<Course> results = search.GetResultList();
 
@@ -50,23 +54,23 @@ public class SearchController {
                 results = filter.ApplyFilter(results);
             }
 
-            if (days != null || startTime != null || endTime != null){
-                DateTimeFilter filter = new DateTimeFilter();
-                if (days != null){
-                    filter.days = days;
-                }
-                if (startTime != null){
-                    LocalTime localTime = LocalTime.parse(startTime);
-                    Time start = Time.valueOf(localTime);
-                    filter.beginTime = start;
-                }
-                if (endTime != null){
-                    LocalTime localTime = LocalTime.parse(endTime);
-                    Time end = Time.valueOf(localTime);
-                    filter.endTime = end;
-                }
-                results = filter.ApplyFilter(results);
-            }
+//            if (days != null || startTime != null || endTime != null){
+//                DateTimeFilter filter = new DateTimeFilter();
+//                if (days != null){
+//                    filter.days = days;
+//                }
+//                if (startTime != null){
+//                    LocalTime localTime = LocalTime.parse(startTime);
+//                    Time start = Time.valueOf(localTime);
+//                    filter.beginTime = start;
+//                }
+//                if (endTime != null){
+//                    LocalTime localTime = LocalTime.parse(endTime);
+//                    Time end = Time.valueOf(localTime);
+//                    filter.endTime = end;
+//                }
+//                results = filter.ApplyFilter(results);
+//            }
 
             if (full != null) {
                 FullFilter filter = new FullFilter();

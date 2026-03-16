@@ -74,6 +74,14 @@ export default function CourseSearch() {
     );
   }
 
+  function loadSched() {
+    fetch("http://localhost:7000/schedule")
+      .then(response => response.json())
+      .then(data => {
+        setSelectedCourses(data);
+      });
+  }
+
   /* ADD COURSE USING BACKEND */
 
   function addCourse(course) {
@@ -86,10 +94,13 @@ export default function CourseSearch() {
       body: JSON.stringify(course)
     })
     .then(() => {
-
-      setSelectedCourses(prev => [...prev, course]);
-
+        loadSched();
     });
+//     .then(() => {
+//
+//       setSelectedCourses(prev => [...prev, course]);
+//
+//     });
   }
 
   /* REMOVE COURSE */
@@ -104,12 +115,15 @@ export default function CourseSearch() {
       body: JSON.stringify(course)
     })
     .then(() => {
-
-      setSelectedCourses(prev =>
-  	prev.filter(c => !(c.subject === course.subject && c.number === course.number))
-      );
-
+        loadSched();
     });
+//     .then(() => {
+//
+//       setSelectedCourses(prev =>
+//   	prev.filter(c => !(c.subject === course.subject && c.number === course.number))
+//       );
+//
+//     });
   }
 
   /* SAVE SCHEDULE */
@@ -328,11 +342,12 @@ export default function CourseSearch() {
             >
 
               <div>
-                <h3>{course.subject} - {course.number}</h3>
-                <p>Professor: {course.professor}</p>
-                <p>Credits: {course.numCredits}</p>
+                <h3>{course.subject} - {course.number}{course.section}</h3>
+                <p>{course.name}</p>
+                <p>Professor: {course.faculty.join(", ")}</p>
+                <p>Credits: {course.credits}</p>
 		{Object.values(
-    		   course.classTimes.reduce((acc, t) => {
+    		   course.times.reduce((acc, t) => {
       		      const key = `${t.start_time}-${t.end_time}`;
 
       		      if (!acc[key]) {
