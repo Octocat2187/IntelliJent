@@ -9,14 +9,15 @@ public class Schedule {
      * Which is silly
      */
     ArrayList<Course> Schedule = new ArrayList<Course>();
+    boolean CourseAdded = false;
+
     public void AddCourse(Course course){
-        //TODO: Change this from true to the schedulable check when implemented
         if (isCourseSchedulable(course)) {
             Schedule.add(course);
+            boolean CourseAdded = true;
         }
         else {
-            System.out.println("Course cannot be added due to scheduling conflict.");
-            //need to add alternative course selection here
+            boolean CourseAdded = false;
         }
     }
 
@@ -64,6 +65,41 @@ public class Schedule {
             }
         }
         return true;
+    }
+
+    /**
+     * Finds alternative sections/times of the same course that can be scheduled without conflicts.
+     * Uses the Search class to find all available sections of the course, then filters them
+     * to find alternatives that don't have scheduling conflicts.
+     *
+     * @param course the course for which to find alternatives
+     * @param courseCatalog the catalog containing all available courses
+     * @return an ArrayList of alternative course sections that are schedulable
+     */
+    public ArrayList<Course> findAlternativeCourses(Course course, CourseCatalog courseCatalog) {
+        ArrayList<Course> alternativeCourses = new ArrayList<>();
+
+        // Create a Search object with the course catalog and search by course code
+        Search Coursename = new Search(courseCatalog, course.getName()); // Assuming course name includes code, adjust if needed
+        ArrayList<Course> searchResults = Coursename.getResultList(); // Get search results for the course name
+
+        // Filter results to find only schedulable alternatives
+        if (searchResults != null) { //skip if no results found
+            for (Course alternative : searchResults) {
+                // Skip the exact same section
+                if (!alternative.getSection().equals(course.getSection())) {
+                    // Check if the alternative course can be scheduled
+                    if (isCourseSchedulable(alternative)) {
+                        alternativeCourses.add(alternative);
+                    }
+                }
+            }
+        }
+        return alternativeCourses;
+    }
+
+    public boolean isCourseAdded(){
+        return CourseAdded;
     }
 
 }

@@ -67,4 +67,12 @@ public class Search {
         return filteredResults;
     }
 
+    /**
+     * Gets the current result list from the search.
+     * @return ArrayList of Course objects from the search results
+     */
+    public ArrayList<Course> getResultList() {
+        return resultList;
+    }
+
 }
