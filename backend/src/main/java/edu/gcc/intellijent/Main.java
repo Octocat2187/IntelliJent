@@ -1,6 +1,7 @@
 package edu.gcc.intellijent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.javalin.Javalin;
 
 import java.io.InputStream;
 import java.util.List;
@@ -21,6 +22,26 @@ public class Main {
             CourseCatalog courseCatalog = mapper.readValue(courseInput, CourseCatalog.class);
 
             List<Course> courses = courseCatalog.getClasses();
+
+            Search search = new Search(courseCatalog, "");
+
+            SearchController controller = new SearchController(search);
+
+            Javalin app = Javalin.create(config -> {
+                // Serve static files from: src/main/resources/public
+//                config.staticFiles.add("public");
+
+                // Enable CORS (allow requests from React dev server)
+                config.bundledPlugins.enableCors(cors -> {
+                    cors.addRule(it -> {
+                        it.anyHost();
+                    });
+                });
+
+            }).start(7000);
+
+            controller.registerRoutes(app);
+            ScheduleController.registerRoutes(app);
 
             // Load Major JSON
             InputStream majorInput = Main.class.getClassLoader().getResourceAsStream("majors.json");

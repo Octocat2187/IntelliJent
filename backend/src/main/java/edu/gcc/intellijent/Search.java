@@ -79,12 +79,14 @@ public class Search {
         return filteredResults;
     }
 
-    /**
-     * Gets the current result list from the search.
-     * @return ArrayList of Course objects from the search results
-     */
-    public ArrayList<Course> getResultList() {
+    public ArrayList<Course> GetResultList(){
         return resultList;
+    }
+
+    public void SetNewQuery(String query){
+        searchQuery = query;
+
+        CourseSearch();
     }
 
 }

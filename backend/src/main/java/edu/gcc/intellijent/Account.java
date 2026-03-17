@@ -35,7 +35,7 @@ public class Account {
     }
 
     private void BeginSearch(String query){
-        currentSearch = new Search(query);
+        //currentSearch = new Search(query);
     }
 
     private Schedule ViewSchedule(){

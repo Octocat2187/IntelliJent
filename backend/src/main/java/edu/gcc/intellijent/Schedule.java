@@ -22,7 +22,9 @@ public class Schedule {
     }
 
     public void RemoveCourse(Course course){
+        System.out.println("remove triggered");
         if(Schedule.contains(course)){
+            System.out.println("it contains the course");
             Schedule.remove(course);
         }
     }
@@ -81,7 +83,7 @@ public class Schedule {
 
         // Create a Search object with the course catalog and search by course code
         Search Coursename = new Search(courseCatalog, course.getName()); // Assuming course name includes code, adjust if needed
-        ArrayList<Course> searchResults = Coursename.getResultList(); // Get search results for the course name
+        ArrayList<Course> searchResults = Coursename.GetResultList(); // Get search results for the course name
 
         // Filter results to find only schedulable alternatives
         if (searchResults != null) { //skip if no results found
