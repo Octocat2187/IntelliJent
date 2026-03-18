@@ -14,10 +14,10 @@ public class Schedule {
     public void AddCourse(Course course){
         if (isCourseSchedulable(course)) {
             Schedule.add(course);
-            boolean CourseAdded = true;
+            CourseAdded = true;
         }
         else {
-            boolean CourseAdded = false;
+            CourseAdded = false;
         }
     }
 

@@ -58,6 +58,9 @@ export default function CourseSearch() {
   const [startTime, setStartTime] = useState({ hour: 8, minute: 0 });
   const [endTime, setEndTime] = useState({ hour: 17, minute: 0 });
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorCourseKey, setErrorCourseKey] = useState(null);
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
@@ -93,14 +96,33 @@ export default function CourseSearch() {
       },
       body: JSON.stringify(course)
     })
-    .then(() => {
+    .then(res => {
+
+      if (res.ok) {
+        // success (200–299)
         loadSched();
+        setErrorMessage("");
+        setErrorCourseKey(null);
+
+      } else if (res.status === 409) {
+        // conflict
+        setErrorMessage("Time conflict with another course");
+        setErrorCourseKey(course.subject + course.number + course.section);
+
+        setTimeout(() => {
+          setErrorMessage("");
+          setErrorCourseKey(null);
+        }, 3000);
+
+      } else {
+        // other errors
+        setErrorMessage("Failed to add course");
+      }
+
+    })
+    .catch(() => {
+      setErrorMessage("Server error");
     });
-//     .then(() => {
-//
-//       setSelectedCourses(prev => [...prev, course]);
-//
-//     });
   }
 
   /* REMOVE COURSE */
@@ -363,21 +385,43 @@ export default function CourseSearch() {
     		   </p>
   		))}
 	      </div>
-              <button
-                onClick={() => addCourse(course)}
-                disabled={alreadyAdded}
-                style={{
-                  padding:"6px 12px",
-                  background: alreadyAdded ? "#aaa" : "#4CAF50",
-                  color:"white",
-                  border:"none",
-                  borderRadius:"4px"
-                }}
-              >
-                {alreadyAdded ? "Added" : "Add"}
-              </button>
 
-            </div>
+          <div style={{ position: "relative" }}>
+
+            <button
+              onClick={() => addCourse(course)}
+              disabled={alreadyAdded}
+              style={{
+                padding:"6px 12px",
+                background: alreadyAdded ? "#aaa" : "#4CAF50",
+                color:"white",
+                border:"none",
+                borderRadius:"4px"
+              }}
+            >
+              {alreadyAdded ? "Added" : "Add"}
+            </button>
+
+            {errorCourseKey === (course.subject + course.number + course.section) && (
+              <div style={{
+                position: "absolute",
+                top: "40px",
+                right: "0px",
+                background: "#ff4d4f",
+                color: "white",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                fontSize: "12px",
+                whiteSpace: "nowrap",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+              }}>
+                {errorMessage}
+              </div>
+            )}
+
+          </div>
+
+          </div>
           );
         })}
 
