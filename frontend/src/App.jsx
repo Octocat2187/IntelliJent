@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+
+const localizer = momentLocalizer(moment);
 
 /* TIME STEPPER COMPONENT */
 
@@ -48,6 +53,8 @@ export default function CourseSearch() {
   const [courses, setCourses] = useState([]);
   const [selectedCourses, setSelectedCourses] = useState([]);
 
+  const [showCalendar, setShowCalendar] = useState(false);
+
   const [search, setSearch] = useState("");
   const [dept, setDept] = useState("");
   const [credits, setCredits] = useState("");
@@ -83,6 +90,40 @@ export default function CourseSearch() {
       .then(data => {
         setSelectedCourses(data);
       });
+  }
+
+  function getEventsFromCourses() {
+
+    const dayMap = { M: 1, T: 2, W: 3, Th: 4, F: 5 };
+
+    return selectedCourses.flatMap(course =>
+      course.times.map(t => {
+
+        const dayNum = dayMap[t.day];
+        const now = new Date();
+
+        const start = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + ((dayNum + 7 - now.getDay()) % 7),
+          ...t.start_time.split(":").map(Number)
+        );
+
+        const end = new Date(
+          start.getFullYear(),
+          start.getMonth(),
+          start.getDate(),
+          ...t.end_time.split(":").map(Number)
+        );
+
+        return {
+          title: `${course.subject}-${course.number}`,
+          start,
+          end
+        };
+
+      })
+    );
   }
 
   /* ADD COURSE USING BACKEND */
@@ -215,12 +256,42 @@ export default function CourseSearch() {
 
   return (
 
-    <div style={{
-      display:"flex",
-      justifyContent:"center",
-      gap:"40px",
-      fontFamily:"Arial"
-    }}>
+    <div>
+
+        <button
+          onClick={() => setShowCalendar(!showCalendar)}
+          style={{ margin: "15px" }}
+        >
+          {showCalendar ? "Back to Search" : "View Calendar"}
+        </button>
+
+        {showCalendar ? (
+
+          <div style={{ height: "700px", width: "200%" }}>
+
+            <Calendar
+              localizer={localizer}
+              events={getEventsFromCourses()}
+              startAccessor="start"
+              endAccessor="end"
+              defaultView="week"
+              min={new Date(1970, 1, 1, 7, 0)}
+              max={new Date(1970, 1, 1, 22, 0)}
+              step={30}
+              timeslots={1}
+              style={{ height: "700px" }}
+            />
+
+          </div>
+
+        ) : (
+
+          <div style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "40px",
+            fontFamily: "Arial"
+          }}>
 
       {/* LEFT SIDE */}
 
@@ -494,6 +565,10 @@ export default function CourseSearch() {
         ))}
 
       </div>
+
+    </div>
+
+    )}
 
     </div>
   );
