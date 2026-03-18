@@ -3,8 +3,7 @@ import io.javalin.Javalin;
 
 import java.sql.Time;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class SearchController {
 
@@ -54,23 +53,43 @@ public class SearchController {
                 results = filter.ApplyFilter(results);
             }
 
-//            if (days != null || startTime != null || endTime != null){
-//                DateTimeFilter filter = new DateTimeFilter();
-//                if (days != null){
-//                    filter.days = days;
-//                }
-//                if (startTime != null){
-//                    LocalTime localTime = LocalTime.parse(startTime);
-//                    Time start = Time.valueOf(localTime);
-//                    filter.beginTime = start;
-//                }
-//                if (endTime != null){
-//                    LocalTime localTime = LocalTime.parse(endTime);
-//                    Time end = Time.valueOf(localTime);
-//                    filter.endTime = end;
-//                }
-//                results = filter.ApplyFilter(results);
-//            }
+            if (days != null && startTime != null && endTime != null){
+                DateTimeFilter filter = new DateTimeFilter();
+
+                // DateTimeFilter needs a List of ClassTime objects.
+
+                // First we must iterate through Days. We can split on commas.
+                ArrayList<String> daysList = new ArrayList<>(List.of(days.split(",")));
+
+                // NOTE: This may not be in any particular order. We need to reorder it before using it
+                // Credit to the below code block goes to ChatGPT.
+
+                // Define the correct order of weekdays
+                List<String> order = Arrays.asList("M", "T", "W", "Th", "F");
+
+                // Sort the list based on the index in the order list
+                Collections.sort(daysList, new Comparator<String>() {
+                    @Override
+                    public int compare(String day1, String day2) {
+                        return Integer.compare(order.indexOf(day1), order.indexOf(day2));
+                    }
+                });
+                // End of generated code block.
+
+                // ArrayList of ClassTime objects may now be created.
+                ArrayList<ClassTime> filterTimes = new ArrayList<>();
+                for(String day : daysList){
+                    ClassTime c = new ClassTime();
+
+                    c.setDay(day);
+                    c.setStart_time(startTime);
+                    c.setEnd_time(endTime);
+                }
+
+                filter.schedule = filterTimes;
+
+                results = filter.ApplyFilter(results);
+            }
 
             if (full != null) {
                 FullFilter filter = new FullFilter();
