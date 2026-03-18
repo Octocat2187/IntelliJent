@@ -51,6 +51,42 @@ class ScheduleTest {
     }
 
     @Test
+    void isCourseSchedulable_CourseIsFull() {
+        // A course that is full (no open seats) should not be schedulable
+        Schedule schedule = new Schedule();
+        Course course = new Course();
+        course.setOpen_seats(0);
+        course.setTotal_seats(30);
+        ClassTime time = new ClassTime();
+        time.setDay("Monday");
+        time.setStart_time("09:00:00");
+        time.setEnd_time("10:30:00");
+        List<ClassTime> times = new ArrayList<>();
+        times.add(time);
+        course.setTimes(times);
+
+        Assertions.assertFalse(schedule.isCourseSchedulable(course));
+    }
+
+    @Test
+    void isCourseSchedulable_CourseHasAvailableSeats() {
+        // A course with available seats should be schedulable
+        Schedule schedule = new Schedule();
+        Course course = new Course();
+        course.setOpen_seats(5);
+        course.setTotal_seats(30);
+        ClassTime time = new ClassTime();
+        time.setDay("Monday");
+        time.setStart_time("09:00:00");
+        time.setEnd_time("10:30:00");
+        List<ClassTime> times = new ArrayList<>();
+        times.add(time);
+        course.setTimes(times);
+
+        Assertions.assertTrue(schedule.isCourseSchedulable(course));
+    }
+
+    @Test
     void isCourseSchedulable_NoConflict() {
         // Course scheduled after existing course (with gap)
         Schedule schedule = new Schedule();
