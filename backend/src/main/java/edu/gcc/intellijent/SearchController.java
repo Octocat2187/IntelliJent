@@ -68,12 +68,8 @@ public class SearchController {
                 List<String> order = Arrays.asList("M", "T", "W", "Th", "F");
 
                 // Sort the list based on the index in the order list
-                Collections.sort(daysList, new Comparator<String>() {
-                    @Override
-                    public int compare(String day1, String day2) {
-                        return Integer.compare(order.indexOf(day1), order.indexOf(day2));
-                    }
-                });
+                daysList.sort((day1, day2) ->
+                        Integer.compare(order.indexOf(day1), order.indexOf(day2)));
                 // End of generated code block.
 
                 // ArrayList of ClassTime objects may now be created.
