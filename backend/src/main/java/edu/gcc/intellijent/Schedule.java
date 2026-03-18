@@ -31,14 +31,19 @@ public class Schedule {
 
 
     /**
-     * Checks whether the given course can be added to the schedule without any time overlap.
+     * Checks whether the given course can be added to the schedule without any time overlap
+     * and if the course has available seats.
      * Compares ClassTime objects based on days and times using Time objects.
      * Back-to-back courses (one ends exactly when another starts) are allowed.
      *
-     * @param course the course to be added, checked for scheduling conflicts
-     * @return true if the course can be scheduled (no overlap), false otherwise
+     * @param course the course to be added, checked for scheduling conflicts and availability
+     * @return true if the course can be scheduled (no overlap and has available seats), false otherwise
      */
     public boolean isCourseSchedulable(Course course){
+        // Check if course is available (not full)
+        if (!course.isAvailable()) {
+            return false;
+        }
         // If course has no class times, it's schedulable
         if (course.getTimes() == null || course.getTimes().isEmpty()) {
             return true;
