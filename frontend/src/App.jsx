@@ -94,7 +94,7 @@ export default function CourseSearch() {
 
   function getEventsFromCourses() {
 
-    const dayMap = { M: 1, T: 2, W: 3, Th: 4, F: 5 };
+    const dayMap = { M: 1, T: 2, W: 3, R: 4, F: 5 };
 
     return selectedCourses.flatMap(course =>
       course.times.map(t => {
@@ -102,10 +102,14 @@ export default function CourseSearch() {
         const dayNum = dayMap[t.day];
         const now = new Date();
 
+        // get Sunday of current week
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+
         const start = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate() + ((dayNum + 7 - now.getDay()) % 7),
+          startOfWeek.getFullYear(),
+          startOfWeek.getMonth(),
+          startOfWeek.getDate() + dayNum,
           ...t.start_time.split(":").map(Number)
         );
 
