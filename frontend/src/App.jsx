@@ -151,7 +151,7 @@ export default function CourseSearch() {
 
       } else if (res.status === 409) {
         // conflict
-        setErrorMessage("Time conflict with another course");
+        setErrorMessage("Time conflict with another course or course is full");
         setErrorCourseKey(course.subject + course.number + course.section);
 
         setTimeout(() => {
@@ -443,6 +443,7 @@ export default function CourseSearch() {
                 <p>{course.name}</p>
                 <p>Professor: {course.faculty.join(", ")}</p>
                 <p>Credits: {course.credits}</p>
+                <p>Seats open: {course.open_seats}</p>
 		{Object.values(
     		   course.times.reduce((acc, t) => {
       		      const key = `${t.start_time}-${t.end_time}`;
