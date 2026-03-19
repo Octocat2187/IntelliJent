@@ -78,8 +78,10 @@ public class SearchController {
                     ClassTime c = new ClassTime();
 
                     c.setDay(day);
-                    c.setStart_time(startTime);
-                    c.setEnd_time(endTime);
+                    c.setStart_time(startTime + ":00"); // Append seconds for formatting
+                    c.setEnd_time(endTime + ":00");
+
+                    filterTimes.add(c);
                 }
 
                 filter.schedule = filterTimes;
