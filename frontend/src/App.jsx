@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+
+const localizer = momentLocalizer(moment);
 
 /* TIME STEPPER COMPONENT */
 
@@ -48,6 +53,8 @@ export default function CourseSearch() {
   const [courses, setCourses] = useState([]);
   const [selectedCourses, setSelectedCourses] = useState([]);
 
+  const [showCalendar, setShowCalendar] = useState(false);
+
   const [search, setSearch] = useState("");
   const [dept, setDept] = useState("");
   const [credits, setCredits] = useState("");
@@ -57,6 +64,9 @@ export default function CourseSearch() {
 
   const [startTime, setStartTime] = useState({ hour: 8, minute: 0 });
   const [endTime, setEndTime] = useState({ hour: 17, minute: 0 });
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorCourseKey, setErrorCourseKey] = useState(null);
 
   /* LOAD SCHEDULE FROM BACKEND */
 
@@ -82,6 +92,44 @@ export default function CourseSearch() {
       });
   }
 
+  function getEventsFromCourses() {
+
+    const dayMap = { M: 1, T: 2, W: 3, R: 4, F: 5 };
+
+    return selectedCourses.flatMap(course =>
+      course.times.map(t => {
+
+        const dayNum = dayMap[t.day];
+        const now = new Date();
+
+        // get Sunday of current week
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+
+        const start = new Date(
+          startOfWeek.getFullYear(),
+          startOfWeek.getMonth(),
+          startOfWeek.getDate() + dayNum,
+          ...t.start_time.split(":").map(Number)
+        );
+
+        const end = new Date(
+          start.getFullYear(),
+          start.getMonth(),
+          start.getDate(),
+          ...t.end_time.split(":").map(Number)
+        );
+
+        return {
+          title: `${course.subject}-${course.number}`,
+          start,
+          end
+        };
+
+      })
+    );
+  }
+
   /* ADD COURSE USING BACKEND */
 
   function addCourse(course) {
@@ -93,14 +141,33 @@ export default function CourseSearch() {
       },
       body: JSON.stringify(course)
     })
-    .then(() => {
+    .then(res => {
+
+      if (res.ok) {
+        // success (200–299)
         loadSched();
+        setErrorMessage("");
+        setErrorCourseKey(null);
+
+      } else if (res.status === 409) {
+        // conflict
+        setErrorMessage("Time conflict with another course");
+        setErrorCourseKey(course.subject + course.number + course.section);
+
+        setTimeout(() => {
+          setErrorMessage("");
+          setErrorCourseKey(null);
+        }, 3000);
+
+      } else {
+        // other errors
+        setErrorMessage("Failed to add course");
+      }
+
+    })
+    .catch(() => {
+      setErrorMessage("Server error");
     });
-//     .then(() => {
-//
-//       setSelectedCourses(prev => [...prev, course]);
-//
-//     });
   }
 
   /* REMOVE COURSE */
@@ -193,12 +260,42 @@ export default function CourseSearch() {
 
   return (
 
-    <div style={{
-      display:"flex",
-      justifyContent:"center",
-      gap:"40px",
-      fontFamily:"Arial"
-    }}>
+    <div>
+
+        <button
+          onClick={() => setShowCalendar(!showCalendar)}
+          style={{ margin: "15px" }}
+        >
+          {showCalendar ? "Back to Search" : "View Calendar"}
+        </button>
+
+        {showCalendar ? (
+
+          <div style={{ height: "700px", width: "200%" }}>
+
+            <Calendar
+              localizer={localizer}
+              events={getEventsFromCourses()}
+              startAccessor="start"
+              endAccessor="end"
+              defaultView="week"
+              min={new Date(1970, 1, 1, 7, 0)}
+              max={new Date(1970, 1, 1, 22, 0)}
+              step={30}
+              timeslots={1}
+              style={{ height: "700px" }}
+            />
+
+          </div>
+
+        ) : (
+
+          <div style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "40px",
+            fontFamily: "Arial"
+          }}>
 
       {/* LEFT SIDE */}
 
@@ -363,21 +460,43 @@ export default function CourseSearch() {
     		   </p>
   		))}
 	      </div>
-              <button
-                onClick={() => addCourse(course)}
-                disabled={alreadyAdded}
-                style={{
-                  padding:"6px 12px",
-                  background: alreadyAdded ? "#aaa" : "#4CAF50",
-                  color:"white",
-                  border:"none",
-                  borderRadius:"4px"
-                }}
-              >
-                {alreadyAdded ? "Added" : "Add"}
-              </button>
 
-            </div>
+          <div style={{ position: "relative" }}>
+
+            <button
+              onClick={() => addCourse(course)}
+              disabled={alreadyAdded}
+              style={{
+                padding:"6px 12px",
+                background: alreadyAdded ? "#aaa" : "#4CAF50",
+                color:"white",
+                border:"none",
+                borderRadius:"4px"
+              }}
+            >
+              {alreadyAdded ? "Added" : "Add"}
+            </button>
+
+            {errorCourseKey === (course.subject + course.number + course.section) && (
+              <div style={{
+                position: "absolute",
+                top: "40px",
+                right: "0px",
+                background: "#ff4d4f",
+                color: "white",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                fontSize: "12px",
+                whiteSpace: "nowrap",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+              }}>
+                {errorMessage}
+              </div>
+            )}
+
+          </div>
+
+          </div>
           );
         })}
 
@@ -450,6 +569,10 @@ export default function CourseSearch() {
         ))}
 
       </div>
+
+    </div>
+
+    )}
 
     </div>
   );

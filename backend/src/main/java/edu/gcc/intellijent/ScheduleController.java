@@ -14,7 +14,11 @@ public class ScheduleController {
         app.post("/schedule", ctx -> {
             Course course = ctx.bodyAsClass(Course.class);
             schedule.AddCourse(course);
-            ctx.status(201);  // 201 means “created”
+            if (schedule.isCourseAdded()){
+                ctx.status(201);  // 201 means “created”
+            } else{
+                ctx.status(409);
+            }
         });
 
         app.delete("/schedule", ctx -> {
