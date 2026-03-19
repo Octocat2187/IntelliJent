@@ -12,6 +12,8 @@ class ScheduleTest {
     @Test
     void addCourse() {
         Course course = new Course();
+        course.setOpen_seats(1);
+        course.setTotal_seats(30);
         Schedule schedule = new Schedule();
 
         Assertions.assertNotEquals(1, schedule.Schedule.size());
@@ -23,6 +25,8 @@ class ScheduleTest {
     @Test
     void removeCourse() {
         Course course = new Course();
+        course.setOpen_seats(1);
+        course.setTotal_seats(30);
         Schedule schedule = new Schedule();
         schedule.AddCourse(course);
 
@@ -39,6 +43,8 @@ class ScheduleTest {
         // A course should be schedulable when schedule is empty
         Schedule schedule = new Schedule();
         Course course = new Course();
+        course.setOpen_seats(1);
+        course.setTotal_seats(30);
         ClassTime time = new ClassTime();
         time.setDay("Monday");
         time.setStart_time("09:00:00");
@@ -69,11 +75,29 @@ class ScheduleTest {
     }
 
     @Test
+    void isCourseSchedulable_CourseHasNoAvailableSeats() {
+        // A course with no available seats (full) should not be schedulable
+        Schedule schedule = new Schedule();
+        Course course = new Course();
+        course.setOpen_seats(0);
+        course.setTotal_seats(30);
+        ClassTime time = new ClassTime();
+        time.setDay("Monday");
+        time.setStart_time("09:00:00");
+        time.setEnd_time("10:30:00");
+        List<ClassTime> times = new ArrayList<>();
+        times.add(time);
+        course.setTimes(times);
+
+        Assertions.assertFalse(schedule.isCourseSchedulable(course));
+    }
+
+    @Test
     void isCourseSchedulable_CourseHasAvailableSeats() {
         // A course with available seats should be schedulable
         Schedule schedule = new Schedule();
         Course course = new Course();
-        course.setOpen_seats(5);
+        course.setOpen_seats(1);
         course.setTotal_seats(30);
         ClassTime time = new ClassTime();
         time.setDay("Monday");
@@ -91,6 +115,8 @@ class ScheduleTest {
         // Course scheduled after existing course (with gap)
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
         existingTime.setStart_time("09:00:00");
@@ -101,6 +127,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("11:00:00");
@@ -117,6 +145,8 @@ class ScheduleTest {
         // Back-to-back courses should be allowed (one ends exactly when another starts)
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
         existingTime.setStart_time("09:00:00");
@@ -127,6 +157,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("10:00:00");
@@ -143,6 +175,8 @@ class ScheduleTest {
         // Course overlaps completely with existing course
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
         existingTime.setStart_time("09:00:00");
@@ -153,6 +187,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("09:00:00");
@@ -169,6 +205,8 @@ class ScheduleTest {
         // New course starts before existing course ends
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
         existingTime.setStart_time("09:00:00");
@@ -179,6 +217,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("08:30:00");
@@ -195,6 +235,8 @@ class ScheduleTest {
         // New course ends after existing course starts
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
         existingTime.setStart_time("10:00:00");
@@ -205,6 +247,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("09:30:00");
@@ -221,6 +265,8 @@ class ScheduleTest {
         // New course is completely inside existing course
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
         existingTime.setStart_time("09:00:00");
@@ -231,6 +277,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("10:00:00");
@@ -247,6 +295,8 @@ class ScheduleTest {
         // New course completely contains existing course
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
         existingTime.setStart_time("10:00:00");
@@ -257,6 +307,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("09:00:00");
@@ -274,6 +326,8 @@ class ScheduleTest {
         Schedule schedule = new Schedule();
 
         Course course1 = new Course();
+        course1.setOpen_seats(1);
+        course1.setTotal_seats(30);
         ClassTime time1 = new ClassTime();
         time1.setDay("Monday");
         time1.setStart_time("09:00:00");
@@ -284,6 +338,8 @@ class ScheduleTest {
         schedule.AddCourse(course1);
 
         Course course2 = new Course();
+        course2.setOpen_seats(1);
+        course2.setTotal_seats(30);
         ClassTime time2 = new ClassTime();
         time2.setDay("Monday");
         time2.setStart_time("11:00:00");
@@ -294,6 +350,8 @@ class ScheduleTest {
         schedule.AddCourse(course2);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("13:00:00");
@@ -311,6 +369,8 @@ class ScheduleTest {
         Schedule schedule = new Schedule();
 
         Course course1 = new Course();
+        course1.setOpen_seats(1);
+        course1.setTotal_seats(30);
         ClassTime time1 = new ClassTime();
         time1.setDay("Monday");
         time1.setStart_time("09:00:00");
@@ -321,6 +381,8 @@ class ScheduleTest {
         schedule.AddCourse(course1);
 
         Course course2 = new Course();
+        course2.setOpen_seats(1);
+        course2.setTotal_seats(30);
         ClassTime time2 = new ClassTime();
         time2.setDay("Monday");
         time2.setStart_time("11:00:00");
@@ -331,6 +393,8 @@ class ScheduleTest {
         schedule.AddCourse(course2);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Monday");
         newTime.setStart_time("11:30:00");
@@ -347,6 +411,8 @@ class ScheduleTest {
         // Same times but on different days should not conflict
         Schedule schedule = new Schedule();
         Course course1 = new Course();
+        course1.setOpen_seats(1);
+        course1.setTotal_seats(30);
         ClassTime time1 = new ClassTime();
         time1.setDay("Monday");
         time1.setStart_time("09:00:00");
@@ -357,6 +423,8 @@ class ScheduleTest {
         schedule.AddCourse(course1);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime newTime = new ClassTime();
         newTime.setDay("Tuesday");
         newTime.setStart_time("09:00:00");
@@ -373,6 +441,8 @@ class ScheduleTest {
         // Course offered on multiple days - new course with one day conflict and one day free
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime mondayTime = new ClassTime();
         mondayTime.setDay("Monday");
         mondayTime.setStart_time("09:00:00");
@@ -388,6 +458,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime tuesdayTime = new ClassTime();
         tuesdayTime.setDay("Tuesday");
         tuesdayTime.setStart_time("09:00:00");
@@ -404,6 +476,8 @@ class ScheduleTest {
         // Course offered on multiple days - new course conflicts on Monday only
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime mondayTime = new ClassTime();
         mondayTime.setDay("Monday");
         mondayTime.setStart_time("09:00:00");
@@ -419,6 +493,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime mondayNewTime = new ClassTime();
         mondayNewTime.setDay("Monday");
         mondayNewTime.setStart_time("09:30:00");
@@ -435,6 +511,8 @@ class ScheduleTest {
         // Course offered on multiple days - new course conflicts on multiple days
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime mondayTime = new ClassTime();
         mondayTime.setDay("Monday");
         mondayTime.setStart_time("09:00:00");
@@ -450,6 +528,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime mondayNewTime = new ClassTime();
         mondayNewTime.setDay("Monday");
         mondayNewTime.setStart_time("09:30:00");
@@ -471,6 +551,8 @@ class ScheduleTest {
         // Course offered Mon/Wed/Fri - new course offered Mon/Wed with conflicts only
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime mondayTime = new ClassTime();
         mondayTime.setDay("Monday");
         mondayTime.setStart_time("09:00:00");
@@ -491,6 +573,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime mondayNewTime = new ClassTime();
         mondayNewTime.setDay("Monday");
         mondayNewTime.setStart_time("09:45:00");
@@ -512,6 +596,8 @@ class ScheduleTest {
         // Both courses offered on multiple days with no overlaps
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime mondayTime = new ClassTime();
         mondayTime.setDay("Monday");
         mondayTime.setStart_time("09:00:00");
@@ -527,6 +613,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime tuesdayTime = new ClassTime();
         tuesdayTime.setDay("Tuesday");
         tuesdayTime.setStart_time("09:00:00");
@@ -548,6 +636,8 @@ class ScheduleTest {
         // Back-to-back courses on different days should not conflict
         Schedule schedule = new Schedule();
         Course existingCourse = new Course();
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         ClassTime mondayTime = new ClassTime();
         mondayTime.setDay("Monday");
         mondayTime.setStart_time("09:00:00");
@@ -558,6 +648,8 @@ class ScheduleTest {
         schedule.AddCourse(existingCourse);
 
         Course newCourse = new Course();
+        newCourse.setOpen_seats(1);
+        newCourse.setTotal_seats(30);
         ClassTime tuesdayTime = new ClassTime();
         tuesdayTime.setDay("Tuesday");
         tuesdayTime.setStart_time("10:00:00");
@@ -578,6 +670,8 @@ class ScheduleTest {
         targetCourse.setNumber(101);
         targetCourse.setName("Intro to CS");
         targetCourse.setSection("01");
+        targetCourse.setOpen_seats(1);
+        targetCourse.setTotal_seats(30);
         targetCourse.setFaculty(new ArrayList<>()); // Initialize faculty list
         ClassTime time = new ClassTime();
         time.setDay("Monday");
@@ -608,6 +702,8 @@ class ScheduleTest {
         existingCourse.setNumber(101);
         existingCourse.setName("Intro to CS");
         existingCourse.setSection("01");
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         existingCourse.setFaculty(new ArrayList<>());
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
@@ -624,6 +720,8 @@ class ScheduleTest {
         targetCourse.setNumber(101);
         targetCourse.setName("Intro to CS");
         targetCourse.setSection("02");
+        targetCourse.setOpen_seats(1);
+        targetCourse.setTotal_seats(30);
         targetCourse.setFaculty(new ArrayList<>());
         ClassTime targetTime = new ClassTime();
         targetTime.setDay("Monday");
@@ -639,6 +737,8 @@ class ScheduleTest {
         alternativeCourse.setNumber(101);
         alternativeCourse.setName("Intro to CS");
         alternativeCourse.setSection("03");
+        alternativeCourse.setOpen_seats(1);
+        alternativeCourse.setTotal_seats(30);
         alternativeCourse.setFaculty(new ArrayList<>());
         ClassTime altTime = new ClassTime();
         altTime.setDay("Tuesday");
@@ -671,6 +771,8 @@ class ScheduleTest {
         existingCourse.setNumber(101);
         existingCourse.setName("Intro to CS");
         existingCourse.setSection("01");
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         existingCourse.setFaculty(new ArrayList<>());
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
@@ -687,6 +789,8 @@ class ScheduleTest {
         targetCourse.setNumber(101);
         targetCourse.setName("Intro to CS");
         targetCourse.setSection("02");
+        targetCourse.setOpen_seats(1);
+        targetCourse.setTotal_seats(30);
         targetCourse.setFaculty(new ArrayList<>());
         ClassTime targetTime = new ClassTime();
         targetTime.setDay("Monday");
@@ -702,6 +806,8 @@ class ScheduleTest {
         alternative1.setNumber(101);
         alternative1.setName("Intro to CS");
         alternative1.setSection("03");
+        alternative1.setOpen_seats(1);
+        alternative1.setTotal_seats(30);
         alternative1.setFaculty(new ArrayList<>());
         ClassTime alt1Time = new ClassTime();
         alt1Time.setDay("Tuesday");
@@ -717,6 +823,8 @@ class ScheduleTest {
         alternative2.setNumber(101);
         alternative2.setName("Intro to CS");
         alternative2.setSection("04");
+        alternative2.setOpen_seats(1);
+        alternative2.setTotal_seats(30);
         alternative2.setFaculty(new ArrayList<>());
         ClassTime alt2Time = new ClassTime();
         alt2Time.setDay("Wednesday");
@@ -749,6 +857,8 @@ class ScheduleTest {
         existingCourse.setNumber(101);
         existingCourse.setName("Intro to CS");
         existingCourse.setSection("01");
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         existingCourse.setFaculty(new ArrayList<>());
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
@@ -765,6 +875,8 @@ class ScheduleTest {
         targetCourse.setNumber(101);
         targetCourse.setName("Intro to CS");
         targetCourse.setSection("02");
+        targetCourse.setOpen_seats(1);
+        targetCourse.setTotal_seats(30);
         targetCourse.setFaculty(new ArrayList<>());
         ClassTime targetTime = new ClassTime();
         targetTime.setDay("Monday");
@@ -780,6 +892,8 @@ class ScheduleTest {
         alternative1.setNumber(101);
         alternative1.setName("Intro to CS");
         alternative1.setSection("03");
+        alternative1.setOpen_seats(1);
+        alternative1.setTotal_seats(30);
         alternative1.setFaculty(new ArrayList<>());
         ClassTime alt1Time = new ClassTime();
         alt1Time.setDay("Monday");
@@ -795,6 +909,8 @@ class ScheduleTest {
         alternative2.setNumber(101);
         alternative2.setName("Intro to CS");
         alternative2.setSection("04");
+        alternative2.setOpen_seats(1);
+        alternative2.setTotal_seats(30);
         alternative2.setFaculty(new ArrayList<>());
         ClassTime alt2Time = new ClassTime();
         alt2Time.setDay("Monday");
@@ -827,6 +943,8 @@ class ScheduleTest {
         existingCourse.setNumber(201);
         existingCourse.setName("Calculus I");
         existingCourse.setSection("01");
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         existingCourse.setFaculty(new ArrayList<>());
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
@@ -843,6 +961,8 @@ class ScheduleTest {
         targetCourse.setNumber(201);
         targetCourse.setName("Calculus I");
         targetCourse.setSection("01");
+        targetCourse.setOpen_seats(1);
+        targetCourse.setTotal_seats(30);
         targetCourse.setFaculty(new ArrayList<>());
         ClassTime targetTime = new ClassTime();
         targetTime.setDay("Monday");
@@ -858,6 +978,8 @@ class ScheduleTest {
         alternative.setNumber(201);
         alternative.setName("Calculus I");
         alternative.setSection("02");
+        alternative.setOpen_seats(1);
+        alternative.setTotal_seats(30);
         alternative.setFaculty(new ArrayList<>());
         ClassTime tuesdayTime = new ClassTime();
         tuesdayTime.setDay("Tuesday");
@@ -895,6 +1017,8 @@ class ScheduleTest {
         existingCourse.setNumber(150);
         existingCourse.setName("Physics I");
         existingCourse.setSection("01");
+        existingCourse.setOpen_seats(1);
+        existingCourse.setTotal_seats(30);
         existingCourse.setFaculty(new ArrayList<>());
         ClassTime existingTime = new ClassTime();
         existingTime.setDay("Monday");
@@ -911,6 +1035,8 @@ class ScheduleTest {
         targetCourse.setNumber(150);
         targetCourse.setName("Physics I");
         targetCourse.setSection("02");
+        targetCourse.setOpen_seats(1);
+        targetCourse.setTotal_seats(30);
         targetCourse.setFaculty(new ArrayList<>());
         ClassTime targetTime = new ClassTime();
         targetTime.setDay("Monday");
@@ -926,6 +1052,8 @@ class ScheduleTest {
         alt1.setNumber(150);
         alt1.setName("Physics I");
         alt1.setSection("03");
+        alt1.setOpen_seats(1);
+        alt1.setTotal_seats(30);
         alt1.setFaculty(new ArrayList<>());
         ClassTime alt1Time = new ClassTime();
         alt1Time.setDay("Monday");
@@ -941,6 +1069,8 @@ class ScheduleTest {
         alt2.setNumber(150);
         alt2.setName("Physics I");
         alt2.setSection("04");
+        alt2.setOpen_seats(1);
+        alt2.setTotal_seats(30);
         alt2.setFaculty(new ArrayList<>());
         ClassTime alt2Time = new ClassTime();
         alt2Time.setDay("Tuesday");
@@ -956,6 +1086,8 @@ class ScheduleTest {
         alt3.setNumber(150);
         alt3.setName("Physics I");
         alt3.setSection("05");
+        alt3.setOpen_seats(1);
+        alt3.setTotal_seats(30);
         alt3.setFaculty(new ArrayList<>());
         ClassTime alt3Time = new ClassTime();
         alt3Time.setDay("Wednesday");
@@ -991,6 +1123,8 @@ class ScheduleTest {
         targetCourse.setNumber(101);
         targetCourse.setName("English Composition");
         targetCourse.setSection("01");
+        targetCourse.setOpen_seats(1);
+        targetCourse.setTotal_seats(30);
         targetCourse.setFaculty(new ArrayList<>());
         ClassTime targetTime = new ClassTime();
         targetTime.setDay("Monday");
@@ -1006,6 +1140,8 @@ class ScheduleTest {
         alternative.setNumber(101);
         alternative.setName("English Composition");
         alternative.setSection("02");
+        alternative.setOpen_seats(1);
+        alternative.setTotal_seats(30);
         alternative.setFaculty(new ArrayList<>());
         ClassTime altTime = new ClassTime();
         altTime.setDay("Tuesday");
