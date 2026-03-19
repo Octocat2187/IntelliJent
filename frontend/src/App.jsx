@@ -387,8 +387,8 @@ export default function CourseSearch() {
 
         <select value={prof} onChange={(e) => setProf(e.target.value)}>
           <option value="">Any Professor</option>
-          <option value="Hutchins">Hutchins</option>
-          <option value="Dellinger">Dellinger</option>
+          <option value="Hutchins, Jonathan O.">Hutchins</option>
+          <option value="Dellinger, Brian J.">Dellinger</option>
         </select>
 
         <select value={isfull} onChange={(e) => setFull(e.target.value)}>
