@@ -2,6 +2,7 @@ package edu.gcc.intellijent;
 
 import java.util.ArrayList;
 
+
 public class CourseAddResponse {
     private boolean success;
     private ArrayList<Course> alternativeCourses;
