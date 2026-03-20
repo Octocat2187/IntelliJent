@@ -700,7 +700,7 @@ class ScheduleTest {
         Course existingCourse = new Course();
         existingCourse.setSubject("CS");
         existingCourse.setNumber(101);
-        existingCourse.setName("Intro to CS");
+        existingCourse.setName("OneAlt_Existing");
         existingCourse.setSection("01");
         existingCourse.setOpen_seats(1);
         existingCourse.setTotal_seats(30);
@@ -718,7 +718,7 @@ class ScheduleTest {
         Course targetCourse = new Course();
         targetCourse.setSubject("CS");
         targetCourse.setNumber(101);
-        targetCourse.setName("Intro to CS");
+        targetCourse.setName("OneAlt_Target");
         targetCourse.setSection("02");
         targetCourse.setOpen_seats(1);
         targetCourse.setTotal_seats(30);
@@ -735,7 +735,7 @@ class ScheduleTest {
         Course alternativeCourse = new Course();
         alternativeCourse.setSubject("CS");
         alternativeCourse.setNumber(101);
-        alternativeCourse.setName("Intro to CS");
+        alternativeCourse.setName("OneAlt_Target");
         alternativeCourse.setSection("03");
         alternativeCourse.setOpen_seats(1);
         alternativeCourse.setTotal_seats(30);
@@ -769,7 +769,7 @@ class ScheduleTest {
         Course existingCourse = new Course();
         existingCourse.setSubject("CS");
         existingCourse.setNumber(101);
-        existingCourse.setName("Intro to CS");
+        existingCourse.setName("MultiAlt_Existing");
         existingCourse.setSection("01");
         existingCourse.setOpen_seats(1);
         existingCourse.setTotal_seats(30);
@@ -787,7 +787,7 @@ class ScheduleTest {
         Course targetCourse = new Course();
         targetCourse.setSubject("CS");
         targetCourse.setNumber(101);
-        targetCourse.setName("Intro to CS");
+        targetCourse.setName("MultiAlt_Target");
         targetCourse.setSection("02");
         targetCourse.setOpen_seats(1);
         targetCourse.setTotal_seats(30);
@@ -804,7 +804,7 @@ class ScheduleTest {
         Course alternative1 = new Course();
         alternative1.setSubject("CS");
         alternative1.setNumber(101);
-        alternative1.setName("Intro to CS");
+        alternative1.setName("MultiAlt_Target");
         alternative1.setSection("03");
         alternative1.setOpen_seats(1);
         alternative1.setTotal_seats(30);
@@ -821,7 +821,7 @@ class ScheduleTest {
         Course alternative2 = new Course();
         alternative2.setSubject("CS");
         alternative2.setNumber(101);
-        alternative2.setName("Intro to CS");
+        alternative2.setName("MultiAlt_Target");
         alternative2.setSection("04");
         alternative2.setOpen_seats(1);
         alternative2.setTotal_seats(30);
@@ -941,7 +941,7 @@ class ScheduleTest {
         Course existingCourse = new Course();
         existingCourse.setSubject("MATH");
         existingCourse.setNumber(201);
-        existingCourse.setName("Calculus I");
+        existingCourse.setName("MultiDay_Existing");
         existingCourse.setSection("01");
         existingCourse.setOpen_seats(1);
         existingCourse.setTotal_seats(30);
@@ -959,7 +959,7 @@ class ScheduleTest {
         Course targetCourse = new Course();
         targetCourse.setSubject("MATH");
         targetCourse.setNumber(201);
-        targetCourse.setName("Calculus I");
+        targetCourse.setName("MultiDay_Target");
         targetCourse.setSection("01");
         targetCourse.setOpen_seats(1);
         targetCourse.setTotal_seats(30);
@@ -976,7 +976,7 @@ class ScheduleTest {
         Course alternative = new Course();
         alternative.setSubject("MATH");
         alternative.setNumber(201);
-        alternative.setName("Calculus I");
+        alternative.setName("MultiDay_Target");
         alternative.setSection("02");
         alternative.setOpen_seats(1);
         alternative.setTotal_seats(30);
@@ -1015,7 +1015,7 @@ class ScheduleTest {
         Course existingCourse = new Course();
         existingCourse.setSubject("PHYS");
         existingCourse.setNumber(150);
-        existingCourse.setName("Physics I");
+        existingCourse.setName("Mixed_Existing");
         existingCourse.setSection("01");
         existingCourse.setOpen_seats(1);
         existingCourse.setTotal_seats(30);
@@ -1033,7 +1033,7 @@ class ScheduleTest {
         Course targetCourse = new Course();
         targetCourse.setSubject("PHYS");
         targetCourse.setNumber(150);
-        targetCourse.setName("Physics I");
+        targetCourse.setName("Mixed_Target");
         targetCourse.setSection("02");
         targetCourse.setOpen_seats(1);
         targetCourse.setTotal_seats(30);
@@ -1050,7 +1050,7 @@ class ScheduleTest {
         Course alt1 = new Course();
         alt1.setSubject("PHYS");
         alt1.setNumber(150);
-        alt1.setName("Physics I");
+        alt1.setName("Mixed_Target");
         alt1.setSection("03");
         alt1.setOpen_seats(1);
         alt1.setTotal_seats(30);
@@ -1067,7 +1067,7 @@ class ScheduleTest {
         Course alt2 = new Course();
         alt2.setSubject("PHYS");
         alt2.setNumber(150);
-        alt2.setName("Physics I");
+        alt2.setName("Mixed_Target");
         alt2.setSection("04");
         alt2.setOpen_seats(1);
         alt2.setTotal_seats(30);
@@ -1084,7 +1084,7 @@ class ScheduleTest {
         Course alt3 = new Course();
         alt3.setSubject("PHYS");
         alt3.setNumber(150);
-        alt3.setName("Physics I");
+        alt3.setName("Mixed_Target");
         alt3.setSection("05");
         alt3.setOpen_seats(1);
         alt3.setTotal_seats(30);
