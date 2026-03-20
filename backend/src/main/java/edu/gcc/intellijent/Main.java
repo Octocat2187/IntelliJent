@@ -47,7 +47,7 @@ public class Main {
             InputStream majorInput = Main.class.getClassLoader().getResourceAsStream("majors.json");
 
             MajorCatalog majorCatalog = mapper.readValue(majorInput, MajorCatalog.class);
-
+/*
             Scanner scanner = new Scanner(System.in);
 
             // Create account
@@ -110,9 +110,11 @@ public class Main {
             if (!found) {
                 System.out.println("Course not found.");
             }
-
+*/
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 }
