@@ -248,7 +248,35 @@ export default function CourseSearch() {
     reader.onload = function(e) {
       try {
         const data = JSON.parse(e.target.result);
-        setSelectedCourses(data);
+
+        // First, clear the backend schedule
+        fetch("http://localhost:7000/schedule/clear", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(() => {
+          // Then send loaded courses to backend
+          data.forEach(course => {
+            fetch("http://localhost:7000/schedule", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(course)
+            })
+            .catch(() => {
+              console.error("Error sending course to backend");
+            });
+          });
+
+          // Update frontend state
+          setSelectedCourses(data);
+        })
+        .catch(() => {
+          console.error("Error clearing backend schedule");
+        });
       } catch {
         alert("Invalid JSON file");
       }

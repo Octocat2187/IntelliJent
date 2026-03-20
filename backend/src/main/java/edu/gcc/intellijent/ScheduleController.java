@@ -38,6 +38,10 @@ public class ScheduleController {
 //            }
         });
 
+        app.post("/schedule/clear", ctx -> {
+            schedule.clearSchedule();
+            ctx.status(204);
+        });
     }
 }
 
