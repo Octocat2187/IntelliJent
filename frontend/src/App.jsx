@@ -433,10 +433,36 @@ export default function CourseSearch() {
 
         <select value={dept} onChange={(e) => setDept(e.target.value)}>
           <option value="">All Departments</option>
-          <option value="COMP">Comp-Sci</option>
-          <option value="MATH">Math</option>
-          <option value="PHYS">Physics</option>
-          <option value="HUMA">Humanities</option>
+          <option value="ABRD">Study Abroad</option>
+            <option value="ACCT">Accounting</option>
+            <option value="ART">Art</option>
+            <option value="ASTR">Astronomy</option>
+            <option value="BIOL">Biology</option>
+            <option value="CHEM">Chemistry</option>
+            <option value="CMIN">Christian Ministries</option>
+            <option value="COMM">Communication</option>
+            <option value="COMP">Computer Science</option>
+
+            <option value="DESI">Design</option>
+            <option value="ECON">Economics</option>
+            <option value="EDUC">Education</option>
+            <option value="ELEE">Electrical Engineering</option>
+            <option value="ENGL">English</option>
+            <option value="ENGR">Engineering</option>
+            <option value="ENTR">Entrepreneurship</option>
+            <option value="HUMA">Humanities</option>
+            <option value="INBS">International Business</option>
+            <option value="MARK">Marketing</option>
+
+            <option value="MATH">Mathematics</option>
+            <option value="MECE">Mechanical Engineering</option>
+            <option value="MNGT">Management</option>
+            <option value="PHYS">Physics</option>
+            <option value="RELI">Religion</option>
+            <option value="ROBO">Robotics</option>
+            <option value="SOCW">Social Work</option>
+            <option value="SPAN">Spanish</option>
+            <option value="SSFT">Science, Faith, & Technology</option>
         </select>
 
         <select value={credits} onChange={(e) => setCredits(e.target.value)}>
@@ -449,8 +475,86 @@ export default function CourseSearch() {
 
         <select value={prof} onChange={(e) => setProf(e.target.value)}>
           <option value="">Any Professor</option>
-          <option value="Hutchins, Jonathan O.">Hutchins</option>
-          <option value="Dellinger, Brian J.">Dellinger</option>
+          <option value="Augspurger, Joseph D.">Augspurger, Joseph D.</option>
+            <option value="Bancroft, Eric D.">Bancroft, Eric D.</option>
+            <option value="Bandy, Gregory A.">Bandy, Gregory A.</option>
+            <option value="Barrios, Shannon N.">Barrios, Shannon N.</option>
+            <option value="Bauer, Christian Jr.">Bauer, Christian Jr.</option>
+            <option value="Brown, Brian K.">Brown, Brian K.</option>
+            <option value="Butler, David M.">Butler, David M.</option>
+            <option value="Byo, Donald W.">Byo, Donald W.</option>
+            <option value="Campagnolo, Enzo R.">Campagnolo, Enzo R.</option>
+            <option value="Carter, Beverly H.">Carter, Beverly H.</option>
+            <option value="Chapman, Jarrett M.">Chapman, Jarrett M.</option>
+            <option value="Cherry, Heather Lynn">Cherry, Heather Lynn</option>
+            <option value="Christman, Alan M.">Christman, Alan M.</option>
+            <option value="Clem, James L.">Clem, James L.</option>
+            <option value="Cramer, Susan J.">Cramer, Susan J.</option>
+            <option value="Culbertson, Linda D.">Culbertson, Linda D.</option>
+            <option value="Dellinger, Brian J.">Dellinger, Brian J.</option>
+            <option value="DiDonato, Andrea Dawn">DiDonato, Andrea Dawn</option>
+            <option value="Dickinson, Brian C">Dickinson, Brian C</option>
+            <option value="Dudt, Jan F.">Dudt, Jan F.</option>
+            <option value="Edwards, Jason R.">Edwards, Jason R.</option>
+            <option value="Falcetta, Michael F.">Falcetta, Michael F.</option>
+            <option value="Farone, Tracy S.">Farone, Tracy S.</option>
+            <option value="Fecich, Samantha J.">Fecich, Samantha J.</option>
+            <option value="Fennell, Drew R.">Fennell, Drew R.</option>
+            <option value="Floris, Joseph D Jr.">Floris, Joseph D Jr.</option>
+            <option value="Franklin, Christopher E">Franklin, Christopher E</option>
+            <option value="Foster, Peter Wesley PhD">Foster, Peter Wesley PhD</option>
+            <option value="Graybill, Keith B.">Graybill, Keith B.</option>
+            <option value="Hammond, Ryan Michael">Hammond, Ryan Michael</option>
+            <option value="Hansford, Jason L.">Hansford, Jason L.</option>
+            <option value="Havrilla, Laura Ritchey">Havrilla, Laura Ritchey</option>
+            <option value="Heasley, Daniel G.">Heasley, Daniel G.</option>
+            <option value="Heisey, Natalie D.">Heisey, Natalie D.</option>
+            <option value="Hoffman, William H.">Hoffman, William H.</option>
+            <option value="Hollenberger, Jennifer C.">Hollenberger, Jennifer C.</option>
+            <option value="Homan, Timothy C.">Homan, Timothy C.</option>
+            <option value="Hosack, Lisa L.">Hosack, Lisa L.</option>
+            <option value="Hutchins, Jonathan O.">Hutchins, Jonathan O.</option>
+            <option value="Inman, John G.">Inman, John G.</option>
+            <option value="Jefferis, Jacob Paul">Jefferis, Jacob Paul</option>
+            <option value="Jenkins, Stephen P.">Jenkins, Stephen P.</option>
+            <option value="Johnson, Ethan Joseph">Johnson, Ethan Joseph</option>
+            <option value="Knupp, April M">Knupp, April M</option>
+            <option value="Lamie, Melissa D.">Lamie, Melissa D.</option>
+            <option value="Lytle, Laurie S.">Lytle, Laurie S.</option>
+            <option value="Markley, Andrew W.">Markley, Andrew W.</option>
+            <option value="Martin, Tammi S.">Martin, Tammi S.</option>
+            <option value="May, Douglas L.">May, Douglas L.</option>
+            <option value="McFeaters, Michelle R.">McFeaters, Michelle R.</option>
+            <option value="McIntyre, Dale L.">McIntyre, Dale L.</option>
+            <option value="Miller, Kimberly M.">Miller, Kimberly M.</option>
+            <option value="Mucha, Nathanael E.">Mucha, Nathanael E.</option>
+            <option value="Munson, Jolene K">Munson, Jolene K</option>
+            <option value="Nemeth, Daniel J.">Nemeth, Daniel J.</option>
+            <option value="Nichols, Constance E.">Nichols, Constance E.</option>
+            <option value="Pazehoski, Kristina O.">Pazehoski, Kristina O.</option>
+            <option value="Powell, Scott K.">Powell, Scott K.</option>
+            <option value="Purifoy, Gary G.">Purifoy, Gary G.</option>
+            <option value="Robbins, David William">Robbins, David William</option>
+            <option value="Rumbaugh, Luke Keith">Rumbaugh, Luke Keith</option>
+            <option value="Rupnik, Elizabeth J.">Rupnik, Elizabeth J.</option>
+            <option value="Ryser, Victoria L.">Ryser, Victoria L.</option>
+            <option value="Sanders, Glen E.">Sanders, Glen E.</option>
+            <option value="Senita, Karyn E.">Senita, Karyn E.</option>
+            <option value="Shepson, Donald R. III">Shepson, Donald R. III</option>
+            <option value="Shultz, Tricia Michele">Shultz, Tricia Michele</option>
+            <option value="Skees, Janet E.">Skees, Janet E.</option>
+            <option value="Stauff, Devin Lee">Stauff, Devin Lee</option>
+            <option value="Stone, Jennifer Nicole">Stone, Jennifer Nicole</option>
+            <option value="Strain, Joy G.">Strain, Joy G.</option>
+            <option value="Thompson, Gary L.">Thompson, Gary L.</option>
+            <option value="Vassar-Bush, Vannessa G.">Vassar-Bush, Vannessa G.</option>
+            <option value="Venesky, Jason P.">Venesky, Jason P.</option>
+            <option value="Wolfe, Abigail E.">Wolfe, Abigail E.</option>
+            <option value="Wolfe, Britton D.">Wolfe, Britton D.</option>
+            <option value="Wong, Ven Ney">Wong, Ven Ney</option>
+            <option value="Wood, Darren">Wood, Darren</option>
+            <option value="Yowler, Brian C.">Yowler, Brian C.</option>
+            <option value="Zhang, He">Zhang, He</option>
         </select>
 
         <select value={isfull} onChange={(e) => setFull(e.target.value)}>
