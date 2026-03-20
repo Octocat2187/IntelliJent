@@ -28,3 +28,7 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+task run(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'edu.gcc.intellijent.Main'
+}
