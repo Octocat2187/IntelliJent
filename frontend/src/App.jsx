@@ -257,8 +257,8 @@ export default function CourseSearch() {
           }
         })
         .then(() => {
-          // Then send loaded courses to backend
-          data.forEach(course => {
+          // Then send loaded courses to backend and wait for all to complete
+          const coursePromises = data.map(course =>
             fetch("http://localhost:7000/schedule", {
               method: "POST",
               headers: {
@@ -268,17 +268,25 @@ export default function CourseSearch() {
             })
             .catch(() => {
               console.error("Error sending course to backend");
-            });
-          });
+            })
+          );
 
-          // Update frontend state
+          return Promise.all(coursePromises);
+        })
+        .then(() => {
+          // Update frontend state after all courses are sent
           setSelectedCourses(data);
         })
         .catch(() => {
           console.error("Error clearing backend schedule");
+        })
+        .finally(() => {
+          // Clear the file input so the same file can be loaded again
+          event.target.value = "";
         });
       } catch {
         alert("Invalid JSON file");
+        event.target.value = "";
       }
     };
 
