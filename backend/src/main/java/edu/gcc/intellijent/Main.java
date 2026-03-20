@@ -41,7 +41,7 @@ public class Main {
             }).start(7000);
 
             controller.registerRoutes(app);
-            ScheduleController.registerRoutes(app);
+            ScheduleController.registerRoutes(app, courseCatalog);
 
             // Load Major JSON
             InputStream majorInput = Main.class.getClassLoader().getResourceAsStream("majors.json");

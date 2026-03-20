@@ -68,6 +68,10 @@ export default function CourseSearch() {
   const [errorMessage, setErrorMessage] = useState("");
   const [errorCourseKey, setErrorCourseKey] = useState(null);
 
+  const [showAlternativesModal, setShowAlternativesModal] = useState(false);
+  const [alternatives, setAlternatives] = useState([]);
+  const [failedCourse, setFailedCourse] = useState(null);
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
@@ -141,29 +145,51 @@ export default function CourseSearch() {
       },
       body: JSON.stringify(course)
     })
-    .then(res => {
+    .then(res => res.json().then(data => ({ status: res.status, data })))
+    .then(({ status, data }) => {
 
-      if (res.ok) {
+      if (status === 201) {
         // success (200–299)
         loadSched();
         setErrorMessage("");
         setErrorCourseKey(null);
 
-      } else if (res.status === 409) {
-        // conflict
-        setErrorMessage("Time conflict with another course");
-        setErrorCourseKey(course.subject + course.number + course.section);
-
-        setTimeout(() => {
-          setErrorMessage("");
-          setErrorCourseKey(null);
-        }, 3000);
+      } else if (status === 409) {
+        // conflict - show alternatives
+        setFailedCourse(course);
+        setAlternatives(data.alternativeCourses || []);
+        setShowAlternativesModal(true);
 
       } else {
         // other errors
         setErrorMessage("Failed to add course");
       }
 
+    })
+    .catch(() => {
+      setErrorMessage("Server error");
+    });
+  }
+
+  function addAlternativeCourse(altCourse) {
+    fetch("http://localhost:7000/schedule", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(altCourse)
+    })
+    .then(res => res.json().then(data => ({ status: res.status, data })))
+    .then(({ status, data }) => {
+      if (status === 201) {
+        loadSched();
+        setShowAlternativesModal(false);
+        setAlternatives([]);
+        setFailedCourse(null);
+      } else {
+        setErrorMessage("Failed to add alternative course");
+        setTimeout(() => setErrorMessage(""), 3000);
+      }
     })
     .catch(() => {
       setErrorMessage("Server error");
@@ -574,6 +600,94 @@ export default function CourseSearch() {
 
     )}
 
+    {/* ALTERNATIVES MODAL */}
+
+    {showAlternativesModal && (
+      <div style={{
+        position: "fixed",
+        top: "0",
+        left: "0",
+        right: "0",
+        bottom: "0",
+        background: "rgba(0, 0, 0, 0.8)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: "1000"
+      }}>
+
+        <div style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "8px",
+          width: "90%",
+          maxWidth: "600px",
+          maxHeight: "80%",
+          overflowY: "auto",
+          position: "relative"
+        }}>
+
+          <button
+            onClick={() => setShowAlternativesModal(false)}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              background: "none",
+              border: "none",
+              fontSize: "18px",
+              cursor: "pointer"
+            }}
+          >
+            &times;
+          </button>
+
+          <h2 style={{ marginTop: "0" }}>Course Conflict</h2>
+
+          <p>
+            The course <strong>{failedCourse?.subject} - {failedCourse?.number} {failedCourse?.section}</strong> conflicts with an existing course you have added.
+          </p>
+
+          <p>
+            Here are some alternative courses:
+          </p>
+
+          <ul style={{ paddingLeft: "20px" }}>
+            {alternatives.map(altCourse => (
+              <li key={altCourse.code} style={{ marginBottom: "10px" }}>
+                <div style={{ fontWeight: "bold" }}>
+                  {altCourse.subject} - {altCourse.number}{altCourse.section}
+                </div>
+                <div>
+                  {altCourse.name}
+                </div>
+                <div style={{ color: "#555", fontSize: "14px" }}>
+                  Professor: {altCourse.faculty.join(", ")} | Credits: {altCourse.credits}
+                </div>
+                <button
+                  onClick={() => addAlternativeCourse(altCourse)}
+                  style={{
+                    marginTop: "5px",
+                    padding: "6px 12px",
+                    background: "#007bff",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Add as Alternative
+                </button>
+              </li>
+            ))}
+          </ul>
+
+        </div>
+
+      </div>
+    )}
+
     </div>
   );
 }
+

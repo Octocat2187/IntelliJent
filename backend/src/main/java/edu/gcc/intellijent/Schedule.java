@@ -10,6 +10,7 @@ public class Schedule {
      */
     ArrayList<Course> Schedule = new ArrayList<Course>();
     boolean CourseAdded = false;
+    ArrayList<Course> lastAlternativeCourses = new ArrayList<>();
 
     public void AddCourse(Course course){
         if (isCourseSchedulable(course)) {
@@ -107,6 +108,14 @@ public class Schedule {
 
     public boolean isCourseAdded(){
         return CourseAdded;
+    }
+
+    public ArrayList<Course> getLastAlternativeCourses() {
+        return lastAlternativeCourses;
+    }
+
+    public void findAndStoreAlternatives(Course course, CourseCatalog courseCatalog) {
+        lastAlternativeCourses = findAlternativeCourses(course, courseCatalog);
     }
 
 }
