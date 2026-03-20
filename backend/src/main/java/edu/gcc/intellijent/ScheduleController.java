@@ -17,13 +17,12 @@ public class ScheduleController {
             Course course = ctx.bodyAsClass(Course.class);
             schedule.AddCourse(course);
             if (schedule.isCourseAdded()){
-                ctx.status(201);  // 201 means "created"
+                ctx.status(201);
                 ctx.json(new CourseAddResponse(true));
             } else{
-                // Find alternative courses
-                schedule.findAndStoreAlternatives(course, courseCatalog);
+                java.util.ArrayList<Course> alternatives = schedule.findAlternativeCourses(course, courseCatalog);
                 ctx.status(409);
-                ctx.json(new CourseAddResponse(false, schedule.getLastAlternativeCourses()));
+                ctx.json(new CourseAddResponse(false, alternatives));
             }
         });
 
