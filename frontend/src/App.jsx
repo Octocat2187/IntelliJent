@@ -649,7 +649,7 @@ export default function CourseSearch() {
       }}>
 
         <div style={{
-          background: "white",
+          background: "gray",
           padding: "20px",
           borderRadius: "8px",
           width: "90%",
@@ -665,7 +665,7 @@ export default function CourseSearch() {
               position: "absolute",
               top: "10px",
               right: "10px",
-              background: "none",
+              background: "#aaaaaa",
               border: "none",
               fontSize: "18px",
               cursor: "pointer"
