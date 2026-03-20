@@ -29,6 +29,10 @@ public class Schedule {
         }
     }
 
+    public void clearSchedule(){
+        Schedule.clear();
+    }
+
 
     /**
      * Checks whether the given course can be added to the schedule without any time overlap
