@@ -484,12 +484,13 @@ export default function CourseSearch() {
           const alreadyAdded = selectedCourses.some(
   	     c => c.subject === course.subject &&
        	     c.number === course.number &&
-       	     c.section === course.section
+       	     c.section === course.section &&
+       	     c.semester === course.semester
 	  );
 
           return (
             <div
-              key={course.code}
+              key={course.subject + course.number + course.section + course.semester}
               style={{
                 border:"1px solid #ddd",
                 padding:"10px",
@@ -505,6 +506,7 @@ export default function CourseSearch() {
                 <p>{course.name}</p>
                 <p>Professor: {course.faculty.join(", ")}</p>
                 <p>Credits: {course.credits}</p>
+                <p>Seats open: {course.open_seats}</p>
 		{Object.values(
     		   course.times.reduce((acc, t) => {
       		      const key = `${t.start_time}-${t.end_time}`;
@@ -539,7 +541,7 @@ export default function CourseSearch() {
               {alreadyAdded ? "Added" : "Add"}
             </button>
 
-            {errorCourseKey === (course.subject + course.number + course.section) && (
+            {errorCourseKey === (course.subject + course.number + course.section + course.semester) && (
               <div style={{
                 position: "absolute",
                 top: "40px",
@@ -602,7 +604,7 @@ export default function CourseSearch() {
           >
 
             <div style={{flex:1, minWidth:0}}>
-              <strong>{`${course.subject}-${course.number}`}</strong>
+              <strong>{`${course.subject}-${course.number}${course.section}`}</strong>
               <div style={{fontSize:"14px"}}>
                 {course.name}
               </div>
@@ -686,7 +688,7 @@ export default function CourseSearch() {
 
           <ul style={{ paddingLeft: "20px" }}>
             {alternatives.map(altCourse => (
-              <li key={altCourse.code} style={{ marginBottom: "10px" }}>
+              <li key={altCourse.subject + altCourse.number + altCourse.section + altCourse.semester} style={{ marginBottom: "10px" }}>
                 <div style={{ fontWeight: "bold" }}>
                   {altCourse.subject} - {altCourse.number}{altCourse.section}
                 </div>
