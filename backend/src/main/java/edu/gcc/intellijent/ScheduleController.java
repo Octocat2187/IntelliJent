@@ -5,9 +5,11 @@ import java.util.Map;
 
 public class ScheduleController {
     private static final Schedule schedule = new Schedule();
+    private static CourseCatalog courseCatalog;
 
 
-    public static void registerRoutes(Javalin app) {
+    public static void registerRoutes(Javalin app, CourseCatalog catalog) {
+        courseCatalog = catalog;
 
         app.get("/schedule", ctx -> ctx.json(schedule.Schedule));
 
@@ -15,9 +17,12 @@ public class ScheduleController {
             Course course = ctx.bodyAsClass(Course.class);
             schedule.AddCourse(course);
             if (schedule.isCourseAdded()){
-                ctx.status(201);  // 201 means “created”
+                ctx.status(201);
+                ctx.json(new CourseAddResponse(true));
             } else{
+                java.util.ArrayList<Course> alternatives = schedule.findAlternativeCourses(course, courseCatalog);
                 ctx.status(409);
+                ctx.json(new CourseAddResponse(false, alternatives));
             }
         });
 
@@ -35,3 +40,4 @@ public class ScheduleController {
 
     }
 }
+
