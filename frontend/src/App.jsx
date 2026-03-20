@@ -489,7 +489,7 @@ export default function CourseSearch() {
 
           return (
             <div
-              key={course.code}
+              key={course.subject + course.number + course.section + course.semester}
               style={{
                 border:"1px solid #ddd",
                 padding:"10px",
@@ -505,6 +505,7 @@ export default function CourseSearch() {
                 <p>{course.name}</p>
                 <p>Professor: {course.faculty.join(", ")}</p>
                 <p>Credits: {course.credits}</p>
+
 		{Object.values(
     		   course.times.reduce((acc, t) => {
       		      const key = `${t.start_time}-${t.end_time}`;
