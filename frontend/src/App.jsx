@@ -530,15 +530,7 @@ export default function CourseSearch() {
 
       {/* RIGHT SIDE */}
 
-      <div style={{
-        width:"260px",
-  	border:"1px solid #ddd",
-  	padding:"15px",
-  	height:"fit-content",
-  	borderRadius:"6px",
-  	background:"#303030",
-  	boxShadow:"0 2px 8px rgba(0,0,0,0.1)"
-      }}>
+      <div className="schedule-container">
 
         <h2>My Schedule</h2>
 
@@ -567,11 +559,13 @@ export default function CourseSearch() {
               borderBottom:"1px solid #ddd",
               padding:"8px 0",
               display:"flex",
-              justifyContent:"space-between"
+              justifyContent:"space-between",
+              alignItems:"flex-start",
+              gap:"8px"
             }}
           >
 
-            <div>
+            <div style={{flex:1, minWidth:0}}>
               <strong>{`${course.subject}-${course.number}`}</strong>
               <div style={{fontSize:"14px"}}>
                 {course.name}
@@ -585,7 +579,9 @@ export default function CourseSearch() {
                 color:"white",
                 border:"none",
                 padding:"4px 8px",
-                borderRadius:"4px"
+                borderRadius:"4px",
+                flexShrink:0,
+                whiteSpace:"nowrap"
               }}
             >
               Remove
