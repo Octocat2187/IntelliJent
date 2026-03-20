@@ -72,6 +72,10 @@ export default function CourseSearch() {
   const [errorMessage, setErrorMessage] = useState("");
   const [errorCourseKey, setErrorCourseKey] = useState(null);
 
+  const [showAlternativesModal, setShowAlternativesModal] = useState(false);
+  const [alternatives, setAlternatives] = useState([]);
+  const [failedCourse, setFailedCourse] = useState(null);
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
@@ -198,26 +202,55 @@ export default function CourseSearch() {
       },
       body: JSON.stringify(course),
     })
-      .then((res) => {
-        if (res.ok) {
-          loadSched();
-          setErrorMessage("");
-          setErrorCourseKey(null);
-        } else if (res.status === 409) {
-          setErrorMessage("Time conflict with another course");
-          setErrorCourseKey(course.subject + course.number + course.section);
+    .then(res => res.json().then(data => ({ status: res.status, data })))
+    .then(({ status, data }) => {
 
-          setTimeout(() => {
-            setErrorMessage("");
-            setErrorCourseKey(null);
-          }, 3000);
-        } else {
-          setErrorMessage("Failed to add course");
-        }
-      })
-      .catch(() => {
-        setErrorMessage("Server error");
-      });
+      if (status === 201) {
+        // success (200–299)
+        loadSched();
+        setErrorMessage("");
+        setErrorCourseKey(null);
+
+      } else if (status === 409) {
+        // conflict - show alternatives
+        setFailedCourse(course);
+        setAlternatives(data.alternativeCourses || []);
+        setShowAlternativesModal(true);
+
+      } else {
+        // other errors
+        setErrorMessage("Failed to add course");
+      }
+
+    })
+    .catch(() => {
+      setErrorMessage("Server error");
+    });
+  }
+
+  function addAlternativeCourse(altCourse) {
+    fetch("http://localhost:7000/schedule", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(altCourse)
+    })
+    .then(res => res.json().then(data => ({ status: res.status, data })))
+    .then(({ status, data }) => {
+      if (status === 201) {
+        loadSched();
+        setShowAlternativesModal(false);
+        setAlternatives([]);
+        setFailedCourse(null);
+      } else {
+        setErrorMessage("Failed to add alternative course");
+        setTimeout(() => setErrorMessage(""), 3000);
+      }
+    })
+    .catch(() => {
+      setErrorMessage("Server error");
+    });
   }
 
   /* REMOVE COURSE */
@@ -261,9 +294,45 @@ export default function CourseSearch() {
     reader.onload = function (e) {
       try {
         const data = JSON.parse(e.target.result);
-        setSelectedCourses(data);
+
+        // First, clear the backend schedule
+        fetch("http://localhost:7000/schedule/clear", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        })
+        .then(() => {
+          // Then send loaded courses to backend and wait for all to complete
+          const coursePromises = data.map(course =>
+            fetch("http://localhost:7000/schedule", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(course)
+            })
+            .catch(() => {
+              console.error("Error sending course to backend");
+            })
+          );
+
+          return Promise.all(coursePromises);
+        })
+        .then(() => {
+          // Update frontend state after all courses are sent
+          setSelectedCourses(data);
+        })
+        .catch(() => {
+          console.error("Error clearing backend schedule");
+        })
+        .finally(() => {
+          // Clear the file input so the same file can be loaded again
+          event.target.value = "";
+        });
       } catch {
         alert("Invalid JSON file");
+        event.target.value = "";
       }
     };
 
@@ -611,23 +680,183 @@ export default function CourseSearch() {
             })}
           </div>
 
-          {/* RIGHT SIDE */}
+        </div>
+
+        {/* FILTERS */}
+
+        <select value={dept} onChange={(e) => setDept(e.target.value)}>
+          <option value="">All Departments</option>
+          <option value="COMP">Comp-Sci</option>
+          <option value="MATH">Math</option>
+          <option value="PHYS">Physics</option>
+          <option value="HUMA">Humanities</option>
+        </select>
+
+        <select value={credits} onChange={(e) => setCredits(e.target.value)}>
+          <option value="">Any Credits</option>
+          <option value="1">1 Credit</option>
+          <option value="2">2 Credits</option>
+          <option value="3">3 Credits</option>
+          <option value="4">4 Credits</option>
+        </select>
+
+        <select value={prof} onChange={(e) => setProf(e.target.value)}>
+          <option value="">Any Professor</option>
+          <option value="Hutchins, Jonathan O.">Hutchins</option>
+          <option value="Dellinger, Brian J.">Dellinger</option>
+        </select>
+
+        <select value={isfull} onChange={(e) => setFull(e.target.value)}>
+          <option value="">Both Open & Full</option>
+          <option value="true">Full Courses</option>
+          <option value="false">Open Courses</option>
+        </select>
+
+        {/* TIME FILTERS */}
+
+        <div style={{marginTop:"15px"}}>
+          <label>Start Time</label>
+          <TimeStepper value={startTime} onChange={setStartTime} />
+        </div>
+
+        <div style={{marginTop:"10px"}}>
+          <label>End Time</label>
+          <TimeStepper value={endTime} onChange={setEndTime} />
+        </div>
+
+        <br />
+
+        <button onClick={searchCourses}>Search</button>
+
+        <hr />
+
+        {/* COURSE RESULTS */}
+
+        {courses.map(course => {
+
+          const alreadyAdded = selectedCourses.some(
+  	     c => c.subject === course.subject &&
+       	     c.number === course.number &&
+       	     c.section === course.section
+	  );
+
+          return (
+            <div
+              key={course.code}
+              style={{
+                border:"1px solid #ddd",
+                padding:"10px",
+                marginBottom:"10px",
+                display:"flex",
+                justifyContent:"space-between",
+                alignItems:"center"
+              }}
+            >
+
+              <div>
+                <h3>{course.subject} - {course.number}{course.section}</h3>
+                <p>{course.name}</p>
+                <p>Professor: {course.faculty.join(", ")}</p>
+                <p>Credits: {course.credits}</p>
+		{Object.values(
+    		   course.times.reduce((acc, t) => {
+      		      const key = `${t.start_time}-${t.end_time}`;
+
+      		      if (!acc[key]) {
+        		acc[key] = { days: "", start: t.start_time, end: t.end_time };
+      		      }
+
+      		      acc[key].days += t.day;
+      		      return acc;
+    		   }, {})
+  		).map((t, i) => (
+    		   <p key={i}>
+      		      {t.days} {t.start}-{t.end}
+    		   </p>
+  		))}
+	      </div>
+
+          <div style={{ position: "relative" }}>
+
+            <button
+              onClick={() => addCourse(course)}
+              disabled={alreadyAdded}
+              style={{
+                padding:"6px 12px",
+                background: alreadyAdded ? "#aaa" : "#4CAF50",
+                color:"white",
+                border:"none",
+                borderRadius:"4px"
+              }}
+            >
+              {alreadyAdded ? "Added" : "Add"}
+            </button>
+
+            {errorCourseKey === (course.subject + course.number + course.section) && (
+              <div style={{
+                position: "absolute",
+                top: "40px",
+                right: "0px",
+                background: "#ff4d4f",
+                color: "white",
+                padding: "6px 10px",
+                borderRadius: "6px",
+                fontSize: "12px",
+                whiteSpace: "nowrap",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
+              }}>
+                {errorMessage}
+              </div>
+            )}
+
+          </div>
+
+          </div>
+          );
+        })}
+
+      </div>
+
+      {/* RIGHT SIDE */}
+
+      <div className="schedule-container">
 
           <div
             style={{
-              width: "260px",
-              border: "1px solid #ddd",
-              padding: "15px",
-              height: "fit-content",
-              borderRadius: "6px",
-              background: "#303030",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              borderBottom:"1px solid #ddd",
+              padding:"8px 0",
+              display:"flex",
+              justifyContent:"space-between",
+              alignItems:"flex-start",
+              gap:"8px"
             }}
           >
             <h2>My Schedule</h2>
 
-            <div style={{ marginBottom: "10px" }}>
-              <button onClick={saveSchedule}>Save Schedule</button>
+            <div style={{flex:1, minWidth:0}}>
+              <strong>{`${course.subject}-${course.number}`}</strong>
+              <div style={{fontSize:"14px"}}>
+                {course.name}
+              </div>
+            </div>
+
+            <button
+              onClick={() => removeCourse(course)}
+              style={{
+                background:"#d9534f",
+                color:"white",
+                border:"none",
+                padding:"4px 8px",
+                borderRadius:"4px",
+                flexShrink:0,
+                whiteSpace:"nowrap"
+              }}
+            >
+              Remove
+            </button>
+
+          </div>
+        ))}
 
               <label style={{ marginLeft: "10px", cursor: "pointer" }}>
                 Load Schedule
@@ -659,23 +888,94 @@ export default function CourseSearch() {
                   <div style={{ fontSize: "14px" }}>{course.name}</div>
                 </div>
 
+    {/* ALTERNATIVES MODAL */}
+
+    {showAlternativesModal && (
+      <div style={{
+        position: "fixed",
+        top: "0",
+        left: "0",
+        right: "0",
+        bottom: "0",
+        background: "rgba(0, 0, 0, 0.8)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: "1000"
+      }}>
+
+        <div style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "8px",
+          width: "90%",
+          maxWidth: "600px",
+          maxHeight: "80%",
+          overflowY: "auto",
+          position: "relative"
+        }}>
+
+          <button
+            onClick={() => setShowAlternativesModal(false)}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              background: "none",
+              border: "none",
+              fontSize: "18px",
+              cursor: "pointer"
+            }}
+          >
+            &times;
+          </button>
+
+          <h2 style={{ marginTop: "0" }}>Course Conflict</h2>
+
+          <p>
+            The course <strong>{failedCourse?.subject} - {failedCourse?.number} {failedCourse?.section}</strong> conflicts with an existing course you have added.
+          </p>
+
+          <p>
+            Here are some alternative courses:
+          </p>
+
+          <ul style={{ paddingLeft: "20px" }}>
+            {alternatives.map(altCourse => (
+              <li key={altCourse.code} style={{ marginBottom: "10px" }}>
+                <div style={{ fontWeight: "bold" }}>
+                  {altCourse.subject} - {altCourse.number}{altCourse.section}
+                </div>
+                <div>
+                  {altCourse.name}
+                </div>
+                <div style={{ color: "#555", fontSize: "14px" }}>
+                  Professor: {altCourse.faculty.join(", ")} | Credits: {altCourse.credits}
+                </div>
                 <button
-                  onClick={() => removeCourse(course)}
+                  onClick={() => addAlternativeCourse(altCourse)}
                   style={{
-                    background: "#d9534f",
+                    marginTop: "5px",
+                    padding: "6px 12px",
+                    background: "#007bff",
                     color: "white",
                     border: "none",
-                    padding: "4px 8px",
                     borderRadius: "4px",
+                    cursor: "pointer"
                   }}
                 >
-                  Remove
+                  Add as Alternative
                 </button>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
+
         </div>
-      )}
+
+      </div>
+    )}
+
     </div>
   );
 }
+
