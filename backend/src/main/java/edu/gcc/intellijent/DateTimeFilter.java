@@ -20,11 +20,10 @@ public class DateTimeFilter extends Filter {
                     Time classBeginTime = Time.valueOf(classTimeList.get(i).getStart_time());
                     Time classEndTime = Time.valueOf(classTimeList.get(i).getEnd_time());
 
-                    String filterDay = schedule.get(i).getDay();
                     Time filterBeginTime = Time.valueOf(schedule.get(i).getStart_time());
                     Time filterEndTime = Time.valueOf(schedule.get(i).getEnd_time());
 
-                    if(!classDay.equals(filterDay)) {
+                    if(!matchDays(classDay)){
                         shouldAddCourse = false;
                     }
 
@@ -48,5 +47,15 @@ public class DateTimeFilter extends Filter {
             }
         }
         return filteredResults;
+    }
+
+    private Boolean matchDays(String day) {
+        for(int i = 0; i<schedule.size(); i++){
+            String scheduleDay = schedule.get(i).getDay();
+            if(scheduleDay.equals(day)){
+                return true;
+            }
+        }
+        return false;
     }
 }

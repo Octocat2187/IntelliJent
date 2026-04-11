@@ -53,24 +53,32 @@ public class SearchController {
                 results = filter.ApplyFilter(results);
             }
 
-            if (days != null && startTime != null && endTime != null){
+            if (startTime != null && endTime != null){
                 DateTimeFilter filter = new DateTimeFilter();
 
                 // DateTimeFilter needs a List of ClassTime objects.
 
-                // First we must iterate through Days. We can split on commas.
-                ArrayList<String> daysList = new ArrayList<>(List.of(days.split(",")));
+                ArrayList<String> daysList = new ArrayList<>();
 
-                // NOTE: This may not be in any particular order. We need to reorder it before using it
-                // Credit to the below code block goes to ChatGPT.
+                if(days != null){
+                    // First we must iterate through Days. We can split on commas.
+                    daysList = new ArrayList<>(List.of(days.split(",")));
 
-                // Define the correct order of weekdays
-                List<String> order = Arrays.asList("M", "T", "W", "Th", "F");
+                    // NOTE: This may not be in any particular order. We need to reorder it before using it
+                    // Credit to the below code block goes to ChatGPT.
 
-                // Sort the list based on the index in the order list
-                daysList.sort((day1, day2) ->
-                        Integer.compare(order.indexOf(day1), order.indexOf(day2)));
-                // End of generated code block.
+                    // Define the correct order of weekdays
+                    List<String> order = Arrays.asList("M", "T", "W", "Th", "F");
+
+                    // Sort the list based on the index in the order list
+                    daysList.sort((day1, day2) ->
+                            Integer.compare(order.indexOf(day1), order.indexOf(day2)));
+                    // End of generated code block.
+                }
+                else {
+                    daysList = new ArrayList<>(List.of("M", "T", "W", "Th", "F"));
+                }
+
 
                 // ArrayList of ClassTime objects may now be created.
                 ArrayList<ClassTime> filterTimes = new ArrayList<>();
