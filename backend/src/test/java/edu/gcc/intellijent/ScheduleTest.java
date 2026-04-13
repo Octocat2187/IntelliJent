@@ -71,7 +71,7 @@ class ScheduleTest {
         times.add(time);
         course.setTimes(times);
 
-        Assertions.assertFalse(schedule.isCourseSchedulable(course));
+        Assertions.assertTrue(schedule.isCourseSchedulable(course));
     }
 
     @Test
@@ -89,7 +89,7 @@ class ScheduleTest {
         times.add(time);
         course.setTimes(times);
 
-        Assertions.assertFalse(schedule.isCourseSchedulable(course));
+        Assertions.assertTrue(schedule.isCourseSchedulable(course));
     }
 
     @Test
@@ -696,9 +696,9 @@ class ScheduleTest {
         // Multiple sections exist, but only one is schedulable
         Schedule schedule = new Schedule();
 
-        // Add existing course to schedule
+        // Add existing course to schedule (different course - ENG 101 to avoid conflict with CS 101)
         Course existingCourse = new Course();
-        existingCourse.setSubject("CS");
+        existingCourse.setSubject("ENG");
         existingCourse.setNumber(101);
         existingCourse.setName("OneAlt_Existing");
         existingCourse.setSection("01");
@@ -765,10 +765,10 @@ class ScheduleTest {
         // Multiple schedulable alternatives available
         Schedule schedule = new Schedule();
 
-        // Add existing course to schedule
+        // Add existing course to schedule (MATH 201 to avoid conflict with CS 101)
         Course existingCourse = new Course();
-        existingCourse.setSubject("CS");
-        existingCourse.setNumber(101);
+        existingCourse.setSubject("MATH");
+        existingCourse.setNumber(201);
         existingCourse.setName("MultiAlt_Existing");
         existingCourse.setSection("01");
         existingCourse.setOpen_seats(1);
@@ -937,10 +937,10 @@ class ScheduleTest {
         // Find alternative section that meets on multiple days
         Schedule schedule = new Schedule();
 
-        // Add existing course to schedule
+        // Add existing course to schedule (different course to avoid conflict with MATH 201)
         Course existingCourse = new Course();
-        existingCourse.setSubject("MATH");
-        existingCourse.setNumber(201);
+        existingCourse.setSubject("PHYS");
+        existingCourse.setNumber(150);
         existingCourse.setName("MultiDay_Existing");
         existingCourse.setSection("01");
         existingCourse.setOpen_seats(1);
@@ -1011,10 +1011,10 @@ class ScheduleTest {
         // Catalog has some schedulable and some non-schedulable alternatives
         Schedule schedule = new Schedule();
 
-        // Add existing course to schedule
+        // Add existing course to schedule (different course to avoid conflict with PHYS 150)
         Course existingCourse = new Course();
-        existingCourse.setSubject("PHYS");
-        existingCourse.setNumber(150);
+        existingCourse.setSubject("CHEM");
+        existingCourse.setNumber(101);
         existingCourse.setName("Mixed_Existing");
         existingCourse.setSection("01");
         existingCourse.setOpen_seats(1);

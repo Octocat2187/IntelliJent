@@ -10,9 +10,10 @@ public class Schedule {
      */
     ArrayList<Course> Schedule = new ArrayList<Course>();
     boolean CourseAdded = false;
-
+    boolean courseFull = false;
     public void AddCourse(Course course){
         if (isCourseSchedulable(course)) {
+            courseFull = !course.isAvailable();
             Schedule.add(course);
             CourseAdded = true;
         }
@@ -44,10 +45,6 @@ public class Schedule {
      * @return true if the course can be scheduled (no overlap and has available seats), false otherwise
      */
     public boolean isCourseSchedulable(Course course){
-        // Check if course is available (not full)
-        if (!course.isAvailable()) {
-            return false;
-        }
 
         // If course has no class times, it's schedulable
         if (course.getTimes() == null || course.getTimes().isEmpty()) {
@@ -55,8 +52,9 @@ public class Schedule {
         }
         // Check against each course already in the schedule
         for (Course scheduledCourse : Schedule) {
-            // Don't add if it's the exact same course (same name)
-            if (course.getName() != null && course.getName().equals(scheduledCourse.getName())) {
+            // Don't add if it's the same course (same subject and number, regardless of section)
+            if (course.getSubject() != null && course.getSubject().equals(scheduledCourse.getSubject()) &&
+                course.getNumber() == scheduledCourse.getNumber()) {
                 return false; // dont add courses that are already in the schedule.
             }
             // Compare each ClassTime of the new course with each ClassTime of scheduled courses
@@ -90,11 +88,10 @@ public class Schedule {
      *
      * @param course the course for which to find alternatives
      * @param courseCatalog the catalog containing all available courses
-     * @return an ArrayList of alternative course sections that are schedulable
+     * @return an ArrayList of alternative course sections that are schedulable, or empty if course already scheduled
      */
     public ArrayList<Course> findAlternativeCourses(Course course, CourseCatalog courseCatalog) {
         ArrayList<Course> alternativeCourses = new ArrayList<>();
-
         // Create a Search object with the course catalog and search by course code
         Search Coursename = new Search(courseCatalog, course.getName()); // Assuming course name includes code, adjust if needed
         ArrayList<Course> searchResults = Coursename.GetResultList(); // Get search results for the course name
@@ -102,12 +99,16 @@ public class Schedule {
         // Filter results to find only schedulable alternatives
         if (searchResults != null) { //skip if no results found
             for (Course alternative : searchResults) {
-                // Skip the exact same section
-                if (!alternative.getSection().equals(course.getSection())) {
-                    // Check if the alternative course can be scheduled
-                    if (isCourseSchedulable(alternative)) {
-                        alternativeCourses.add(alternative);
-                    }
+                // Skip if it's the exact same section being re-added
+                if (alternative.getSection() != null && alternative.getSection().equals(course.getSection())) {
+                    continue;
+                }
+                if (Schedule.contains(alternative)) {
+                    continue;
+                }
+                // Check if the alternative course can be scheduled (time conflicts, etc)
+                if (isCourseSchedulable(alternative)) {
+                    alternativeCourses.add(alternative);
                 }
             }
         }
@@ -118,5 +119,8 @@ public class Schedule {
         return CourseAdded;
     }
 
+    public boolean isCourseFull(){
+        return courseFull;
+    }
 
 }

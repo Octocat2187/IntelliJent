@@ -18,7 +18,7 @@ public class ScheduleController {
             schedule.AddCourse(course);
             if (schedule.isCourseAdded()){
                 ctx.status(201);
-                ctx.json(new CourseAddResponse(true));
+                ctx.json(new CourseAddResponse(true, schedule.isCourseFull(), new java.util.ArrayList<>()));
             } else{
                 java.util.ArrayList<Course> alternatives = schedule.findAlternativeCourses(course, courseCatalog);
                 ctx.status(409);

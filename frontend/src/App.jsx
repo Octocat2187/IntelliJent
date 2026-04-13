@@ -72,6 +72,9 @@ export default function CourseSearch() {
   const [alternatives, setAlternatives] = useState([]);
   const [failedCourse, setFailedCourse] = useState(null);
 
+  const [showFullNotification, setShowFullNotification] = useState(false);
+  const [fullCourseName, setFullCourseName] = useState("");
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
@@ -154,6 +157,13 @@ export default function CourseSearch() {
         setErrorMessage("");
         setErrorCourseKey(null);
 
+        // Show full course notification if applicable
+        if (data.courseFull) {
+          setFullCourseName(`${course.subject} - ${course.number}${course.section}`);
+          setShowFullNotification(true);
+          setTimeout(() => setShowFullNotification(false), 3000);
+        }
+
       } else if (status === 409) {
         // conflict - show alternatives
         setFailedCourse(course);
@@ -186,6 +196,13 @@ export default function CourseSearch() {
         setShowAlternativesModal(false);
         setAlternatives([]);
         setFailedCourse(null);
+
+        // Show full course notification if applicable
+        if (data.courseFull) {
+          setFullCourseName(`${altCourse.subject} - ${altCourse.number}${altCourse.section}`);
+          setShowFullNotification(true);
+          setTimeout(() => setShowFullNotification(false), 3000);
+        }
       } else {
         setErrorMessage("Failed to add alternative course");
         setTimeout(() => setErrorMessage(""), 3000);
@@ -632,6 +649,26 @@ export default function CourseSearch() {
 
     </div>
 
+    )}
+
+    {/* FULL COURSE NOTIFICATION */}
+
+    {showFullNotification && (
+      <div style={{
+        position: "fixed",
+        top: "20px",
+        right: "20px",
+        background: "#ffc107",
+        color: "#333",
+        padding: "12px 16px",
+        borderRadius: "6px",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+        zIndex: "999",
+        fontWeight: "500",
+        maxWidth: "300px"
+      }}>
+        ⚠️ Full Course Added: {fullCourseName}
+      </div>
     )}
 
     {/* ALTERNATIVES MODAL */}
