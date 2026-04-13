@@ -46,18 +46,81 @@ function TimeStepper({ value, onChange }) {
   );
 }
 
+function RequiredCoursesPage({
+  majors,
+  selectedMajorName,
+  requiredCourses,
+  majorsError,
+  onSelectMajor,
+}) {
+  return (
+    <div style={{ maxWidth: "900px", margin: "0 auto", padding: "20px", fontFamily: "Arial" }}>
+      <h1>Required Courses</h1>
+      <p>Select a major to view its required courses.</p>
+
+      <div style={{ marginBottom: "20px" }}>
+        <select
+          value={selectedMajorName}
+          onChange={(e) => onSelectMajor(e.target.value)}
+          style={{ minWidth: "280px", padding: "10px" }}
+        >
+          <option value="">Choose a major</option>
+          {majors.map((major) => (
+            <option key={major.name} value={major.name}>
+              {major.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {majorsError && (
+        <div
+          style={{
+            marginBottom: "20px",
+            padding: "12px",
+            borderRadius: "8px",
+            background: "#ffe5e5",
+            color: "#8a1f1f",
+          }}
+        >
+          {majorsError}
+        </div>
+      )}
+
+      {selectedMajorName && (
+        <div
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            padding: "20px",
+          }}
+        >
+          <h2 style={{ marginTop: 0 }}>{selectedMajorName}</h2>
+
+          {requiredCourses.length > 0 ? (
+            <ul style={{ marginBottom: 0 }}>
+              {requiredCourses.map((course) => (
+                <li key={course} style={{ marginBottom: "8px" }}>
+                  {course}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No required courses found for this major.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* MAIN COMPONENT */
 
 export default function CourseSearch() {
   const [courses, setCourses] = useState([]);
   const [selectedCourses, setSelectedCourses] = useState([]);
 
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [showMajorRequirements, setShowMajorRequirements] = useState(false);
-
-  const [majors, setMajors] = useState([]);
-  const [selectedMajor, setSelectedMajor] = useState("");
-  const [requiredCourses, setRequiredCourses] = useState([]);
+  const [currentPage, setCurrentPage] = useState("search");
 
   const [search, setSearch] = useState("");
   const [dept, setDept] = useState("");
@@ -76,22 +139,35 @@ export default function CourseSearch() {
   const [alternatives, setAlternatives] = useState([]);
   const [failedCourse, setFailedCourse] = useState(null);
 
+  const [majors, setMajors] = useState([]);
+  const [selectedMajorName, setSelectedMajorName] = useState("");
+  const [requiredCourses, setRequiredCourses] = useState([]);
+  const [majorsError, setMajorsError] = useState("");
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
     fetch("http://localhost:7000/schedule")
       .then((res) => res.json())
-      .then((data) => setSelectedCourses(data))
-      .catch(() => console.log("Failed to load schedule"));
+      .then((data) => setSelectedCourses(data));
   }, []);
-
-  /* LOAD MAJORS FROM BACKEND */
 
   useEffect(() => {
     fetch("http://localhost:7000/majors")
-      .then((res) => res.json())
-      .then((data) => setMajors(data))
-      .catch(() => console.log("Failed to load majors"));
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Could not load majors from the backend.");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setMajors(data);
+        setMajorsError("");
+      })
+      .catch(() => {
+        setMajors([]);
+        setMajorsError("Could not load majors. Make sure the backend has the major routes enabled.");
+      });
   }, []);
 
   function toggleDay(day) {
@@ -108,55 +184,6 @@ export default function CourseSearch() {
       });
   }
 
-  function selectMajor() {
-    if (!selectedMajor) {
-      alert("Please select a major");
-      return;
-    }
-
-    fetch(
-      `http://localhost:7000/majors/select/${encodeURIComponent(selectedMajor)}`,
-      {
-        method: "POST",
-      }
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to select major");
-        }
-        return res.json();
-      })
-      .then(() => {
-        return fetch("http://localhost:7000/majors/requirements");
-      })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to load requirements");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setRequiredCourses(data);
-      })
-      .catch(() => {
-        alert("Could not select major");
-      });
-  }
-
-  function getMajorRequirements() {
-    fetch("http://localhost:7000/majors/requirements")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("No major selected");
-        }
-        return res.json();
-      })
-      .then((data) => setRequiredCourses(data))
-      .catch(() => {
-        alert("Please select and save a major first");
-      });
-  }
-
   function getEventsFromCourses() {
     const dayMap = { M: 1, T: 2, W: 3, R: 4, F: 5 };
 
@@ -165,7 +192,6 @@ export default function CourseSearch() {
         const dayNum = dayMap[t.day];
         const now = new Date();
 
-        // get Sunday of current week
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
 
@@ -192,8 +218,6 @@ export default function CourseSearch() {
     );
   }
 
-  /* ADD COURSE USING BACKEND */
-
   function addCourse(course) {
     fetch("http://localhost:7000/schedule", {
       method: "POST",
@@ -202,58 +226,49 @@ export default function CourseSearch() {
       },
       body: JSON.stringify(course),
     })
-    .then(res => res.json().then(data => ({ status: res.status, data })))
-    .then(({ status, data }) => {
-
-      if (status === 201) {
-        // success (200–299)
-        loadSched();
-        setErrorMessage("");
-        setErrorCourseKey(null);
-
-      } else if (status === 409) {
-        // conflict - show alternatives
-        setFailedCourse(course);
-        setAlternatives(data.alternativeCourses || []);
-        setShowAlternativesModal(true);
-
-      } else {
-        // other errors
-        setErrorMessage("Failed to add course");
-      }
-
-    })
-    .catch(() => {
-      setErrorMessage("Server error");
-    });
+      .then((res) => res.json().then((data) => ({ status: res.status, data })))
+      .then(({ status, data }) => {
+        if (status === 201) {
+          loadSched();
+          setErrorMessage("");
+          setErrorCourseKey(null);
+        } else if (status === 409) {
+          setFailedCourse(course);
+          setAlternatives(data.alternativeCourses || []);
+          setShowAlternativesModal(true);
+        } else {
+          setErrorMessage("Failed to add course");
+        }
+      })
+      .catch(() => {
+        setErrorMessage("Server error");
+      });
   }
 
   function addAlternativeCourse(altCourse) {
     fetch("http://localhost:7000/schedule", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(altCourse)
+      body: JSON.stringify(altCourse),
     })
-    .then(res => res.json().then(data => ({ status: res.status, data })))
-    .then(({ status, data }) => {
-      if (status === 201) {
-        loadSched();
-        setShowAlternativesModal(false);
-        setAlternatives([]);
-        setFailedCourse(null);
-      } else {
-        setErrorMessage("Failed to add alternative course");
-        setTimeout(() => setErrorMessage(""), 3000);
-      }
-    })
-    .catch(() => {
-      setErrorMessage("Server error");
-    });
+      .then((res) => res.json().then((data) => ({ status: res.status, data })))
+      .then(({ status }) => {
+        if (status === 201) {
+          loadSched();
+          setShowAlternativesModal(false);
+          setAlternatives([]);
+          setFailedCourse(null);
+        } else {
+          setErrorMessage("Failed to add alternative course");
+          setTimeout(() => setErrorMessage(""), 3000);
+        }
+      })
+      .catch(() => {
+        setErrorMessage("Server error");
+      });
   }
-
-  /* REMOVE COURSE */
 
   function removeCourse(course) {
     fetch("http://localhost:7000/schedule", {
@@ -266,8 +281,6 @@ export default function CourseSearch() {
       loadSched();
     });
   }
-
-  /* SAVE SCHEDULE */
 
   function saveSchedule() {
     const json = JSON.stringify(selectedCourses, null, 2);
@@ -283,8 +296,6 @@ export default function CourseSearch() {
     URL.revokeObjectURL(url);
   }
 
-  /* LOAD SCHEDULE */
-
   function loadSchedule(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -295,41 +306,36 @@ export default function CourseSearch() {
       try {
         const data = JSON.parse(e.target.result);
 
-        // First, clear the backend schedule
         fetch("http://localhost:7000/schedule/clear", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         })
-        .then(() => {
-          // Then send loaded courses to backend and wait for all to complete
-          const coursePromises = data.map(course =>
-            fetch("http://localhost:7000/schedule", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(course)
-            })
-            .catch(() => {
-              console.error("Error sending course to backend");
-            })
-          );
+          .then(() => {
+            const coursePromises = data.map((course) =>
+              fetch("http://localhost:7000/schedule", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(course),
+              }).catch(() => {
+                console.error("Error sending course to backend");
+              })
+            );
 
-          return Promise.all(coursePromises);
-        })
-        .then(() => {
-          // Update frontend state after all courses are sent
-          setSelectedCourses(data);
-        })
-        .catch(() => {
-          console.error("Error clearing backend schedule");
-        })
-        .finally(() => {
-          // Clear the file input so the same file can be loaded again
-          event.target.value = "";
-        });
+            return Promise.all(coursePromises);
+          })
+          .then(() => {
+            setSelectedCourses(data);
+          })
+          .catch(() => {
+            console.error("Error clearing backend schedule");
+          })
+          .finally(() => {
+            event.target.value = "";
+          });
       } catch {
         alert("Invalid JSON file");
         event.target.value = "";
@@ -340,10 +346,7 @@ export default function CourseSearch() {
   }
 
   function formatTime(time) {
-    return `${String(time.hour).padStart(2, "0")}:${String(time.minute).padStart(
-      2,
-      "0"
-    )}`;
+    return `${String(time.hour).padStart(2, "0")}:${String(time.minute).padStart(2, "0")}`;
   }
 
   function searchCourses() {
@@ -365,39 +368,53 @@ export default function CourseSearch() {
       .then((data) => setCourses(data));
   }
 
+  function handleMajorSelection(majorName) {
+    setSelectedMajorName(majorName);
+    setRequiredCourses([]);
+
+    if (!majorName) return;
+
+    fetch(`http://localhost:7000/majors/select/${encodeURIComponent(majorName)}`, {
+      method: "POST",
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Could not load required courses for that major.");
+        }
+        return res.json();
+      })
+      .then((major) => {
+        setRequiredCourses(major.requiredCourses || []);
+        setMajorsError("");
+      })
+      .catch(() => {
+        setRequiredCourses([]);
+        setMajorsError("Could not load the required courses for that major.");
+      });
+  }
+
   return (
     <div>
-      <div style={{ margin: "15px", display: "flex", gap: "10px" }}>
+      <div style={{ display: "flex", gap: "10px", margin: "15px" }}>
         <button
-          onClick={() => {
-            setShowCalendar(!showCalendar);
-            setShowMajorRequirements(false);
-          }}
-          style={{ marginRight: "10px" }}
+          onClick={() => setCurrentPage(currentPage === "calendar" ? "search" : "calendar")}
         >
-          {showCalendar ? "Back to Search" : "View Calendar"}
+          {currentPage === "calendar" ? "Back to Search" : "View Calendar"}
         </button>
 
-        <button
-          onClick={() => {
-            setShowMajorRequirements(!showMajorRequirements);
-            setShowCalendar(false);
-          }}
-        >
-          {showMajorRequirements
-            ? "Back to Search"
-            : "View Major Requirements"}
-        </button>
+        {currentPage === "requiredCourses" ? (
+          <button onClick={() => setCurrentPage("search")}>
+            Back to Search
+          </button>
+        ) : (
+          <button onClick={() => setCurrentPage("requiredCourses")}>
+            Required Courses
+          </button>
+        )}
       </div>
 
-      {showCalendar ? (
-        <div
-          style={{
-            height: "700px",
-            width: "95%",
-            margin: "20px auto 0 auto",
-          }}
-        >
+      {currentPage === "calendar" ? (
+        <div style={{ height: "700px", width: "200%" }}>
           <Calendar
             localizer={localizer}
             events={getEventsFromCourses()}
@@ -411,77 +428,23 @@ export default function CourseSearch() {
             style={{ height: "700px" }}
           />
         </div>
-            ) : showMajorRequirements ? (
-              <div
-                style={{
-                  width: "700px",
-                  margin: "20px 0 0 0",
-                  fontFamily: "Arial",
-                  padding: "5px 25px 20px 25px",
-                }}
-              >
-                <h1 style={{ marginTop: "0", marginBottom: "15px" }}>
-                  Major Requirements
-                </h1>
-
-                <div style={{ marginBottom: "15px" }}>
-                  <select
-                    value={selectedMajor}
-                    onChange={(e) => setSelectedMajor(e.target.value)}
-                    style={{ marginRight: "10px", padding: "6px" }}
-                  >
-                    <option value="">Select a major</option>
-                    {majors.map((major) => (
-                      <option key={major.name} value={major.name}>
-                        {major.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  <button onClick={selectMajor} style={{ marginRight: "10px" }}>
-                    Save Major
-                  </button>
-
-                  <button onClick={getMajorRequirements}>Show Required Courses</button>
-                </div>
-
-                {requiredCourses.length === 0 ? (
-                  <p style={{ marginTop: "10px" }}>No major requirements loaded yet.</p>
-                ) : (
-                  <div
-                    style={{
-                      border: "1px solid #ddd",
-                      borderRadius: "6px",
-                      padding: "15px",
-                      background: "#303030",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    }}
-                  >
-                    <h2 style={{ marginTop: "0" }}>Required Courses</h2>
-                    <ul style={{ marginBottom: "0", paddingLeft: "20px" }}>
-                      {requiredCourses.map((course, index) => (
-                        <li key={index} style={{ marginBottom: "8px" }}>
-                          {course}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
+      ) : currentPage === "requiredCourses" ? (
+        <RequiredCoursesPage
+          majors={majors}
+          selectedMajorName={selectedMajorName}
+          requiredCourses={requiredCourses}
+          majorsError={majorsError}
+          onSelectMajor={handleMajorSelection}
+        />
       ) : (
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-start",
+            justifyContent: "center",
             gap: "40px",
             fontFamily: "Arial",
-            width: "100%",
-            marginTop: "20px",
-            paddingLeft: "25px",
           }}
         >
-          {/* LEFT SIDE */}
-
           <div style={{ width: "700px" }}>
             <h1>Course Search</h1>
 
@@ -490,8 +453,6 @@ export default function CourseSearch() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-
-            {/* DAY SELECTOR */}
 
             <div style={{ marginTop: "15px", marginBottom: "10px" }}>
               <div style={{ fontWeight: "bold", marginBottom: "5px" }}>Days</div>
@@ -539,8 +500,6 @@ export default function CourseSearch() {
               </div>
             </div>
 
-            {/* FILTERS */}
-
             <select value={dept} onChange={(e) => setDept(e.target.value)}>
               <option value="">All Departments</option>
               <option value="COMP">Comp-Sci</option>
@@ -569,8 +528,6 @@ export default function CourseSearch() {
               <option value="false">Open Courses</option>
             </select>
 
-            {/* TIME FILTERS */}
-
             <div style={{ marginTop: "15px" }}>
               <label>Start Time</label>
               <TimeStepper value={startTime} onChange={setStartTime} />
@@ -587,19 +544,18 @@ export default function CourseSearch() {
 
             <hr />
 
-            {/* COURSE RESULTS */}
-
             {courses.map((course) => {
               const alreadyAdded = selectedCourses.some(
                 (c) =>
                   c.subject === course.subject &&
                   c.number === course.number &&
-                  c.section === course.section
+                  c.section === course.section &&
+                  c.semester === course.semester
               );
 
               return (
                 <div
-                  key={course.subject + course.number + course.section}
+                  key={course.subject + course.number + course.section + course.semester}
                   style={{
                     border: "1px solid #ddd",
                     padding: "10px",
@@ -617,17 +573,13 @@ export default function CourseSearch() {
                     <p>{course.name}</p>
                     <p>Professor: {course.faculty.join(", ")}</p>
                     <p>Credits: {course.credits}</p>
-
+                    <p>Seats open: {course.open_seats}</p>
                     {Object.values(
                       course.times.reduce((acc, t) => {
                         const key = `${t.start_time}-${t.end_time}`;
 
                         if (!acc[key]) {
-                          acc[key] = {
-                            days: "",
-                            start: t.start_time,
-                            end: t.end_time,
-                          };
+                          acc[key] = { days: "", start: t.start_time, end: t.end_time };
                         }
 
                         acc[key].days += t.day;
@@ -656,7 +608,7 @@ export default function CourseSearch() {
                     </button>
 
                     {errorCourseKey ===
-                      course.subject + course.number + course.section && (
+                      course.subject + course.number + course.section + course.semester && (
                       <div
                         style={{
                           position: "absolute",
@@ -680,183 +632,11 @@ export default function CourseSearch() {
             })}
           </div>
 
-        </div>
-
-        {/* FILTERS */}
-
-        <select value={dept} onChange={(e) => setDept(e.target.value)}>
-          <option value="">All Departments</option>
-          <option value="COMP">Comp-Sci</option>
-          <option value="MATH">Math</option>
-          <option value="PHYS">Physics</option>
-          <option value="HUMA">Humanities</option>
-        </select>
-
-        <select value={credits} onChange={(e) => setCredits(e.target.value)}>
-          <option value="">Any Credits</option>
-          <option value="1">1 Credit</option>
-          <option value="2">2 Credits</option>
-          <option value="3">3 Credits</option>
-          <option value="4">4 Credits</option>
-        </select>
-
-        <select value={prof} onChange={(e) => setProf(e.target.value)}>
-          <option value="">Any Professor</option>
-          <option value="Hutchins, Jonathan O.">Hutchins</option>
-          <option value="Dellinger, Brian J.">Dellinger</option>
-        </select>
-
-        <select value={isfull} onChange={(e) => setFull(e.target.value)}>
-          <option value="">Both Open & Full</option>
-          <option value="true">Full Courses</option>
-          <option value="false">Open Courses</option>
-        </select>
-
-        {/* TIME FILTERS */}
-
-        <div style={{marginTop:"15px"}}>
-          <label>Start Time</label>
-          <TimeStepper value={startTime} onChange={setStartTime} />
-        </div>
-
-        <div style={{marginTop:"10px"}}>
-          <label>End Time</label>
-          <TimeStepper value={endTime} onChange={setEndTime} />
-        </div>
-
-        <br />
-
-        <button onClick={searchCourses}>Search</button>
-
-        <hr />
-
-        {/* COURSE RESULTS */}
-
-        {courses.map(course => {
-
-          const alreadyAdded = selectedCourses.some(
-  	     c => c.subject === course.subject &&
-       	     c.number === course.number &&
-       	     c.section === course.section
-	  );
-
-          return (
-            <div
-              key={course.code}
-              style={{
-                border:"1px solid #ddd",
-                padding:"10px",
-                marginBottom:"10px",
-                display:"flex",
-                justifyContent:"space-between",
-                alignItems:"center"
-              }}
-            >
-
-              <div>
-                <h3>{course.subject} - {course.number}{course.section}</h3>
-                <p>{course.name}</p>
-                <p>Professor: {course.faculty.join(", ")}</p>
-                <p>Credits: {course.credits}</p>
-		{Object.values(
-    		   course.times.reduce((acc, t) => {
-      		      const key = `${t.start_time}-${t.end_time}`;
-
-      		      if (!acc[key]) {
-        		acc[key] = { days: "", start: t.start_time, end: t.end_time };
-      		      }
-
-      		      acc[key].days += t.day;
-      		      return acc;
-    		   }, {})
-  		).map((t, i) => (
-    		   <p key={i}>
-      		      {t.days} {t.start}-{t.end}
-    		   </p>
-  		))}
-	      </div>
-
-          <div style={{ position: "relative" }}>
-
-            <button
-              onClick={() => addCourse(course)}
-              disabled={alreadyAdded}
-              style={{
-                padding:"6px 12px",
-                background: alreadyAdded ? "#aaa" : "#4CAF50",
-                color:"white",
-                border:"none",
-                borderRadius:"4px"
-              }}
-            >
-              {alreadyAdded ? "Added" : "Add"}
-            </button>
-
-            {errorCourseKey === (course.subject + course.number + course.section) && (
-              <div style={{
-                position: "absolute",
-                top: "40px",
-                right: "0px",
-                background: "#ff4d4f",
-                color: "white",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                fontSize: "12px",
-                whiteSpace: "nowrap",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
-              }}>
-                {errorMessage}
-              </div>
-            )}
-
-          </div>
-
-          </div>
-          );
-        })}
-
-      </div>
-
-      {/* RIGHT SIDE */}
-
-      <div className="schedule-container">
-
-          <div
-            style={{
-              borderBottom:"1px solid #ddd",
-              padding:"8px 0",
-              display:"flex",
-              justifyContent:"space-between",
-              alignItems:"flex-start",
-              gap:"8px"
-            }}
-          >
+          <div className="schedule-container">
             <h2>My Schedule</h2>
 
-            <div style={{flex:1, minWidth:0}}>
-              <strong>{`${course.subject}-${course.number}`}</strong>
-              <div style={{fontSize:"14px"}}>
-                {course.name}
-              </div>
-            </div>
-
-            <button
-              onClick={() => removeCourse(course)}
-              style={{
-                background:"#d9534f",
-                color:"white",
-                border:"none",
-                padding:"4px 8px",
-                borderRadius:"4px",
-                flexShrink:0,
-                whiteSpace:"nowrap"
-              }}
-            >
-              Remove
-            </button>
-
-          </div>
-        ))}
+            <div style={{ marginBottom: "10px" }}>
+              <button onClick={saveSchedule}>Save Schedule</button>
 
               <label style={{ marginLeft: "10px", cursor: "pointer" }}>
                 Load Schedule
@@ -869,113 +649,129 @@ export default function CourseSearch() {
               </label>
             </div>
 
-            {selectedCourses.length === 0 && (
-              <p style={{ color: "#777" }}>No courses added</p>
-            )}
+            {selectedCourses.length === 0 && <p style={{ color: "#777" }}>No courses added</p>}
 
             {selectedCourses.map((course) => (
               <div
-                key={course.subject + course.number + course.section}
+                key={course.subject + course.number}
                 style={{
                   borderBottom: "1px solid #ddd",
                   padding: "8px 0",
                   display: "flex",
                   justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: "8px",
                 }}
               >
-                <div>
-                  <strong>{`${course.subject}-${course.number}`}</strong>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <strong>{`${course.subject}-${course.number}${course.section}`}</strong>
                   <div style={{ fontSize: "14px" }}>{course.name}</div>
                 </div>
 
-    {/* ALTERNATIVES MODAL */}
-
-    {showAlternativesModal && (
-      <div style={{
-        position: "fixed",
-        top: "0",
-        left: "0",
-        right: "0",
-        bottom: "0",
-        background: "rgba(0, 0, 0, 0.8)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: "1000"
-      }}>
-
-        <div style={{
-          background: "white",
-          padding: "20px",
-          borderRadius: "8px",
-          width: "90%",
-          maxWidth: "600px",
-          maxHeight: "80%",
-          overflowY: "auto",
-          position: "relative"
-        }}>
-
-          <button
-            onClick={() => setShowAlternativesModal(false)}
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              background: "none",
-              border: "none",
-              fontSize: "18px",
-              cursor: "pointer"
-            }}
-          >
-            &times;
-          </button>
-
-          <h2 style={{ marginTop: "0" }}>Course Conflict</h2>
-
-          <p>
-            The course <strong>{failedCourse?.subject} - {failedCourse?.number} {failedCourse?.section}</strong> conflicts with an existing course you have added.
-          </p>
-
-          <p>
-            Here are some alternative courses:
-          </p>
-
-          <ul style={{ paddingLeft: "20px" }}>
-            {alternatives.map(altCourse => (
-              <li key={altCourse.code} style={{ marginBottom: "10px" }}>
-                <div style={{ fontWeight: "bold" }}>
-                  {altCourse.subject} - {altCourse.number}{altCourse.section}
-                </div>
-                <div>
-                  {altCourse.name}
-                </div>
-                <div style={{ color: "#555", fontSize: "14px" }}>
-                  Professor: {altCourse.faculty.join(", ")} | Credits: {altCourse.credits}
-                </div>
                 <button
-                  onClick={() => addAlternativeCourse(altCourse)}
+                  onClick={() => removeCourse(course)}
                   style={{
-                    marginTop: "5px",
-                    padding: "6px 12px",
-                    background: "#007bff",
+                    background: "#d9534f",
                     color: "white",
                     border: "none",
+                    padding: "4px 8px",
                     borderRadius: "4px",
-                    cursor: "pointer"
+                    flexShrink: 0,
+                    whiteSpace: "nowrap",
                   }}
                 >
-                  Add as Alternative
+                  Remove
                 </button>
-              </li>
+              </div>
             ))}
-          </ul>
-
+          </div>
         </div>
+      )}
 
-      </div>
-    )}
+      {showAlternativesModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: "0",
+            left: "0",
+            right: "0",
+            bottom: "0",
+            background: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: "1000",
+          }}
+        >
+          <div
+            style={{
+              background: "gray",
+              padding: "20px",
+              borderRadius: "8px",
+              width: "90%",
+              maxWidth: "600px",
+              maxHeight: "80%",
+              overflowY: "auto",
+              position: "relative",
+            }}
+          >
+            <button
+              onClick={() => setShowAlternativesModal(false)}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                background: "#aaaaaa",
+                border: "none",
+                fontSize: "18px",
+                cursor: "pointer",
+              }}
+            >
+              &times;
+            </button>
 
+            <h2 style={{ marginTop: "0" }}>Course Conflict</h2>
+
+            <p>
+              The course <strong>{failedCourse?.subject} - {failedCourse?.number} {failedCourse?.section}</strong> conflicts with an existing course you have added.
+            </p>
+
+            <p>Here are some alternative courses:</p>
+
+            <ul style={{ paddingLeft: "20px" }}>
+              {alternatives.map((altCourse) => (
+                <li
+                  key={altCourse.subject + altCourse.number + altCourse.section + altCourse.semester}
+                  style={{ marginBottom: "10px" }}
+                >
+                  <div style={{ fontWeight: "bold" }}>
+                    {altCourse.subject} - {altCourse.number}
+                    {altCourse.section}
+                  </div>
+                  <div>{altCourse.name}</div>
+                  <div style={{ color: "#555", fontSize: "14px" }}>
+                    Professor: {altCourse.faculty.join(", ")} | Credits: {altCourse.credits}
+                  </div>
+                  <button
+                    onClick={() => addAlternativeCourse(altCourse)}
+                    style={{
+                      marginTop: "5px",
+                      padding: "6px 12px",
+                      background: "#007bff",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Add as Alternative
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
