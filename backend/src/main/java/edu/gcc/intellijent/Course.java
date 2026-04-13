@@ -21,12 +21,13 @@ public class Course {
     private boolean is_open;
     private List<ClassTime> times;
     private String daysOfWeek;
+    private String semester;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Course course = (Course) o;
-        return getNumber() == course.getNumber() && getCredits() == course.getCredits() && getOpen_seats() == course.getOpen_seats() && getTotal_seats() == course.getTotal_seats() && isIs_open() == course.isIs_open() && Objects.equals(getSubject(), course.getSubject()) && Objects.equals(getName(), course.getName()) && Objects.equals(getSection(), course.getSection()) && Objects.equals(getLocation(), course.getLocation()) && Objects.equals(getFaculty(), course.getFaculty());
+        return getNumber() == course.getNumber() && getCredits() == course.getCredits() && getOpen_seats() == course.getOpen_seats() && getTotal_seats() == course.getTotal_seats() && isIs_open() == course.isIs_open() && Objects.equals(getSubject(), course.getSubject()) && Objects.equals(getName(), course.getName()) && Objects.equals(getSection(), course.getSection()) && Objects.equals(getLocation(), course.getLocation()) && Objects.equals(getFaculty(), course.getFaculty()) && Objects.equals(getSemester(), course.getSemester());
     }
 
 //    @Override
@@ -149,6 +150,10 @@ public class Course {
 
     public String getCourseCode()   {
         return subject + number;
+    }
+
+    public String getSemester(){
+        return semester;
     }
 
 }

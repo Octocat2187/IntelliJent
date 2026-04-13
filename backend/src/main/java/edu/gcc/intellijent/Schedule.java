@@ -29,6 +29,10 @@ public class Schedule {
         }
     }
 
+    public void clearSchedule(){
+        Schedule.clear();
+    }
+
 
     /**
      * Checks whether the given course can be added to the schedule without any time overlap
@@ -44,12 +48,17 @@ public class Schedule {
         if (!course.isAvailable()) {
             return false;
         }
+
         // If course has no class times, it's schedulable
         if (course.getTimes() == null || course.getTimes().isEmpty()) {
             return true;
         }
         // Check against each course already in the schedule
         for (Course scheduledCourse : Schedule) {
+            // Don't add if it's the exact same course (same name)
+            if (course.getName() != null && course.getName().equals(scheduledCourse.getName())) {
+                return false; // dont add courses that are already in the schedule.
+            }
             // Compare each ClassTime of the new course with each ClassTime of scheduled courses
             for (ClassTime newTime : course.getTimes()) {
                 for (ClassTime scheduledTime : scheduledCourse.getTimes()) {
@@ -108,5 +117,6 @@ public class Schedule {
     public boolean isCourseAdded(){
         return CourseAdded;
     }
+
 
 }

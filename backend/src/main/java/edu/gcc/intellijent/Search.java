@@ -40,33 +40,54 @@ public class Search {
     private void CourseSearch() {
         resultList = new ArrayList<Course>();
 
-        for (Course c : courseCatalog.getClasses()){
-            boolean isMatch = false;
-
-            if(c.getName().toLowerCase().contains(searchQuery.toLowerCase())){
-                isMatch = true;
+        for(Course c: courseCatalog.getClasses()){
+            if(c.getSubject().toLowerCase().contains(searchQuery.toLowerCase())){
+                if(!resultList.contains(c)){
+                    resultList.add(c);
+                }
             }
+        }
 
-            for(String faculty : c.getFaculty()){
-                if(faculty.toLowerCase().contains(searchQuery.toLowerCase())){
-                    isMatch = true;
+        for (Course c : courseCatalog.getClasses()){
+            if(c.getSubject().toLowerCase().contains(searchQuery.toLowerCase())){
+                if(!resultList.contains(c)){
+                    resultList.add(c);
+                    continue;
                 }
             }
 
-            if(c.getSubject().toLowerCase().contains(searchQuery.toLowerCase())){
-                isMatch = true;
+            if(c.getName().toLowerCase().contains(searchQuery.toLowerCase())){
+                if(!resultList.contains(c)){
+                    resultList.add(c);
+                    continue;
+                }
+            }
+
+            boolean facultyFound = false;
+            for(String faculty : c.getFaculty()){
+                if(faculty.toLowerCase().contains(searchQuery.toLowerCase())){
+                    facultyFound = true;
+                }
+            }
+            if(facultyFound){
+                if(!resultList.contains(c)){
+                    resultList.add(c);
+                    continue;
+                }
             }
 
             if(c.getCourseCode().toLowerCase().contains(searchQuery.toLowerCase())){
-                isMatch = true;
+                if(!resultList.contains(c)){
+                    resultList.add(c);
+                    continue;
+                }
             }
 
             if(Integer.toString(c.getNumber()).contains(searchQuery.toLowerCase())){
-                isMatch = true;
-            }
-
-            if(isMatch){
-                resultList.add(c);
+                if(!resultList.contains(c)){
+                    resultList.add(c);
+                    continue;
+                }
             }
         }
     }
