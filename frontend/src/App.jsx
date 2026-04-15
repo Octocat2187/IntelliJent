@@ -395,12 +395,26 @@ export default function CourseSearch() {
 
     <div>
 
-        <button
-          onClick={() => setShowCalendar(!showCalendar)}
-          style={{ margin: "15px" }}
-        >
-          {showCalendar ? "Back to Search" : "View Calendar"}
-        </button>
+        <div style={{ margin: "15px", display: "flex", gap: "10px" }}>
+          <button
+            onClick={() => setShowCalendar(!showCalendar)}
+          >
+            {showCalendar ? "Back to Search" : "View Calendar"}
+          </button>
+
+          <button
+            style={{
+              background: "#4285F4",
+              color: "white",
+              border: "none",
+              padding: "6px 12px",
+              borderRadius: "4px",
+              cursor: "pointer"
+            }}
+          >
+            I'm Feeling Lucky
+          </button>
+        </div>
 
         {showCalendar ? (
 
