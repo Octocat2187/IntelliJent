@@ -42,9 +42,12 @@ public class Account {
         return courseSchedule;
     }
 
-    // Set student's major
     public void setMajor(Major major){
         this.major = major;
+    }
+
+    public Major getMajor(){
+        return major;
     }
 
     // Display required courses for the major
