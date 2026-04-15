@@ -14,9 +14,9 @@
       "name": "Computer Science",
       "requiredCourses": [
         "COMP141",
-        "COMP220",
-        "COMP314",
-        "COMP350",
+        "COMP201",
+        "COMP202",
+        "COMP301",
         "MATH161"
       ]
     }
