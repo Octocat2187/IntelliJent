@@ -31,7 +31,7 @@ function TimeStepper({ value, onChange }) {
     <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
       <div style={{ textAlign: "center" }}>
         <button onClick={() => changeHour(1)}>▲</button>
-        <div>{String(hour).padStart(2, "0")}</div>
+        <div>{((hour % 12) || 12).toString().padStart(2, "0")}</div>
         <button onClick={() => changeHour(-1)}>▼</button>
       </div>
 
@@ -42,6 +42,11 @@ function TimeStepper({ value, onChange }) {
         <div>{String(minute).padStart(2, "0")}</div>
         <button onClick={() => changeMinute(-30)}>▼</button>
       </div>
+
+      <div style={{ marginLeft: "5px", fontWeight: "bold" }}>
+        {hour >= 12 ? "PM" : "AM"}
+      </div>
+
     </div>
   );
 }
@@ -88,7 +93,7 @@ export default function CourseSearch() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:7000/search?") // or whatever your full dataset endpoint is
+    fetch("http://localhost:7000/search?") // all of the courses, since no query params
       .then(res => res.json())
       .then(data => {
         setAllCourses(data);
@@ -126,6 +131,18 @@ export default function CourseSearch() {
         ? prev.filter(d => d !== day)
         : [...prev, day]
     );
+  }
+
+  function formatTo12Hour(timeStr) {
+    if (!timeStr) return "";
+
+    let [hour, minute] = timeStr.split(":").map(Number);
+
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+
+    return `${hour}:${minute.toString().padStart(2, "0")} ${ampm}`;
   }
 
   function loadSched() {
@@ -578,7 +595,7 @@ export default function CourseSearch() {
     		   }, {})
   		).map((t, i) => (
     		   <p key={i}>
-      		      {t.days} {t.start}-{t.end}
+      		      {t.days} {formatTo12Hour(t.start)} - {formatTo12Hour(t.end)}
     		   </p>
   		))}
 	      </div>
@@ -665,6 +682,27 @@ export default function CourseSearch() {
               <strong>{`${course.subject}-${course.number}${course.section}`}</strong>
               <div style={{fontSize:"14px"}}>
                 {course.name}
+
+                {Object.values(
+                  course.times.reduce((acc, t) => {
+                    const key = `${t.start_time}-${t.end_time}`;
+
+                    if (!acc[key]) {
+                      acc[key] = {
+                        days: "",
+                        start: t.start_time,
+                        end: t.end_time
+                      };
+                    }
+
+                    acc[key].days += t.day;
+                    return acc;
+                  }, {})
+                ).map((t, i) => (
+                  <div key={i}>
+                    {t.days} {formatTo12Hour(t.start)} - {formatTo12Hour(t.end)}
+                  </div>
+                ))}
               </div>
             </div>
 
