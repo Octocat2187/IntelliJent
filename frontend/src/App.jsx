@@ -75,6 +75,10 @@ export default function CourseSearch() {
   const [showFullNotification, setShowFullNotification] = useState(false);
   const [fullCourseName, setFullCourseName] = useState("");
 
+  const [allCourses, setAllCourses] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [professors, setProfessors] = useState([]);
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
@@ -82,6 +86,39 @@ export default function CourseSearch() {
       .then(res => res.json())
       .then(data => setSelectedCourses(data));
   }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:7000/search?") // or whatever your full dataset endpoint is
+      .then(res => res.json())
+      .then(data => {
+        setAllCourses(data);
+        extractDropdownData(data);
+      });
+  }, []);
+
+  function extractDropdownData(data) {
+    const subjectSet = new Set();
+    const professorSet = new Set();
+
+    data.forEach(course => {
+      // SUBJECT
+      if (course.subject) {
+        subjectSet.add(course.subject);
+      }
+
+      // PROFESSORS (array)
+      if (course.faculty) {
+        course.faculty.forEach(prof => {
+          if (prof && prof.trim() !== "") {
+            professorSet.add(prof.trim());
+          }
+        });
+      }
+    });
+
+    setSubjects([...subjectSet].sort());
+    setProfessors([...professorSet].sort());
+  }
 
   function toggleDay(day) {
     setDays(prev =>
@@ -450,10 +487,11 @@ export default function CourseSearch() {
 
         <select value={dept} onChange={(e) => setDept(e.target.value)}>
           <option value="">All Departments</option>
-          <option value="COMP">Comp-Sci</option>
-          <option value="MATH">Math</option>
-          <option value="PHYS">Physics</option>
-          <option value="HUMA">Humanities</option>
+          {subjects.map(sub => (
+              <option key={sub} value={sub}>
+                {sub}
+              </option>
+          ))}
         </select>
 
         <select value={credits} onChange={(e) => setCredits(e.target.value)}>
@@ -466,8 +504,11 @@ export default function CourseSearch() {
 
         <select value={prof} onChange={(e) => setProf(e.target.value)}>
           <option value="">Any Professor</option>
-          <option value="Hutchins, Jonathan O.">Hutchins</option>
-          <option value="Dellinger, Brian J.">Dellinger</option>
+          {professors.map(p => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+          ))}
         </select>
 
         <select value={isfull} onChange={(e) => setFull(e.target.value)}>
