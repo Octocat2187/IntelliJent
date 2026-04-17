@@ -172,6 +172,8 @@ export default function CourseSearch() {
   const [password, setPassword] = useState("");
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [loginError, setLoginError] = useState("");
+  const [signupError, setSignupError] = useState("");
+  const [signupSuccess, setSignupSuccess] = useState("");
 
   /* LOAD SCHEDULE FROM BACKEND */
 
@@ -269,9 +271,50 @@ export default function CourseSearch() {
         setUsername("");
         setPassword("");
         setLoginError("");
+        setSignupError("");
+        setSignupSuccess("");
       })
       .catch((err) => {
         setLoginError(err.message);
+      });
+  }
+
+  function handleSignup() {
+    setSignupError("");
+    setSignupSuccess("");
+    setLoginError("");
+
+    fetch("http://localhost:7000/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username,
+        password
+      })
+    })
+      .then(async (res) => {
+        const text = await res.text();
+        let data;
+
+        try {
+          data = JSON.parse(text);
+        } catch {
+          throw new Error(text || "Server error");
+        }
+
+        if (!res.ok) {
+          throw new Error(data.message || "Signup failed");
+        }
+
+        setSignupSuccess("Account created successfully. You can now log in.");
+        setSignupError("");
+        setPassword("");
+      })
+      .catch((err) => {
+        setSignupError(err.message);
+        setSignupSuccess("");
       });
   }
 
@@ -616,7 +659,16 @@ export default function CourseSearch() {
                 {loggedInUser} (Logout)
               </button>
             ) : (
-              <button onClick={() => setShowLogin(true)}>
+              <button
+                onClick={() => {
+                  setShowLogin(true);
+                  setLoginError("");
+                  setSignupError("");
+                  setSignupSuccess("");
+                  setUsername("");
+                  setPassword("");
+                }}
+              >
                 Account
               </button>
             )}
@@ -1117,6 +1169,18 @@ export default function CourseSearch() {
         </div>
       )}
 
+  {signupError && (
+    <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
+      {signupError}
+    </div>
+  )}
+
+  {signupSuccess && (
+    <div style={{ color: "green", marginBottom: "10px", fontSize: "14px" }}>
+      {signupSuccess}
+    </div>
+  )}
+
       <button
         onClick={handleLogin}
         style={{ width: "100%", marginBottom: "10px" }}
@@ -1125,7 +1189,19 @@ export default function CourseSearch() {
       </button>
 
       <button
-        onClick={() => setShowLogin(false)}
+        onClick={handleSignup}
+        style={{ width: "100%", marginBottom: "10px" }}
+      >
+        Sign Up
+      </button>
+
+      <button
+        onClick={() => {
+          setShowLogin(false);
+          setLoginError("");
+          setSignupError("");
+          setSignupSuccess("");
+        }}
         style={{ width: "100%" }}
       >
         Cancel

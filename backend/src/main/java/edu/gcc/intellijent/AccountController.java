@@ -31,5 +31,49 @@ public class AccountController {
                 ctx.status(401).json(response);
             }
         });
+
+        app.post("/signup", ctx -> {
+            Account account = ctx.bodyAsClass(Account.class);
+
+            String username = account.getUsername();
+            String password = account.getPassword();
+
+            Map<String, Object> response = new HashMap<>();
+
+            if (username == null || username.isBlank()) {
+                response.put("success", false);
+                response.put("message", "Username cannot be blank");
+                ctx.status(400).json(response);
+                return;
+            }
+
+            if (password == null || password.isBlank()) {
+                response.put("success", false);
+                response.put("message", "Password cannot be blank");
+                ctx.status(400).json(response);
+                return;
+            }
+
+            if (password.length() < 6) {
+                response.put("success", false);
+                response.put("message", "Password must be at least 6 characters");
+                ctx.status(400).json(response);
+                return;
+            }
+
+            if (accountStore.userExists(username)) {
+                response.put("success", false);
+                response.put("message", "Username already exists");
+                ctx.status(409).json(response);
+                return;
+            }
+
+            accountStore.createAccount(username, password);
+
+            response.put("success", true);
+            response.put("username", username);
+            response.put("message", "Account created successfully");
+            ctx.status(201).json(response);
+        });
     }
 }

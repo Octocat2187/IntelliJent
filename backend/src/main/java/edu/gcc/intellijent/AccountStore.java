@@ -15,4 +15,17 @@ public class AccountStore {
     public boolean validateLogin(String username, String password) {
         return accounts.containsKey(username) && accounts.get(username).equals(password);
     }
+
+    public boolean userExists(String username) {
+        return accounts.containsKey(username);
+    }
+
+    public boolean createAccount(String username, String password) {
+        if (accounts.containsKey(username)) {
+            return false;
+        }
+
+        accounts.put(username, password);
+        return true;
+    }
 }
