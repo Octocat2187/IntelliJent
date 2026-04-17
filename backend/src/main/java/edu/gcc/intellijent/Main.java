@@ -41,14 +41,18 @@ public class Main {
             }).start(7000);
 
             controller.registerRoutes(app);
-            ScheduleController.registerRoutes(app, courseCatalog);
+            UserScheduleStore userScheduleStore = new UserScheduleStore();
+            ScheduleController.registerRoutes(app, courseCatalog, userScheduleStore);
 
             // Load Major JSON
             InputStream majorInput = Main.class.getClassLoader().getResourceAsStream("majors.json");
-
             MajorCatalog majorCatalog = mapper.readValue(majorInput, MajorCatalog.class);
             MajorController majorController = new MajorController(majorCatalog);
             majorController.registerRoutes(app);
+
+            AccountStore accountStore = new AccountStore();
+            AccountController accountController = new AccountController(accountStore);
+            accountController.registerRoutes(app);
 
         } catch (Exception e) {
             e.printStackTrace();

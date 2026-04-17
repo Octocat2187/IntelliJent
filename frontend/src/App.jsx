@@ -167,13 +167,24 @@ export default function CourseSearch() {
   const [requiredCourses, setRequiredCourses] = useState([]);
   const [majorsError, setMajorsError] = useState("");
 
+  const [showLogin, setShowLogin] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [loginError, setLoginError] = useState("");
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
-    fetch("http://localhost:7000/schedule")
+    if (!loggedInUser) {
+      setSelectedCourses([]);
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`)
       .then(res => res.json())
       .then(data => setSelectedCourses(data));
-  }, []);
+  }, [loggedInUser]);
 
   useEffect(() => {
     fetch("http://localhost:7000/search?") // all of the courses, since no query params
@@ -233,6 +244,37 @@ export default function CourseSearch() {
     setProfessors([...professorSet].sort());
   }
 
+  function handleLogin() {
+    setLoginError("");
+
+    fetch("http://localhost:7000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username,
+        password
+      })
+    })
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Login failed");
+        }
+
+        setLoggedInUser(data.username);
+        setShowLogin(false);
+        setUsername("");
+        setPassword("");
+        setLoginError("");
+      })
+      .catch((err) => {
+        setLoginError(err.message);
+      });
+  }
+
   function toggleDay(day) {
     setDays(prev =>
       prev.includes(day)
@@ -254,7 +296,12 @@ export default function CourseSearch() {
   }
 
   function loadSched() {
-    fetch("http://localhost:7000/schedule")
+    if (!loggedInUser) {
+      setSelectedCourses([]);
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`)
       .then(response => response.json())
       .then(data => {
         setSelectedCourses(data);
@@ -303,7 +350,12 @@ export default function CourseSearch() {
 
   function addCourse(course) {
 
-    fetch("http://localhost:7000/schedule", {
+    if (!loggedInUser) {
+      setErrorMessage("Please log in first");
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -344,7 +396,12 @@ export default function CourseSearch() {
   }
 
   function addAlternativeCourse(altCourse) {
-    fetch("http://localhost:7000/schedule", {
+    if (!loggedInUser) {
+      setErrorMessage("Please log in first");
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -379,7 +436,11 @@ export default function CourseSearch() {
 
   function removeCourse(course) {
 
-    fetch("http://localhost:7000/schedule", {
+    if (!loggedInUser) {
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -429,7 +490,13 @@ export default function CourseSearch() {
         const data = JSON.parse(e.target.result);
 
         // First, clear the backend schedule
-        fetch("http://localhost:7000/schedule/clear", {
+        if (!loggedInUser) {
+          alert("Please log in first");
+          event.target.value = "";
+          return;
+        }
+
+        fetch(`http://localhost:7000/schedule/clear?username=${encodeURIComponent(loggedInUser)}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -438,7 +505,7 @@ export default function CourseSearch() {
         .then(() => {
           // Then send loaded courses to backend and wait for all to complete
           const coursePromises = data.map(course =>
-            fetch("http://localhost:7000/schedule", {
+            fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
@@ -501,37 +568,62 @@ export default function CourseSearch() {
 
   return (
     <div>
-
-      <div
-        style={{
-          position: "fixed",
-          top: "20px",
-          left: "20px",
-          display: "flex",
-          gap: "10px",
-          zIndex: 1000
-        }}
-      >
-        <button
-          onClick={() => {
-            const next = !showCalendar;
-            setShowCalendar(next);
-            if (next) setShowRequiredCourses(false);
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "20px",
+            right: "20px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            zIndex: 1000
           }}
         >
-          {showCalendar ? "Back to Search" : "View Calendar"}
-        </button>
 
-        <button
-          onClick={() => {
-            const next = !showRequiredCourses;
-            setShowRequiredCourses(next);
-            if (next) setShowCalendar(false);
-          }}
-        >
-          {showRequiredCourses ? "Back to Search" : "Required Courses"}
-        </button>
-      </div>
+          {/* LEFT SIDE BUTTONS */}
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              onClick={() => {
+                const next = !showCalendar;
+                setShowCalendar(next);
+                if (next) setShowRequiredCourses(false);
+              }}
+            >
+              {showCalendar ? "Back to Search" : "View Calendar"}
+            </button>
+
+            <button
+              onClick={() => {
+                const next = !showRequiredCourses;
+                setShowRequiredCourses(next);
+                if (next) setShowCalendar(false);
+              }}
+            >
+              {showRequiredCourses ? "Back to Search" : "Required Courses"}
+            </button>
+          </div>
+
+          {/* RIGHT SIDE ACCOUNT */}
+          <div>
+            {loggedInUser ? (
+              <button
+                onClick={() => {
+                  setLoggedInUser(null);
+                  setSelectedCourses([]);
+                }}
+              >
+                {loggedInUser} (Logout)
+              </button>
+            ) : (
+              <button onClick={() => setShowLogin(true)}>
+                Account
+              </button>
+            )}
+          </div>
+
+        </div>
+
 
       <div style={{ height: "80px" }} />
 
@@ -977,6 +1069,70 @@ export default function CourseSearch() {
 
       </div>
     )}
+
+{showLogin && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.6)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 2000
+    }}
+  >
+    <div
+      style={{
+        background: "white",
+        padding: "30px",
+        borderRadius: "10px",
+        width: "300px",
+        textAlign: "center"
+      }}
+    >
+      <h2>Login</h2>
+
+      <input
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ width: "100%", marginBottom: "15px", padding: "8px" }}
+      />
+
+      {loginError && (
+        <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
+          {loginError}
+        </div>
+      )}
+
+      <button
+        onClick={handleLogin}
+        style={{ width: "100%", marginBottom: "10px" }}
+      >
+        Login
+      </button>
+
+      <button
+        onClick={() => setShowLogin(false)}
+        style={{ width: "100%" }}
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
 
     </div>
   );

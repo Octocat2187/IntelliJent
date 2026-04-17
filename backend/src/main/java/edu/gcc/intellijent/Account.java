@@ -11,23 +11,30 @@ public class Account {
     private String password;
     private Major major;
 
+    public Account()    {
+
+    }
+
     public Account(String username, String password) {
         this.username = username;
         this.password = password;
         this.courseSchedule = new Schedule();
     }
 
-    // STUB METHODS
-    private void login(String username, String password){
-        // I DON'T KNOW HOW TO LOGIN BUT WE SHOULD DEFINITELY HAVE THAT
+    public String getUsername() {
+        return username;
     }
 
-    private void AddCourse(Course course){
-        // Add to schedule of account
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    private void RemoveCourse(Course course){
-        // Remove from schedule of account
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     private void EditFilter(String dept, String code, String days, String times, String prof, Boolean full, int credits){
@@ -40,11 +47,6 @@ public class Account {
 
     private Schedule ViewSchedule(){
         return courseSchedule;
-    }
-
-    // Set student's major
-    public void setMajor(Major major){
-        this.major = major;
     }
 
     // Display required courses for the major
