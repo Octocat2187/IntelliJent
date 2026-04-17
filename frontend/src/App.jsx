@@ -51,6 +51,83 @@ function TimeStepper({ value, onChange }) {
   );
 }
 
+function RequiredCoursesPage({
+  majors,
+  selectedMajorName,
+  requiredCourses,
+  majorsError,
+  onSelectMajor,
+}) {
+  return (
+    <div
+      style={{
+        maxWidth: "900px",
+        margin: "0 auto",
+        padding: "0 20px 20px 20px",
+        fontFamily: "Arial"
+      }}
+    >
+      <h1 style={{ margin: "0 0 10px 0" }}>Required Courses</h1>
+      <p style={{ margin: "0 0 20px 0" }}>
+        Select a major to view its required courses.
+      </p>
+
+      <div style={{ marginBottom: "20px" }}>
+        <select
+          value={selectedMajorName}
+          onChange={(e) => onSelectMajor(e.target.value)}
+          style={{ minWidth: "280px", padding: "10px" }}
+        >
+          <option value="">Choose a major</option>
+          {majors.map((major) => (
+            <option key={major.name} value={major.name}>
+              {major.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {majorsError && (
+        <div
+          style={{
+            marginBottom: "20px",
+            padding: "12px",
+            borderRadius: "8px",
+            background: "#ffe5e5",
+            color: "#8a1f1f",
+          }}
+        >
+          {majorsError}
+        </div>
+      )}
+
+      {selectedMajorName && (
+        <div
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            padding: "20px",
+          }}
+        >
+          <h2 style={{ margin: "0 0 12px 0" }}>{selectedMajorName}</h2>
+
+          {requiredCourses.length > 0 ? (
+            <ul style={{ margin: 0, paddingLeft: "20px" }}>
+              {requiredCourses.map((course) => (
+                <li key={course} style={{ marginBottom: "8px" }}>
+                  {course}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ margin: 0 }}>No required courses found for this major.</p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* MAIN COMPONENT */
 
 export default function CourseSearch() {
@@ -84,6 +161,12 @@ export default function CourseSearch() {
   const [subjects, setSubjects] = useState([]);
   const [professors, setProfessors] = useState([]);
 
+  const [showRequiredCourses, setShowRequiredCourses] = useState(false);
+  const [majors, setMajors] = useState([]);
+  const [selectedMajorName, setSelectedMajorName] = useState("");
+  const [requiredCourses, setRequiredCourses] = useState([]);
+  const [majorsError, setMajorsError] = useState("");
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
@@ -100,6 +183,31 @@ export default function CourseSearch() {
         extractDropdownData(data);
       });
   }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:7000/majors")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Could not load majors from the backend.");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setMajors(data);
+        setMajorsError("");
+      })
+      .catch(() => {
+        setMajors([]);
+        setMajorsError("Could not load majors. Make sure the backend has the major routes enabled.");
+      });
+  }, []);
+
+  function handleSelectMajor(majorName) {
+  setSelectedMajorName(majorName);
+
+  const major = majors.find((m) => m.name === majorName);
+  setRequiredCourses(major ? major.requiredCourses : []);
+}
 
   function extractDropdownData(data) {
     const subjectSet = new Set();
@@ -392,15 +500,40 @@ export default function CourseSearch() {
   }
 
   return (
-
     <div>
 
+      <div
+        style={{
+          position: "fixed",
+          top: "20px",
+          left: "20px",
+          display: "flex",
+          gap: "10px",
+          zIndex: 1000
+        }}
+      >
         <button
-          onClick={() => setShowCalendar(!showCalendar)}
-          style={{ margin: "15px" }}
+          onClick={() => {
+            const next = !showCalendar;
+            setShowCalendar(next);
+            if (next) setShowRequiredCourses(false);
+          }}
         >
           {showCalendar ? "Back to Search" : "View Calendar"}
         </button>
+
+        <button
+          onClick={() => {
+            const next = !showRequiredCourses;
+            setShowRequiredCourses(next);
+            if (next) setShowCalendar(false);
+          }}
+        >
+          {showRequiredCourses ? "Back to Search" : "Required Courses"}
+        </button>
+      </div>
+
+      <div style={{ height: "80px" }} />
 
         {showCalendar ? (
 
@@ -421,7 +554,15 @@ export default function CourseSearch() {
 
           </div>
 
-        ) : (
+        ) : showRequiredCourses ? (
+            <RequiredCoursesPage
+              majors={majors}
+              selectedMajorName={selectedMajorName}
+              requiredCourses={requiredCourses}
+              majorsError={majorsError}
+              onSelectMajor={handleSelectMajor}
+            />
+          ) : (
 
           <div style={{
             display: "flex",
