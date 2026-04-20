@@ -10,12 +10,7 @@ const localizer = momentLocalizer(moment);
 function TimeStepper({ value, onChange }) {
   const { hour, minute } = value;
 
-  function changeHour(delta) {
-    let newHour = (hour + delta + 24) % 24;
-    onChange({ hour: newHour, minute });
-  }
-
-  function changeMinute(delta) {
+  function changeByMinutes(delta) {
     let total = hour * 60 + minute + delta;
 
     if (total < 0) total += 24 * 60;
@@ -27,26 +22,66 @@ function TimeStepper({ value, onChange }) {
     onChange({ hour: newHour, minute: newMinute });
   }
 
+  function handleTimeInputChange(e) {
+    const input = e.target.value;
+    if (!input) return;
+
+    const parts = input.split(":");
+    if (parts.length !== 2) return;
+
+    const parsedHour = Number(parts[0]);
+    const parsedMinute = Number(parts[1]);
+
+    if (
+      Number.isNaN(parsedHour) ||
+      Number.isNaN(parsedMinute) ||
+      parsedHour < 0 ||
+      parsedHour > 23 ||
+      parsedMinute < 0 ||
+      parsedMinute > 59
+    ) {
+      return;
+    }
+
+    onChange({ hour: parsedHour, minute: parsedMinute });
+  }
+
+  function handleWheel(e) {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 30 : -30;
+    changeByMinutes(delta);
+  }
+
+  const timeInputValue = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-      <div style={{ textAlign: "center" }}>
-        <button onClick={() => changeHour(1)}>▲</button>
-        <div>{((hour % 12) || 12).toString().padStart(2, "0")}</div>
-        <button onClick={() => changeHour(-1)}>▼</button>
+    <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", marginLeft: "8px" }}>
+      <input
+        type="time"
+        value={timeInputValue}
+        onChange={handleTimeInputChange}
+        onWheel={handleWheel}
+        step={1800}
+        aria-label="Time input"
+      />
+      <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+        <button
+          type="button"
+          onClick={() => changeByMinutes(30)}
+          aria-label="Increase time"
+          style={{ width: "24px", lineHeight: 1, padding: "2px 0" }}
+        >
+          +
+        </button>
+        <button
+          type="button"
+          onClick={() => changeByMinutes(-30)}
+          aria-label="Decrease time"
+          style={{ width: "24px", lineHeight: 1, padding: "2px 0" }}
+        >
+          -
+        </button>
       </div>
-
-      <div>:</div>
-
-      <div style={{ textAlign: "center" }}>
-        <button onClick={() => changeMinute(30)}>▲</button>
-        <div>{String(minute).padStart(2, "0")}</div>
-        <button onClick={() => changeMinute(-30)}>▼</button>
-      </div>
-
-      <div style={{ marginLeft: "5px", fontWeight: "bold" }}>
-        {hour >= 12 ? "PM" : "AM"}
-      </div>
-
     </div>
   );
 }
