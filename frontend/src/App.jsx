@@ -933,10 +933,10 @@ export default function CourseSearch() {
         <h2>My Schedule</h2>
 
         <div style={{marginBottom:"10px"}}>
-          <button onClick={saveSchedule}>Save Schedule</button>
+          <button onClick={saveSchedule}>Download Schedule</button>
 
           <label style={{marginLeft:"10px", cursor:"pointer"}}>
-            Load Schedule
+
             <input
               type="file"
               accept=".json"
