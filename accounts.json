@@ -1,7 +1,12 @@
 {
-  "josh": {
-    "username": "josh",
-    "password": "password123",
-    "major": "Computer Science"
+  "John" : {
+    "username" : "John",
+    "password" : "Rah586",
+    "major" : "Computer Science"
+  },
+  "josh" : {
+    "username" : "josh",
+    "password" : "password123",
+    "major" : "Computer Science"
   }
 }
