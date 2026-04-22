@@ -391,6 +391,29 @@ export default function CourseSearch() {
       .then(data => setCourses(data));
   }
 
+  function handleLucky() {
+    fetch("http://localhost:7000/schedule/lucky", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(courses)
+    })
+      .then(res => {
+        if (res.status === 201) {
+          // success → reload schedule
+          loadSched();
+        } else if (res.status === 409) {
+          alert("No schedulable courses found");
+        } else {
+          alert("Something went wrong");
+        }
+      })
+      .catch(() => {
+        alert("Server error");
+      });
+  }
+
   return (
 
     <div>
@@ -436,11 +459,31 @@ export default function CourseSearch() {
 
         <h1>Course Search</h1>
 
-        <input
-          placeholder="Search courses..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "10px" }}>
+          <input
+            placeholder="Search courses..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              flex: 1,
+              padding: "6px"
+            }}
+          />
+
+          <button
+            style={{
+              background: "#4285F4",
+              color: "white",
+              border: "none",
+              padding: "6px 12px",
+              borderRadius: "4px",
+              cursor: "pointer"
+            }}
+            onClick={handleLucky}
+          >
+            I'm Feeling Lucky
+          </button>
+        </div>
 
         {/* DAY SELECTOR */}
 
