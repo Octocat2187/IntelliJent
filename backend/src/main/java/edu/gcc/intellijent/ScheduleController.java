@@ -79,6 +79,15 @@ public class ScheduleController {
         });
 
         app.post("/schedule/lucky", ctx -> {
+            String username = ctx.queryParam("username");
+
+            if (username == null || username.isBlank()) {
+                ctx.status(400).result("Username is required");
+                return;
+            }
+
+            Schedule schedule = userScheduleStore.getSchedule(username);
+
             ObjectMapper mapper = new ObjectMapper();
 
             ArrayList<Course> courseList = mapper.readValue(

@@ -645,7 +645,7 @@ export default function CourseSearch() {
   }
 
   function handleLucky() {
-    fetch("http://localhost:7000/schedule/lucky", {
+    fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
