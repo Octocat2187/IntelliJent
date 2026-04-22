@@ -1,4 +1,7 @@
 {
-  "josh" : "password123",
-  "user" : "123456"
+  "josh": {
+    "username": "josh",
+    "password": "password123",
+    "major": "Computer Science"
+  }
 }

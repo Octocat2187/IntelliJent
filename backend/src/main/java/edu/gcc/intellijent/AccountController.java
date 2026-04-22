@@ -24,6 +24,7 @@ public class AccountController {
             if (valid) {
                 response.put("success", true);
                 response.put("username", account.getUsername());
+                response.put("major", accountStore.getAccount(account.getUsername()).getMajor());
                 ctx.status(200).json(response);
             } else {
                 response.put("success", false);
@@ -68,7 +69,7 @@ public class AccountController {
                 return;
             }
 
-            accountStore.createAccount(username, password);
+            accountStore.createAccount(username, password, account.getMajor());
 
             response.put("success", true);
             response.put("username", username);

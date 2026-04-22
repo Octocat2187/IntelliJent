@@ -60,6 +60,9 @@ public class Schedule {
      */
     public boolean isCourseSchedulable(Course course){
 
+        if (!course.isAvailable()) {
+            return false;
+        }
         // If course has no class times, it's schedulable
         if (course.getTimes() == null || course.getTimes().isEmpty()) {
             return true;
