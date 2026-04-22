@@ -115,6 +115,12 @@ public class Schedule {
         return alternativeCourses;
     }
 
+    public boolean wonRoulette(int guess){
+        int winningNumber = (int)(Math.random() * 50) + 1;
+
+        return guess == winningNumber;
+    }
+
     public boolean isCourseAdded(){
         return CourseAdded;
     }
