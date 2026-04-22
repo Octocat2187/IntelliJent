@@ -9,7 +9,7 @@ public class Account {
     private Search currentSearch; // Suggested by Dr. Hutchins
     private String username;
     private String password;
-    private Major major;
+    private String major;
 
     public Account()    {
 
@@ -37,6 +37,14 @@ public class Account {
         this.password = password;
     }
 
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
     private void EditFilter(String dept, String code, String days, String times, String prof, Boolean full, int credits){
 
     }
@@ -50,17 +58,17 @@ public class Account {
     }
 
     // Display required courses for the major
-    public void viewMajorRequirements(){
-
-        if(major == null){
-            System.out.println("No major selected.");
-            return;
-        }
-
-        System.out.println("Major: " + major.getName());
-
-        for(String course : major.getRequiredCourses()){
-            System.out.println(course);
-        }
-    }
+//    public void viewMajorRequirements(){
+//
+//        if(major == null){
+//            System.out.println("No major selected.");
+//            return;
+//        }
+//
+//        System.out.println("Major: " + major.getName());
+//
+//        for(String course : major.getRequiredCourses()){
+//            System.out.println(course);
+//        }
+//    }
 }
