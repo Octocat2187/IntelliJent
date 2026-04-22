@@ -2,8 +2,34 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import Tooltip from "@mui/material/Tooltip";
 
 const localizer = momentLocalizer(moment);
+
+function CustomEvent({ event }) {
+  return (
+      <Tooltip
+        title={
+          <>
+            <div>{event.resource.fullName}</div>
+            <div>Prof: {event.resource.professor}</div>
+            <div>Credits: {event.resource.credits}</div>
+          </>
+        }
+        arrow
+        placement="top"
+      >
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          {event.title}
+        </div>
+      </Tooltip>
+  );
+}
 
 /* TIME STEPPER COMPONENT */
 
@@ -417,7 +443,12 @@ export default function CourseSearch() {
         return {
           title: `${course.subject}-${course.number}`,
           start,
-          end
+          end,
+          resource: {
+              fullName: course.name,
+              professor: course.faculty.join(", "),
+              credits: course.credits
+          }
         };
 
       })
@@ -645,7 +676,7 @@ export default function CourseSearch() {
   }
 
   function handleLucky() {
-    fetch("http://localhost:7000/schedule/lucky", {
+    fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -751,6 +782,10 @@ export default function CourseSearch() {
               max={new Date(1970, 1, 1, 22, 0)}
               step={30}
               timeslots={1}
+              components={{
+                  event: CustomEvent
+              }}
+              tooltipAccessor={null}
               style={{ height: "700px" }}
             />
 
