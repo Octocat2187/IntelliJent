@@ -209,6 +209,8 @@ export default function CourseSearch() {
   const [loginError, setLoginError] = useState("");
   const [signupError, setSignupError] = useState("");
   const [signupSuccess, setSignupSuccess] = useState("");
+  const [major, setMajor] = useState("");
+  const [showProfile, setShowProfile] = useState(false);
 
   /* LOAD SCHEDULE FROM BACKEND */
 
@@ -231,6 +233,12 @@ export default function CourseSearch() {
         extractDropdownData(data);
       });
   }, []);
+
+  useEffect(() => {
+    if (loggedInUser && major) {
+      handleSelectMajor(major);
+    }
+  }, [loggedInUser, major]);
 
   useEffect(() => {
     fetch("http://localhost:7000/majors")
@@ -302,6 +310,7 @@ export default function CourseSearch() {
         }
 
         setLoggedInUser(data.username);
+        setMajor(data.major);
         setShowLogin(false);
         setUsername("");
         setPassword("");
@@ -319,6 +328,11 @@ export default function CourseSearch() {
     setSignupSuccess("");
     setLoginError("");
 
+    if (!major) {
+      setSignupError("Please select a major");
+      return;
+    }
+
     fetch("http://localhost:7000/signup", {
       method: "POST",
       headers: {
@@ -326,7 +340,8 @@ export default function CourseSearch() {
       },
       body: JSON.stringify({
         username,
-        password
+        password,
+        major
       })
     })
       .then(async (res) => {
@@ -645,29 +660,53 @@ export default function CourseSearch() {
   }
 
   function handleLucky() {
-    fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(courses)
-    })
-      .then(res => {
-        if (res.status === 201) {
-          // success → reload schedule
-          loadSched();
-        } else if (res.status === 409) {
-          alert("No schedulable courses found");
-        } else {
-          alert("Something went wrong");
-        }
+      fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(courses)
       })
-      .catch(() => {
-        alert("Server error");
-      });
-  }
+        .then(res => {
+          if (res.status === 201) {
+            // success → reload schedule
+            loadSched();
+          } else if (res.status === 409) {
+            alert("No schedulable courses found");
+          } else {
+            alert("Something went wrong");
+          }
+        })
+        .catch(() => {
+          alert("Server error");
+        });
+    }
 
-  return (
+  return showProfile ? (
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+      <h2>Account</h2>
+
+      <p><strong>Username:</strong> {loggedInUser}</p>
+      <p><strong>Major:</strong> {major}</p>
+
+      <button
+        onClick={() => setShowProfile(false)}
+        style={{ marginRight: "10px" }}
+      >
+        Back
+      </button>
+
+      <button
+        onClick={() => {
+          setLoggedInUser(null);
+          setSelectedCourses([]);
+          setShowProfile(false);
+        }}
+      >
+        Sign Out
+      </button>
+    </div>
+  ) : (
     <div>
         <div
           style={{
@@ -708,13 +747,8 @@ export default function CourseSearch() {
           {/* RIGHT SIDE ACCOUNT */}
           <div>
             {loggedInUser ? (
-              <button
-                onClick={() => {
-                  setLoggedInUser(null);
-                  setSelectedCourses([]);
-                }}
-              >
-                {loggedInUser} (Logout)
+              <button onClick={() => setShowProfile(true)}>
+                {loggedInUser}
               </button>
             ) : (
               <button
@@ -771,6 +805,7 @@ export default function CourseSearch() {
             justifyContent: "center",
             gap: "40px",
             fontFamily: "Arial"
+
           }}>
 
       {/* LEFT SIDE */}
@@ -1011,10 +1046,10 @@ export default function CourseSearch() {
         <h2>My Schedule</h2>
 
         <div style={{marginBottom:"10px"}}>
-          <button onClick={saveSchedule}>Save Schedule</button>
+          <button onClick={saveSchedule}>Download Schedule</button>
 
           <label style={{marginLeft:"10px", cursor:"pointer"}}>
-            Load Schedule
+
             <input
               type="file"
               accept=".json"
@@ -1240,6 +1275,19 @@ export default function CourseSearch() {
         onChange={(e) => setPassword(e.target.value)}
         style={{ width: "100%", marginBottom: "15px", padding: "8px" }}
       />
+
+      <select
+        value={major}
+        onChange={(e) => setMajor(e.target.value)}
+        style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+      >
+        <option value="">Select Major</option>
+        {majors.map((m) => (
+          <option key={m.name} value={m.name}>
+            {m.name}
+          </option>
+        ))}
+      </select>
 
       {loginError && (
         <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>

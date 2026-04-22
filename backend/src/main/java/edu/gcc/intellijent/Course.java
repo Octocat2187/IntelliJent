@@ -34,17 +34,17 @@ public class Course {
 //    public int hashCode() {
 //        return Objects.hash(getSubject(), getNumber(), getName(), getSection(), getLocation(), getFaculty(), getCredits(), getOpen_seats(), getTotal_seats(), isIs_open());
 //    }
-
-    private Time startTime;
-    private Time endTime;
+//
+//    private Time startTime;
+//    private Time endTime;
 
     public String getDaysOfWeek() {
         return daysOfWeek;
     }
-
-    public Time getStartTime() {
-        return startTime;
-    }
+//
+//    public Time getStartTime() {
+//        return startTime;
+//    }
 
     public void setDaysOfWeek(String daysOfWeek) {
         this.daysOfWeek = daysOfWeek;

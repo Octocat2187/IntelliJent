@@ -19,6 +19,166 @@
         "COMP301",
         "MATH161"
       ]
+    },
+    {
+      "name": "Mechanical Engineering",
+      "requiredCourses": [
+        "MECH120",
+        "MECH211",
+        "MECH212",
+        "MECH311",
+        "MATH261"
+      ]
+    },
+    {
+      "name": "Electrical Engineering",
+      "requiredCourses": [
+        "ELEE201",
+        "ELEE204",
+        "ELEE251",
+        "MATH262",
+        "PHYS102"
+      ]
+    },
+    {
+      "name": "Biology",
+      "requiredCourses": [
+        "BIOL101",
+        "BIOL102",
+        "BIOL233",
+        "CHEM101",
+        "CHEM102"
+      ]
+    },
+    {
+      "name": "Chemistry",
+      "requiredCourses": [
+        "CHEM101",
+        "CHEM102",
+        "CHEM241",
+        "CHEM242",
+        "PHYS101"
+      ]
+    },
+    {
+      "name": "Mathematics",
+      "requiredCourses": [
+        "MATH161",
+        "MATH162",
+        "MATH222",
+        "MATH261",
+        "MATH465"
+      ]
+    },
+    {
+      "name": "Accounting",
+      "requiredCourses": [
+        "ACCS201",
+        "ACCS202",
+        "ACCS301",
+        "ACCS302",
+        "ECON101"
+      ]
+    },
+    {
+      "name": "Finance",
+      "requiredCourses": [
+        "FNCE301",
+        "FNCE341",
+        "ACCS201",
+        "ECON101",
+        "MNGT110"
+      ]
+    },
+    {
+      "name": "Marketing",
+      "requiredCourses": [
+        "MARK104",
+        "MARK204",
+        "MARK315",
+        "MNGT110",
+        "STAT131"
+      ]
+    },
+    {
+      "name": "Entrepreneurship",
+      "requiredCourses": [
+        "ENTR101",
+        "ENTR301",
+        "ENTR430",
+        "MARK104",
+        "FNCE301"
+      ]
+    },
+    {
+      "name": "Psychology",
+      "requiredCourses": [
+        "PSYC101",
+        "PSYC201",
+        "PSYC204",
+        "PSYC310",
+        "PSYC404"
+      ]
+    },
+    {
+      "name": "Political Science",
+      "requiredCourses": [
+        "POLS101",
+        "POLS201",
+        "POLS204",
+        "POLS205",
+        "HIST141"
+      ]
+    },
+    {
+      "name": "English",
+      "requiredCourses": [
+        "ENGL201",
+        "ENGL202",
+        "ENGL302",
+        "ENGL485",
+        "HUMA102"
+      ]
+    },
+    {
+      "name": "History",
+      "requiredCourses": [
+        "HIST141",
+        "HIST142",
+        "HIST201",
+        "HIST204",
+        "HIST251"
+      ]
+    },
+    {
+      "name": "Exercise Science",
+      "requiredCourses": [
+        "EXER101",
+        "EXER201",
+        "EXER203",
+        "EXER304",
+        "BIOL101"
+      ]
+    },
+    {
+      "name": "Communication Arts",
+      "requiredCourses": [
+        "COMM104",
+        "COMM110",
+        "COMM135",
+        "COMM212",
+        "COMM470"
+      ]
+    },
+    {
+      "name": "Biblical & Religious Studies",
+      "requiredCourses": [
+        "RELI211",
+        "RELI212",
+        "RELI246",
+        "RELI341",
+        "GREK101"
+      ]
     }
   ]
 }

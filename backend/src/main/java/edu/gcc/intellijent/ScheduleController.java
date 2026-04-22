@@ -25,7 +25,7 @@ public class ScheduleController {
             }
 
             Schedule schedule = userScheduleStore.getSchedule(username);
-            ctx.json(schedule.Schedule);
+            ctx.json(schedule.getCourses());
         });
 
         app.post("/schedule", ctx -> {
@@ -42,6 +42,7 @@ public class ScheduleController {
             schedule.AddCourse(course);
 
             if (schedule.isCourseAdded()) {
+                userScheduleStore.saveUserSchedule(username, schedule);
                 ctx.status(201);
                 ctx.json(new CourseAddResponse(true, schedule.isCourseFull(), new java.util.ArrayList<>()));
             } else {
@@ -62,6 +63,7 @@ public class ScheduleController {
             Schedule schedule = userScheduleStore.getSchedule(username);
             Course course = ctx.bodyAsClass(Course.class);
             schedule.RemoveCourse(course);
+            userScheduleStore.saveUserSchedule(username, schedule);
             ctx.status(204);
         });
 
@@ -75,6 +77,7 @@ public class ScheduleController {
 
             Schedule schedule = userScheduleStore.getSchedule(username);
             schedule.clearSchedule();
+            userScheduleStore.saveUserSchedule(username, schedule);
             ctx.status(204);
         });
 

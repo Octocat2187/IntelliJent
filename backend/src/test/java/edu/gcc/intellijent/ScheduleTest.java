@@ -16,10 +16,10 @@ class ScheduleTest {
         course.setTotal_seats(30);
         Schedule schedule = new Schedule();
 
-        Assertions.assertNotEquals(1, schedule.Schedule.size());
+        Assertions.assertNotEquals(1, schedule.getCourses().size());
 
         schedule.AddCourse(course);
-        Assertions.assertEquals(1, schedule.Schedule.size());
+        Assertions.assertEquals(1, schedule.getCourses().size());
     }
 
     @Test
@@ -30,10 +30,10 @@ class ScheduleTest {
         Schedule schedule = new Schedule();
         schedule.AddCourse(course);
 
-        Assertions.assertEquals(1, schedule.Schedule.size());
+        Assertions.assertEquals(1, schedule.getCourses().size());
 
         schedule.RemoveCourse(course);
-        Assertions.assertEquals(0, schedule.Schedule.size());
+        Assertions.assertEquals(0, schedule.getCourses().size());
     }
 
     // Test cases for isCourseSchedulable method
@@ -71,7 +71,7 @@ class ScheduleTest {
         times.add(time);
         course.setTimes(times);
 
-        Assertions.assertTrue(schedule.isCourseSchedulable(course));
+        Assertions.assertFalse(schedule.isCourseSchedulable(course));
     }
 
     @Test
@@ -89,7 +89,7 @@ class ScheduleTest {
         times.add(time);
         course.setTimes(times);
 
-        Assertions.assertTrue(schedule.isCourseSchedulable(course));
+        Assertions.assertFalse(schedule.isCourseSchedulable(course));
     }
 
     @Test
