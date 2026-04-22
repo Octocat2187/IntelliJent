@@ -14,6 +14,7 @@ function CustomEvent({ event }) {
             <div>{event.resource.fullName}</div>
             <div>Prof: {event.resource.professor}</div>
             <div>Credits: {event.resource.credits}</div>
+            <div>Location: {event.resource.location}</div>
           </>
         }
         arrow
@@ -447,7 +448,8 @@ export default function CourseSearch() {
           resource: {
               fullName: course.name,
               professor: course.faculty.join(", "),
-              credits: course.credits
+              credits: course.credits,
+              location: course.location
           }
         };
 
