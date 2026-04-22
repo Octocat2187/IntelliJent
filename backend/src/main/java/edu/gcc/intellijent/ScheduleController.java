@@ -35,9 +35,9 @@ public class ScheduleController {
                 schedule.clearSchedule();
 
                 ctx.status(204);
+            } else {
+                ctx.status(200);
             }
-
-            ctx.status(200);
         });
 
         app.post("/schedule", ctx -> {

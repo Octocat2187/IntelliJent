@@ -210,6 +210,8 @@ export default function CourseSearch() {
   const [signupError, setSignupError] = useState("");
   const [signupSuccess, setSignupSuccess] = useState("");
 
+  const [showRoulette, setShowRoulette] = useState(false);
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
@@ -644,6 +646,28 @@ export default function CourseSearch() {
       .then(data => setCourses(data));
   }
 
+  function playRoulette(guess) {
+    if (!loggedInUser) {
+      alert("Please log in first");
+      return;
+    }
+
+    fetch(`http://localhost:7000/roulette?username=${encodeURIComponent(loggedInUser)}&guess=${guess}`)
+      .then(res => {
+        if (res.status === 204) {
+          loadSched();
+          alert("You lost! Your schedule has been cleared.");
+        } else if (res.status === 200) {
+          alert("You won!");
+        }
+        setShowRoulette(false);
+      })
+      .catch(() => {
+        alert("Error playing roulette");
+        setShowRoulette(false);
+      });
+  }
+
   return (
     <div>
         <div
@@ -979,6 +1003,8 @@ export default function CourseSearch() {
               style={{display:"none"}}
             />
           </label>
+
+          <button onClick={() => setShowRoulette(true)} style={{marginLeft:"10px"}}>Play Roulette</button>
         </div>
 
         {selectedCourses.length === 0 && (
@@ -1245,7 +1271,77 @@ export default function CourseSearch() {
   </div>
 )}
 
+{showRoulette && (
+  <div style={{
+    position: "fixed",
+    top: "0",
+    left: "0",
+    right: "0",
+    bottom: "0",
+    background: "rgba(0, 0, 0, 0.8)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: "1000"
+  }}>
+
+    <div style={{
+      background: "gray",
+      padding: "20px",
+      borderRadius: "8px",
+      width: "90%",
+      maxWidth: "600px",
+      maxHeight: "80%",
+      overflowY: "auto",
+      position: "relative"
+    }}>
+
+      <button
+        onClick={() => setShowRoulette(false)}
+        style={{
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+          background: "#aaaaaa",
+          border: "none",
+          fontSize: "18px",
+          cursor: "pointer"
+        }}
+      >
+        &times;
+      </button>
+
+      <h2 style={{ marginTop: "0" }}>Roulette</h2>
+
+      <p>Guess the correct number to win! Wrong guess clears your schedule.</p>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
+        {Array.from({ length: 50 }, (_, i) => i + 1).map(num => (
+          <button
+            key={num}
+            onClick={() => playRoulette(num)}
+            style={{
+              width: "50px",
+              height: "50px",
+              background: "#4CAF50",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold"
+            }}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+
+    </div>
+
+  </div>
+)}
+
     </div>
   );
 }
-
