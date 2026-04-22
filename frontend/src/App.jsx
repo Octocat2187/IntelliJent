@@ -10,12 +10,7 @@ const localizer = momentLocalizer(moment);
 function TimeStepper({ value, onChange }) {
   const { hour, minute } = value;
 
-  function changeHour(delta) {
-    let newHour = (hour + delta + 24) % 24;
-    onChange({ hour: newHour, minute });
-  }
-
-  function changeMinute(delta) {
+  function changeByMinutes(delta) {
     let total = hour * 60 + minute + delta;
 
     if (total < 0) total += 24 * 60;
@@ -27,26 +22,143 @@ function TimeStepper({ value, onChange }) {
     onChange({ hour: newHour, minute: newMinute });
   }
 
+  function handleTimeInputChange(e) {
+    const input = e.target.value;
+    if (!input) return;
+
+    const parts = input.split(":");
+    if (parts.length !== 2) return;
+
+    const parsedHour = Number(parts[0]);
+    const parsedMinute = Number(parts[1]);
+
+    if (
+      Number.isNaN(parsedHour) ||
+      Number.isNaN(parsedMinute) ||
+      parsedHour < 0 ||
+      parsedHour > 23 ||
+      parsedMinute < 0 ||
+      parsedMinute > 59
+    ) {
+      return;
+    }
+
+    onChange({ hour: parsedHour, minute: parsedMinute });
+  }
+
+  function handleWheel(e) {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? 30 : -30;
+    changeByMinutes(delta);
+  }
+
+  const timeInputValue = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-      <div style={{ textAlign: "center" }}>
-        <button onClick={() => changeHour(1)}>▲</button>
-        <div>{((hour % 12) || 12).toString().padStart(2, "0")}</div>
-        <button onClick={() => changeHour(-1)}>▼</button>
+    <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", marginLeft: "8px" }}>
+      <input
+        type="time"
+        value={timeInputValue}
+        onChange={handleTimeInputChange}
+        onWheel={handleWheel}
+        step={1800}
+        aria-label="Time input"
+      />
+      <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+        <button
+          type="button"
+          onClick={() => changeByMinutes(30)}
+          aria-label="Increase time"
+          style={{ width: "24px", lineHeight: 1, padding: "2px 0" }}
+        >
+          +
+        </button>
+        <button
+          type="button"
+          onClick={() => changeByMinutes(-30)}
+          aria-label="Decrease time"
+          style={{ width: "24px", lineHeight: 1, padding: "2px 0" }}
+        >
+          -
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function RequiredCoursesPage({
+  majors,
+  selectedMajorName,
+  requiredCourses,
+  majorsError,
+  onSelectMajor,
+}) {
+  return (
+    <div
+      style={{
+        maxWidth: "900px",
+        margin: "0 auto",
+        padding: "0 20px 20px 20px",
+        fontFamily: "Arial"
+      }}
+    >
+      <h1 style={{ margin: "0 0 10px 0" }}>Required Courses</h1>
+      <p style={{ margin: "0 0 20px 0" }}>
+        Select a major to view its required courses.
+      </p>
+
+      <div style={{ marginBottom: "20px" }}>
+        <select
+          value={selectedMajorName}
+          onChange={(e) => onSelectMajor(e.target.value)}
+          style={{ minWidth: "280px", padding: "10px" }}
+        >
+          <option value="">Choose a major</option>
+          {majors.map((major) => (
+            <option key={major.name} value={major.name}>
+              {major.name}
+            </option>
+          ))}
+        </select>
       </div>
 
-      <div>:</div>
+      {majorsError && (
+        <div
+          style={{
+            marginBottom: "20px",
+            padding: "12px",
+            borderRadius: "8px",
+            background: "#ffe5e5",
+            color: "#8a1f1f",
+          }}
+        >
+          {majorsError}
+        </div>
+      )}
 
-      <div style={{ textAlign: "center" }}>
-        <button onClick={() => changeMinute(30)}>▲</button>
-        <div>{String(minute).padStart(2, "0")}</div>
-        <button onClick={() => changeMinute(-30)}>▼</button>
-      </div>
+      {selectedMajorName && (
+        <div
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "10px",
+            padding: "20px",
+          }}
+        >
+          <h2 style={{ margin: "0 0 12px 0" }}>{selectedMajorName}</h2>
 
-      <div style={{ marginLeft: "5px", fontWeight: "bold" }}>
-        {hour >= 12 ? "PM" : "AM"}
-      </div>
-
+          {requiredCourses.length > 0 ? (
+            <ul style={{ margin: 0, paddingLeft: "20px" }}>
+              {requiredCourses.map((course) => (
+                <li key={course} style={{ marginBottom: "8px" }}>
+                  {course}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p style={{ margin: 0 }}>No required courses found for this major.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -84,13 +196,32 @@ export default function CourseSearch() {
   const [subjects, setSubjects] = useState([]);
   const [professors, setProfessors] = useState([]);
 
+  const [showRequiredCourses, setShowRequiredCourses] = useState(false);
+  const [majors, setMajors] = useState([]);
+  const [selectedMajorName, setSelectedMajorName] = useState("");
+  const [requiredCourses, setRequiredCourses] = useState([]);
+  const [majorsError, setMajorsError] = useState("");
+
+  const [showLogin, setShowLogin] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [loginError, setLoginError] = useState("");
+  const [signupError, setSignupError] = useState("");
+  const [signupSuccess, setSignupSuccess] = useState("");
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
-    fetch("http://localhost:7000/schedule")
+    if (!loggedInUser) {
+      setSelectedCourses([]);
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`)
       .then(res => res.json())
       .then(data => setSelectedCourses(data));
-  }, []);
+  }, [loggedInUser]);
 
   useEffect(() => {
     fetch("http://localhost:7000/search?") // all of the courses, since no query params
@@ -100,6 +231,31 @@ export default function CourseSearch() {
         extractDropdownData(data);
       });
   }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:7000/majors")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Could not load majors from the backend.");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setMajors(data);
+        setMajorsError("");
+      })
+      .catch(() => {
+        setMajors([]);
+        setMajorsError("Could not load majors. Make sure the backend has the major routes enabled.");
+      });
+  }, []);
+
+  function handleSelectMajor(majorName) {
+  setSelectedMajorName(majorName);
+
+  const major = majors.find((m) => m.name === majorName);
+  setRequiredCourses(major ? major.requiredCourses : []);
+}
 
   function extractDropdownData(data) {
     const subjectSet = new Set();
@@ -125,6 +281,78 @@ export default function CourseSearch() {
     setProfessors([...professorSet].sort());
   }
 
+  function handleLogin() {
+    setLoginError("");
+
+    fetch("http://localhost:7000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username,
+        password
+      })
+    })
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Login failed");
+        }
+
+        setLoggedInUser(data.username);
+        setShowLogin(false);
+        setUsername("");
+        setPassword("");
+        setLoginError("");
+        setSignupError("");
+        setSignupSuccess("");
+      })
+      .catch((err) => {
+        setLoginError(err.message);
+      });
+  }
+
+  function handleSignup() {
+    setSignupError("");
+    setSignupSuccess("");
+    setLoginError("");
+
+    fetch("http://localhost:7000/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username,
+        password
+      })
+    })
+      .then(async (res) => {
+        const text = await res.text();
+        let data;
+
+        try {
+          data = JSON.parse(text);
+        } catch {
+          throw new Error(text || "Server error");
+        }
+
+        if (!res.ok) {
+          throw new Error(data.message || "Signup failed");
+        }
+
+        setSignupSuccess("Account created successfully. You can now log in.");
+        setSignupError("");
+        setPassword("");
+      })
+      .catch((err) => {
+        setSignupError(err.message);
+        setSignupSuccess("");
+      });
+  }
+
   function toggleDay(day) {
     setDays(prev =>
       prev.includes(day)
@@ -146,7 +374,12 @@ export default function CourseSearch() {
   }
 
   function loadSched() {
-    fetch("http://localhost:7000/schedule")
+    if (!loggedInUser) {
+      setSelectedCourses([]);
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`)
       .then(response => response.json())
       .then(data => {
         setSelectedCourses(data);
@@ -195,7 +428,12 @@ export default function CourseSearch() {
 
   function addCourse(course) {
 
-    fetch("http://localhost:7000/schedule", {
+    if (!loggedInUser) {
+      setErrorMessage("Please log in first");
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -236,7 +474,12 @@ export default function CourseSearch() {
   }
 
   function addAlternativeCourse(altCourse) {
-    fetch("http://localhost:7000/schedule", {
+    if (!loggedInUser) {
+      setErrorMessage("Please log in first");
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -271,7 +514,11 @@ export default function CourseSearch() {
 
   function removeCourse(course) {
 
-    fetch("http://localhost:7000/schedule", {
+    if (!loggedInUser) {
+      return;
+    }
+
+    fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -321,7 +568,13 @@ export default function CourseSearch() {
         const data = JSON.parse(e.target.result);
 
         // First, clear the backend schedule
-        fetch("http://localhost:7000/schedule/clear", {
+        if (!loggedInUser) {
+          alert("Please log in first");
+          event.target.value = "";
+          return;
+        }
+
+        fetch(`http://localhost:7000/schedule/clear?username=${encodeURIComponent(loggedInUser)}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -330,7 +583,7 @@ export default function CourseSearch() {
         .then(() => {
           // Then send loaded courses to backend and wait for all to complete
           const coursePromises = data.map(course =>
-            fetch("http://localhost:7000/schedule", {
+            fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
@@ -415,15 +668,74 @@ export default function CourseSearch() {
   }
 
   return (
-
     <div>
-
-        <button
-          onClick={() => setShowCalendar(!showCalendar)}
-          style={{ margin: "15px" }}
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "20px",
+            right: "20px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            zIndex: 1000
+          }}
         >
-          {showCalendar ? "Back to Search" : "View Calendar"}
-        </button>
+
+          {/* LEFT SIDE BUTTONS */}
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              onClick={() => {
+                const next = !showCalendar;
+                setShowCalendar(next);
+                if (next) setShowRequiredCourses(false);
+              }}
+            >
+              {showCalendar ? "Back to Search" : "View Calendar"}
+            </button>
+
+            <button
+              onClick={() => {
+                const next = !showRequiredCourses;
+                setShowRequiredCourses(next);
+                if (next) setShowCalendar(false);
+              }}
+            >
+              {showRequiredCourses ? "Back to Search" : "Required Courses"}
+            </button>
+          </div>
+
+          {/* RIGHT SIDE ACCOUNT */}
+          <div>
+            {loggedInUser ? (
+              <button
+                onClick={() => {
+                  setLoggedInUser(null);
+                  setSelectedCourses([]);
+                }}
+              >
+                {loggedInUser} (Logout)
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setShowLogin(true);
+                  setLoginError("");
+                  setSignupError("");
+                  setSignupSuccess("");
+                  setUsername("");
+                  setPassword("");
+                }}
+              >
+                Account
+              </button>
+            )}
+          </div>
+
+        </div>
+
+
+      <div style={{ height: "80px" }} />
 
         {showCalendar ? (
 
@@ -444,7 +756,15 @@ export default function CourseSearch() {
 
           </div>
 
-        ) : (
+        ) : showRequiredCourses ? (
+            <RequiredCoursesPage
+              majors={majors}
+              selectedMajorName={selectedMajorName}
+              requiredCourses={requiredCourses}
+              majorsError={majorsError}
+              onSelectMajor={handleSelectMajor}
+            />
+          ) : (
 
           <div style={{
             display: "flex",
@@ -879,6 +1199,94 @@ export default function CourseSearch() {
 
       </div>
     )}
+
+{showLogin && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(0,0,0,0.6)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 2000
+    }}
+  >
+    <div
+      style={{
+        background: "white",
+        padding: "30px",
+        borderRadius: "10px",
+        width: "300px",
+        textAlign: "center"
+      }}
+    >
+      <h2>Login</h2>
+
+      <input
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        style={{ width: "100%", marginBottom: "15px", padding: "8px" }}
+      />
+
+      {loginError && (
+        <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
+          {loginError}
+        </div>
+      )}
+
+  {signupError && (
+    <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
+      {signupError}
+    </div>
+  )}
+
+  {signupSuccess && (
+    <div style={{ color: "green", marginBottom: "10px", fontSize: "14px" }}>
+      {signupSuccess}
+    </div>
+  )}
+
+      <button
+        onClick={handleLogin}
+        style={{ width: "100%", marginBottom: "10px" }}
+      >
+        Login
+      </button>
+
+      <button
+        onClick={handleSignup}
+        style={{ width: "100%", marginBottom: "10px" }}
+      >
+        Sign Up
+      </button>
+
+      <button
+        onClick={() => {
+          setShowLogin(false);
+          setLoginError("");
+          setSignupError("");
+          setSignupSuccess("");
+        }}
+        style={{ width: "100%" }}
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
 
     </div>
   );

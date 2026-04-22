@@ -9,22 +9,42 @@ import java.util.Map;
 import java.util.Random;
 
 public class ScheduleController {
-    private static final Schedule schedule = new Schedule();
     private static CourseCatalog courseCatalog;
+    private static UserScheduleStore userScheduleStore;
 
-
-    public static void registerRoutes(Javalin app, CourseCatalog catalog) {
+    public static void registerRoutes(Javalin app, CourseCatalog catalog, UserScheduleStore store) {
         courseCatalog = catalog;
+        userScheduleStore = store;
 
-        app.get("/schedule", ctx -> ctx.json(schedule.Schedule));
+        app.get("/schedule", ctx -> {
+            String username = ctx.queryParam("username");
+
+            if (username == null || username.isBlank()) {
+                ctx.status(400).result("Username is required");
+                return;
+            }
+
+            Schedule schedule = userScheduleStore.getSchedule(username);
+            ctx.json(schedule.Schedule);
+        });
 
         app.post("/schedule", ctx -> {
+            String username = ctx.queryParam("username");
+
+            if (username == null || username.isBlank()) {
+                ctx.status(400).json(java.util.Map.of("message", "Username is required"));
+                return;
+            }
+
+            Schedule schedule = userScheduleStore.getSchedule(username);
             Course course = ctx.bodyAsClass(Course.class);
+
             schedule.AddCourse(course);
-            if (schedule.isCourseAdded()){
+
+            if (schedule.isCourseAdded()) {
                 ctx.status(201);
                 ctx.json(new CourseAddResponse(true, schedule.isCourseFull(), new java.util.ArrayList<>()));
-            } else{
+            } else {
                 java.util.ArrayList<Course> alternatives = schedule.findAlternativeCourses(course, courseCatalog);
                 ctx.status(409);
                 ctx.json(new CourseAddResponse(false, alternatives));
@@ -32,18 +52,28 @@ public class ScheduleController {
         });
 
         app.delete("/schedule", ctx -> {
+            String username = ctx.queryParam("username");
+
+            if (username == null || username.isBlank()) {
+                ctx.status(400).result("Username is required");
+                return;
+            }
+
+            Schedule schedule = userScheduleStore.getSchedule(username);
             Course course = ctx.bodyAsClass(Course.class);
-            //boolean removed = schedule.RemoveCourse(course);
             schedule.RemoveCourse(course);
             ctx.status(204);
-//            if (removed) {
-//                ctx.status(204); // success, no body
-//            } else {
-//                ctx.status(404);
-//            }
         });
 
         app.post("/schedule/clear", ctx -> {
+            String username = ctx.queryParam("username");
+
+            if (username == null || username.isBlank()) {
+                ctx.status(400).result("Username is required");
+                return;
+            }
+
+            Schedule schedule = userScheduleStore.getSchedule(username);
             schedule.clearSchedule();
             ctx.status(204);
         });
