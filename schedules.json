@@ -1,0 +1,68 @@
+{
+  "null" : {
+    "courses" : [ {
+      "subject" : "COMP",
+      "number" : 350,
+      "name" : "SOFTWARE ENGINEERING",
+      "section" : "B",
+      "location" : "STEM 326",
+      "faculty" : [ "Hutchins, Jonathan O." ],
+      "credits" : 3,
+      "open_seats" : 9,
+      "total_seats" : 23,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "15:00:00",
+        "end_time" : "15:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "15:00:00",
+        "end_time" : "15:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "15:00:00",
+        "end_time" : "15:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Spring",
+      "courseCode" : "COMP350",
+      "available" : true
+    } ],
+    "courseFull" : false,
+    "courseAdded" : true
+  },
+  "user" : {
+    "courses" : [ {
+      "subject" : "ASTR",
+      "number" : 206,
+      "name" : "INTRO TO SKY MOTIONS & PLANETS",
+      "section" : "A",
+      "location" : "STEM 051",
+      "faculty" : [ "Clem, James L." ],
+      "credits" : 3,
+      "open_seats" : 23,
+      "total_seats" : 45,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "13:00:00",
+        "end_time" : "13:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "13:00:00",
+        "end_time" : "13:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "13:00:00",
+        "end_time" : "13:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "courseCode" : "ASTR206",
+      "available" : true
+    } ],
+    "courseFull" : false,
+    "courseAdded" : false
+  }
+}

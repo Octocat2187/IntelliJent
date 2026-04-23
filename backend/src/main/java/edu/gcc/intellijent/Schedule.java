@@ -1,20 +1,34 @@
 package edu.gcc.intellijent;
 import java.util.ArrayList;
 import java.sql.Time;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Schedule {
     /**
      * TODO: Change name of this var. It matches the name of the public class Schedule
      * This means to call it we'd have to do something like Schedule.Schedule.add(Course)
      * Which is silly
      */
-    ArrayList<Course> Schedule = new ArrayList<Course>();
-    boolean CourseAdded = false;
-    boolean courseFull = false;
+    private ArrayList<Course> courses = new ArrayList<Course>();
+    private boolean CourseAdded = false;
+    private boolean courseFull = false;
+
+    public Schedule() {
+    }
+
+    public ArrayList<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(ArrayList<Course> courses) {
+        this.courses = courses;
+    }
+
     public void AddCourse(Course course){
         if (isCourseSchedulable(course)) {
             courseFull = !course.isAvailable();
-            Schedule.add(course);
+            courses.add(course);
             CourseAdded = true;
         }
         else {
@@ -24,14 +38,14 @@ public class Schedule {
 
     public void RemoveCourse(Course course){
         System.out.println("remove triggered");
-        if(Schedule.contains(course)){
+        if(courses.contains(course)){
             System.out.println("it contains the course");
-            Schedule.remove(course);
+            courses.remove(course);
         }
     }
 
     public void clearSchedule(){
-        Schedule.clear();
+        courses.clear();
     }
 
 
@@ -46,12 +60,15 @@ public class Schedule {
      */
     public boolean isCourseSchedulable(Course course){
 
+        if (!course.isAvailable()) {
+            return false;
+        }
         // If course has no class times, it's schedulable
         if (course.getTimes() == null || course.getTimes().isEmpty()) {
             return true;
         }
         // Check against each course already in the schedule
-        for (Course scheduledCourse : Schedule) {
+        for (Course scheduledCourse : courses) {
             // Don't add if it's the same course (same subject and number, regardless of section)
             if (course.getSubject() != null && course.getSubject().equals(scheduledCourse.getSubject()) &&
                 course.getNumber() == scheduledCourse.getNumber()) {
@@ -103,7 +120,7 @@ public class Schedule {
                 if (alternative.getSection() != null && alternative.getSection().equals(course.getSection())) {
                     continue;
                 }
-                if (Schedule.contains(alternative)) {
+                if (courses.contains(alternative)) {
                     continue;
                 }
                 // Check if the alternative course can be scheduled (time conflicts, etc)

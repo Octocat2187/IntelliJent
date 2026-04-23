@@ -209,8 +209,8 @@ export default function CourseSearch() {
   const [loginError, setLoginError] = useState("");
   const [signupError, setSignupError] = useState("");
   const [signupSuccess, setSignupSuccess] = useState("");
-
-  const [showRoulette, setShowRoulette] = useState(false);
+  const [major, setMajor] = useState("");
+  const [showProfile, setShowProfile] = useState(false);
 
   /* LOAD SCHEDULE FROM BACKEND */
 
@@ -233,6 +233,12 @@ export default function CourseSearch() {
         extractDropdownData(data);
       });
   }, []);
+
+  useEffect(() => {
+    if (loggedInUser && major) {
+      handleSelectMajor(major);
+    }
+  }, [loggedInUser, major]);
 
   useEffect(() => {
     fetch("http://localhost:7000/majors")
@@ -304,6 +310,7 @@ export default function CourseSearch() {
         }
 
         setLoggedInUser(data.username);
+        setMajor(data.major);
         setShowLogin(false);
         setUsername("");
         setPassword("");
@@ -321,6 +328,11 @@ export default function CourseSearch() {
     setSignupSuccess("");
     setLoginError("");
 
+    if (!major) {
+      setSignupError("Please select a major");
+      return;
+    }
+
     fetch("http://localhost:7000/signup", {
       method: "POST",
       headers: {
@@ -328,7 +340,8 @@ export default function CourseSearch() {
       },
       body: JSON.stringify({
         username,
-        password
+        password,
+        major
       })
     })
       .then(async (res) => {
@@ -646,29 +659,54 @@ export default function CourseSearch() {
       .then(data => setCourses(data));
   }
 
-  function playRoulette(guess) {
-    if (!loggedInUser) {
-      alert("Please log in first");
-      return;
+  function handleLucky() {
+      fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(courses)
+      })
+        .then(res => {
+          if (res.status === 201) {
+            // success → reload schedule
+            loadSched();
+          } else if (res.status === 409) {
+            alert("No schedulable courses found");
+          } else {
+            alert("Something went wrong");
+          }
+        })
+        .catch(() => {
+          alert("Server error");
+        });
     }
 
-    fetch(`http://localhost:7000/roulette?username=${encodeURIComponent(loggedInUser)}&guess=${guess}`)
-      .then(res => {
-        if (res.status === 204) {
-          loadSched();
-          alert("You lost! Your schedule has been cleared.");
-        } else if (res.status === 200) {
-          alert("You won!");
-        }
-        setShowRoulette(false);
-      })
-      .catch(() => {
-        alert("Error playing roulette");
-        setShowRoulette(false);
-      });
-  }
+  return showProfile ? (
+    <div style={{ textAlign: "center", marginTop: "100px" }}>
+      <h2>Account</h2>
 
-  return (
+      <p><strong>Username:</strong> {loggedInUser}</p>
+      <p><strong>Major:</strong> {major}</p>
+
+      <button
+        onClick={() => setShowProfile(false)}
+        style={{ marginRight: "10px" }}
+      >
+        Back
+      </button>
+
+      <button
+        onClick={() => {
+          setLoggedInUser(null);
+          setSelectedCourses([]);
+          setShowProfile(false);
+        }}
+      >
+        Sign Out
+      </button>
+    </div>
+  ) : (
     <div>
         <div
           style={{
@@ -709,13 +747,8 @@ export default function CourseSearch() {
           {/* RIGHT SIDE ACCOUNT */}
           <div>
             {loggedInUser ? (
-              <button
-                onClick={() => {
-                  setLoggedInUser(null);
-                  setSelectedCourses([]);
-                }}
-              >
-                {loggedInUser} (Logout)
+              <button onClick={() => setShowProfile(true)}>
+                {loggedInUser}
               </button>
             ) : (
               <button
@@ -772,6 +805,7 @@ export default function CourseSearch() {
             justifyContent: "center",
             gap: "40px",
             fontFamily: "Arial"
+
           }}>
 
       {/* LEFT SIDE */}
@@ -780,11 +814,31 @@ export default function CourseSearch() {
 
         <h1>Course Search</h1>
 
-        <input
-          placeholder="Search courses..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "10px" }}>
+          <input
+            placeholder="Search courses..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              flex: 1,
+              padding: "6px"
+            }}
+          />
+
+          <button
+            style={{
+              background: "#4285F4",
+              color: "white",
+              border: "none",
+              padding: "6px 12px",
+              borderRadius: "4px",
+              cursor: "pointer"
+            }}
+            onClick={handleLucky}
+          >
+            I'm Feeling Lucky
+          </button>
+        </div>
 
         {/* DAY SELECTOR */}
 
@@ -992,10 +1046,10 @@ export default function CourseSearch() {
         <h2>My Schedule</h2>
 
         <div style={{marginBottom:"10px"}}>
-          <button onClick={saveSchedule}>Save Schedule</button>
+          <button onClick={saveSchedule}>Download Schedule</button>
 
           <label style={{marginLeft:"10px", cursor:"pointer"}}>
-            Load Schedule
+
             <input
               type="file"
               accept=".json"
@@ -1003,8 +1057,6 @@ export default function CourseSearch() {
               style={{display:"none"}}
             />
           </label>
-
-          <button onClick={() => setShowRoulette(true)} style={{marginLeft:"10px"}}>Play Roulette</button>
         </div>
 
         {selectedCourses.length === 0 && (
@@ -1224,6 +1276,19 @@ export default function CourseSearch() {
         style={{ width: "100%", marginBottom: "15px", padding: "8px" }}
       />
 
+      <select
+        value={major}
+        onChange={(e) => setMajor(e.target.value)}
+        style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+      >
+        <option value="">Select Major</option>
+        {majors.map((m) => (
+          <option key={m.name} value={m.name}>
+            {m.name}
+          </option>
+        ))}
+      </select>
+
       {loginError && (
         <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
           {loginError}
@@ -1271,77 +1336,7 @@ export default function CourseSearch() {
   </div>
 )}
 
-{showRoulette && (
-  <div style={{
-    position: "fixed",
-    top: "0",
-    left: "0",
-    right: "0",
-    bottom: "0",
-    background: "rgba(0, 0, 0, 0.8)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: "1000"
-  }}>
-
-    <div style={{
-      background: "gray",
-      padding: "20px",
-      borderRadius: "8px",
-      width: "90%",
-      maxWidth: "600px",
-      maxHeight: "80%",
-      overflowY: "auto",
-      position: "relative"
-    }}>
-
-      <button
-        onClick={() => setShowRoulette(false)}
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "10px",
-          background: "#aaaaaa",
-          border: "none",
-          fontSize: "18px",
-          cursor: "pointer"
-        }}
-      >
-        &times;
-      </button>
-
-      <h2 style={{ marginTop: "0" }}>Roulette</h2>
-
-      <p>Guess the correct number to win! Wrong guess clears your schedule.</p>
-
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", justifyContent: "center" }}>
-        {Array.from({ length: 50 }, (_, i) => i + 1).map(num => (
-          <button
-            key={num}
-            onClick={() => playRoulette(num)}
-            style={{
-              width: "50px",
-              height: "50px",
-              background: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              fontSize: "16px",
-              fontWeight: "bold"
-            }}
-          >
-            {num}
-          </button>
-        ))}
-      </div>
-
-    </div>
-
-  </div>
-)}
-
     </div>
   );
 }
+
