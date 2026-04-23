@@ -212,6 +212,10 @@ export default function CourseSearch() {
   const [major, setMajor] = useState("");
   const [showProfile, setShowProfile] = useState(false);
 
+  const [showRoulette, setShowRoulette] = useState(false);
+  const [rouletteLoading, setRouletteLoading] = useState(false);
+  const [rouletteNotification, setRouletteNotification] = useState(null);
+
   /* LOAD SCHEDULE FROM BACKEND */
 
   useEffect(() => {
@@ -682,6 +686,40 @@ export default function CourseSearch() {
         });
     }
 
+  function handleRouletteGuess(guess) {
+    if (!loggedInUser) {
+      alert("Please log in first");
+      return;
+    }
+
+    setRouletteLoading(true);
+
+    fetch(`http://localhost:7000/roulette?username=${encodeURIComponent(loggedInUser)}&guess=${guess}`)
+      .then(res => {
+        if (res.status === 200) {
+          // Won
+          alert("Success!");
+          loadSched();
+          setTimeout(() => {
+            setShowRoulette(false);
+          }, 2000);
+        } else if (res.status === 204) {
+          // Lost - schedule was deleted
+          alert("Wrong!");
+          loadSched();
+          setShowRoulette(false);
+        } else {
+          alert("Error");
+        }
+      })
+      .catch(() => {
+        alert("Error")
+      })
+      .finally(() => {
+        setRouletteLoading(false);
+      });
+  }
+
   return showProfile ? (
     <div style={{ textAlign: "center", marginTop: "100px" }}>
       <h2>Account</h2>
@@ -741,6 +779,22 @@ export default function CourseSearch() {
               }}
             >
               {showRequiredCourses ? "Back to Search" : "Required Courses"}
+            </button>
+
+            <button
+              onClick={() => {
+                setShowRoulette(true);
+              }}
+              style={{
+                background: "#9c27b0",
+                color: "white",
+                border: "none",
+                padding: "6px 12px",
+                borderRadius: "4px",
+                cursor: "pointer"
+              }}
+            >
+             Roulette
             </button>
           </div>
 
@@ -1333,6 +1387,94 @@ export default function CourseSearch() {
         Cancel
       </button>
     </div>
+  </div>
+)}
+
+{/* ROULETTE MODAL */}
+
+{showRoulette && (
+  <div style={{
+    position: "fixed",
+    top: "0",
+    left: "0",
+    right: "0",
+    bottom: "0",
+    background: "rgba(0, 0, 0, 0.8)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: "1000"
+  }}>
+
+    <div style={{
+      background: "#2a2a2a",
+      padding: "30px",
+      borderRadius: "12px",
+      width: "90%",
+      maxWidth: "800px",
+      maxHeight: "85vh",
+      overflowY: "auto",
+      position: "relative",
+      textAlign: "center",
+      color: "#fff"
+    }}>
+
+      <button
+        onClick={() => {
+          setShowRoulette(false);
+        }}
+        style={{
+          position: "absolute",
+          top: "15px",
+          right: "15px",
+          background: "#555",
+          border: "none",
+          fontSize: "24px",
+          cursor: "pointer",
+          width: "40px",
+          height: "40px",
+          borderRadius: "4px",
+          color: "#fff"
+        }}
+      >
+        ✕
+      </button>
+
+      <h2 style={{ marginTop: "0", marginBottom: "10px" }}>🎲 Try Your Luck!</h2>
+      <p style={{ marginBottom: "30px", color: "#ccc" }}>
+        Pick a number from 1 to 50. If you're right, you keep your schedule. If you're wrong... goodbye schedule!
+      </p>
+
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(60px, 1fr))",
+        gap: "10px",
+        marginBottom: "20px"
+      }}>
+        {Array.from({ length: 50 }, (_, i) => i + 1).map(num => (
+          <button
+            key={num}
+            onClick={() => handleRouletteGuess(num)}
+            disabled={rouletteLoading}
+            style={{
+              padding: "12px",
+              background: "#4CAF50",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              cursor: rouletteLoading ? "not-allowed" : "pointer",
+              opacity: rouletteLoading ? 0.6 : 1,
+              transition: "all 0.2s ease"
+            }}
+          >
+            {num}
+          </button>
+        ))}
+      </div>
+    </div>
+
   </div>
 )}
 
