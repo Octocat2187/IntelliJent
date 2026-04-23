@@ -1,4 +1,37 @@
 {
+  "John" : {
+    "courses" : [ {
+      "subject" : "MATH",
+      "number" : 262,
+      "name" : "DIFFERENTIAL EQUATIONS",
+      "section" : "A",
+      "location" : "SHAL 206",
+      "faculty" : [ "Flanders, Steven Todd" ],
+      "credits" : 3,
+      "open_seats" : 32,
+      "total_seats" : 32,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "available" : true,
+      "courseCode" : "MATH262"
+    } ],
+    "courseFull" : false,
+    "courseAdded" : true
+  },
   "null" : {
     "courses" : [ {
       "subject" : "COMP",
@@ -26,8 +59,36 @@
       } ],
       "daysOfWeek" : null,
       "semester" : "2024_Spring",
-      "courseCode" : "COMP350",
-      "available" : true
+      "available" : true,
+      "courseCode" : "COMP350"
+    }, {
+      "subject" : "STAT",
+      "number" : 412,
+      "name" : "DATA ANALYSIS RESEARCH METHODS",
+      "section" : "A",
+      "location" : "SHAL 305 Seminar-14 Tables-10 Tablet Arm Desks",
+      "faculty" : [ "Flanders, Steven Todd" ],
+      "credits" : 3,
+      "open_seats" : 5,
+      "total_seats" : 10,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "STAT412"
     } ],
     "courseFull" : false,
     "courseAdded" : true
@@ -59,8 +120,8 @@
       } ],
       "daysOfWeek" : null,
       "semester" : "2023_Fall",
-      "courseCode" : "ASTR206",
-      "available" : true
+      "available" : true,
+      "courseCode" : "ASTR206"
     } ],
     "courseFull" : false,
     "courseAdded" : false

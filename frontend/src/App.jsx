@@ -2,8 +2,35 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import Tooltip from "@mui/material/Tooltip";
 
 const localizer = momentLocalizer(moment);
+
+function CustomEvent({ event }) {
+  return (
+      <Tooltip
+        title={
+          <>
+            <div>{event.resource.fullName}</div>
+            <div>Prof: {event.resource.professor}</div>
+            <div>Credits: {event.resource.credits}</div>
+            <div>Location: {event.resource.location}</div>
+          </>
+        }
+        arrow
+        placement="top"
+      >
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          {event.title}
+        </div>
+      </Tooltip>
+  );
+}
 
 /* TIME STEPPER COMPONENT */
 
@@ -436,7 +463,13 @@ export default function CourseSearch() {
         return {
           title: `${course.subject}-${course.number}`,
           start,
-          end
+          end,
+          resource: {
+              fullName: course.name,
+              professor: course.faculty.join(", "),
+              credits: course.credits,
+              location: course.location
+          }
         };
 
       })
@@ -664,27 +697,27 @@ export default function CourseSearch() {
   }
 
   function handleLucky() {
-      fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(courses)
+    fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(courses)
+    })
+      .then(res => {
+        if (res.status === 201) {
+          // success → reload schedule
+          loadSched();
+        } else if (res.status === 409) {
+          alert("No schedulable courses found");
+        } else {
+          alert("Something went wrong");
+        }
       })
-        .then(res => {
-          if (res.status === 201) {
-            // success → reload schedule
-            loadSched();
-          } else if (res.status === 409) {
-            alert("No schedulable courses found");
-          } else {
-            alert("Something went wrong");
-          }
-        })
-        .catch(() => {
-          alert("Server error");
-        });
-    }
+      .catch(() => {
+        alert("Server error");
+      });
+  }
 
   function handleRouletteGuess(guess) {
     if (!loggedInUser) {
@@ -839,6 +872,10 @@ export default function CourseSearch() {
               max={new Date(1970, 1, 1, 22, 0)}
               step={30}
               timeslots={1}
+              components={{
+                  event: CustomEvent
+              }}
+              tooltipAccessor={null}
               style={{ height: "700px" }}
             />
 
