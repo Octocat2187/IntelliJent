@@ -1252,7 +1252,7 @@ export default function CourseSearch() {
   >
     <div
       style={{
-        background: "white",
+        background: "gray",
         padding: "30px",
         borderRadius: "10px",
         width: "300px",
