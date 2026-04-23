@@ -28,6 +28,23 @@ public class ScheduleController {
             ctx.json(schedule.getCourses());
         });
 
+        app.get("/roulette", ctx ->{
+            String username =  ctx.queryParam("username");
+            int guess = Integer.parseInt(ctx.queryParam("guess"));
+
+            Schedule schedule = userScheduleStore.getSchedule(username);
+
+            if(!schedule.wonRoulette(guess)){
+                // you lose
+                // delete schedule
+                schedule.clearSchedule();
+
+                ctx.status(204);
+            } else {
+                ctx.status(200);
+            }
+        });
+
         app.post("/schedule", ctx -> {
             String username = ctx.queryParam("username");
 
