@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class AccountStore {
     private final Map<String, Account> accounts = new HashMap<>();
@@ -15,6 +16,9 @@ public class AccountStore {
 
     public AccountStore() {
         loadFromFile();
+        if (!accounts.containsKey("admin")) {
+            createAccount("admin", "admin123", "");
+        }
     }
 
     private void loadFromFile() {
@@ -72,5 +76,13 @@ public class AccountStore {
         acc.setMajor(newMajor);
         saveToFile();
         return true;
+    }
+    public Set<String> getAllUsernames() {
+        return accounts.keySet();
+    }
+    public boolean deleteUser(String username) {
+        boolean removed = accounts.remove(username) != null;
+        if (removed) saveToFile();
+        return removed;
     }
 }

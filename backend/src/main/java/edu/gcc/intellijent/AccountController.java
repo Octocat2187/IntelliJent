@@ -8,9 +8,11 @@ import java.util.Map;
 public class AccountController {
 
     private static AccountStore accountStore;
+    private static UserScheduleStore userScheduleStore;
 
-    public AccountController(AccountStore accountStore) {
+    public AccountController(AccountStore accountStore, UserScheduleStore scheduleStore) {
         AccountController.accountStore = accountStore;
+        AccountController.userScheduleStore = scheduleStore;
     }
 
     public static void registerRoutes(Javalin app) {
@@ -21,10 +23,13 @@ public class AccountController {
 
             Map<String, Object> response = new HashMap<>();
 
+
             if (valid) {
+                boolean isAdmin = account.getUsername().equals("admin");
                 response.put("success", true);
                 response.put("username", account.getUsername());
                 response.put("major", accountStore.getAccount(account.getUsername()).getMajor());
+                response.put("isAdmin", isAdmin);
                 ctx.status(200).json(response);
             } else {
                 response.put("success", false);
@@ -104,6 +109,43 @@ public class AccountController {
             response.put("success", true);
             response.put("major", newMajor);
             ctx.status(200).json(response);
+        });
+
+        app.get("/users", ctx -> {
+
+            String requester = ctx.queryParam("username");
+
+            if (!"admin".equals(requester)) {
+                ctx.status(403).result("Forbidden");
+                return;
+            }
+
+            ctx.json(accountStore.getAllUsernames());
+        });
+        app.delete("/users/{username}", ctx -> {
+
+            String requester = ctx.queryParam("username");
+            String usernameToDelete = ctx.pathParam("username");
+
+            if (!"admin".equals(requester)) {
+                ctx.status(403).result("Forbidden");
+                return;
+            }
+
+            if ("admin".equals(usernameToDelete)) {
+                ctx.status(403).result("Cannot delete admin user");
+                return;
+            }
+
+            boolean removed = accountStore.deleteUser(usernameToDelete);
+
+            if (!removed) {
+                ctx.status(404).result("User not found");
+                return;
+            }
+
+            userScheduleStore.deleteUserSchedule(usernameToDelete);
+            ctx.status(200).result("User deleted");
         });
     }
 }

@@ -38,6 +38,7 @@ public class ScheduleController {
                 // you lose
                 // delete schedule
                 schedule.clearSchedule();
+                userScheduleStore.saveUserSchedule(username, schedule);
 
                 ctx.status(204);
             } else {
@@ -126,6 +127,7 @@ public class ScheduleController {
             Course luckyCourse = potentialList.get(rand.nextInt(potentialList.size()));
             schedule.AddCourse(luckyCourse);
             if (schedule.isCourseAdded()){
+                userScheduleStore.saveUserSchedule(username, schedule);
                 ctx.status(201);
             } else{
                 ctx.status(409);

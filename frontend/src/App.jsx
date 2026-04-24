@@ -239,6 +239,8 @@ export default function CourseSearch() {
   const [major, setMajor] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [authMode, setAuthMode] = useState("login");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const [showRoulette, setShowRoulette] = useState(false);
   const [rouletteLoading, setRouletteLoading] = useState(false);
@@ -265,6 +267,12 @@ export default function CourseSearch() {
         extractDropdownData(data);
       });
   }, []);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadUsers();
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     if (loggedInUser && major) {
@@ -361,6 +369,7 @@ export default function CourseSearch() {
 
         setLoggedInUser(data.username);
         setMajor(data.major);
+        setIsAdmin(data.isAdmin || false);
         setShowLogin(false);
         setUsername("");
         setPassword("");
@@ -428,6 +437,25 @@ export default function CourseSearch() {
         ? prev.filter(d => d !== day)
         : [...prev, day]
     );
+  }
+  function loadUsers() {
+    fetch(`http://localhost:7000/users?username=${loggedInUser}`)
+      .then(res => res.json())
+      .then(data => setUsers(data))
+      .catch(() => alert("Failed to load users"));
+  }
+  function deleteUser(usernameToDelete) {
+    fetch(`http://localhost:7000/users/${usernameToDelete}?username=${loggedInUser}`, {
+      method: "DELETE"
+    })
+      .then(res => {
+        if (res.ok) {
+          setUsers(prev => prev.filter(u => u !== usernameToDelete));
+        } else {
+          alert("Failed to delete user");
+        }
+      })
+      .catch(() => alert("Server error"));
   }
 
   function formatTo12Hour(timeStr) {
@@ -504,9 +532,10 @@ export default function CourseSearch() {
   function addCourse(course) {
 
     if (!loggedInUser) {
-      setErrorMessage("Please log in first");
-      return;
-    }
+        setSelectedCourses(prev => [...prev, course]);
+        return;
+      }
+
 
     fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
@@ -590,8 +619,15 @@ export default function CourseSearch() {
   function removeCourse(course) {
 
     if (!loggedInUser) {
-      return;
-    }
+        setSelectedCourses(prev =>
+          prev.filter(c =>
+            !(c.subject === course.subject &&
+              c.number === course.number &&
+              c.section === course.section)
+          )
+        );
+        return;
+      }
 
     fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "DELETE",
@@ -603,13 +639,6 @@ export default function CourseSearch() {
     .then(() => {
         loadSched();
     });
-//     .then(() => {
-//
-//       setSelectedCourses(prev =>
-//   	prev.filter(c => !(c.subject === course.subject && c.number === course.number))
-//       );
-//
-//     });
   }
 
   /* SAVE SCHEDULE */
@@ -720,6 +749,16 @@ export default function CourseSearch() {
   }
 
   function handleLucky() {
+      if (!loggedInUser) {
+          if (!courses.length) {
+            alert("No courses available");
+            return;
+          }
+
+          const random = courses[Math.floor(Math.random() * courses.length)];
+          setSelectedCourses(prev => [...prev, random]);
+          return;
+        }
     fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
       headers: {
@@ -744,9 +783,19 @@ export default function CourseSearch() {
 
   function handleRouletteGuess(guess) {
     if (!loggedInUser) {
-      alert("Please log in first");
-      return;
-    }
+        const winningNumber = Math.floor(Math.random() * 50) + 1;
+
+        if (guess === winningNumber) {
+          alert("Success! You guessed correctly");
+          // keep schedule
+        } else {
+          alert("Wrong! Your schedule has been cleared");
+          setSelectedCourses([]);
+        }
+
+        setShowRoulette(false);
+        return;
+      }
 
     setRouletteLoading(true);
 
@@ -774,6 +823,65 @@ export default function CourseSearch() {
       .finally(() => {
         setRouletteLoading(false);
       });
+  }
+  if (isAdmin) {
+    return (
+      <>
+        {/* SIGN OUT BUTTON */}
+        <button
+          onClick={() => {
+            setLoggedInUser(null);
+            setIsAdmin(false);
+            setUsers([]);
+          }}
+          style={{
+            position: "fixed",
+            top: "20px",
+            right: "20px",
+            padding: "8px 12px",
+            cursor: "pointer"
+          }}
+        >
+          Sign Out
+        </button>
+
+        <div style={{ padding: "40px", fontFamily: "Arial" }}>
+          <h1>Admin Panel</h1>
+
+          {users.length === 0 ? (
+            <p>No users found</p>
+          ) : (
+            users.map(user => (
+              <div
+                key={user}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                  borderBottom: "1px solid #ddd"
+                }}
+              >
+                <span>{user}</span>
+
+                <button
+                  onClick={() => deleteUser(user)}
+                  style={{
+                    background: "#d9534f",
+                    color: "white",
+                    border: "none",
+                    padding: "4px 10px",
+                    borderRadius: "4px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </>
+    );
   }
 
   return showProfile ? (
