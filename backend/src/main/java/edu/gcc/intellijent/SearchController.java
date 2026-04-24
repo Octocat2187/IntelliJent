@@ -24,6 +24,7 @@ public class SearchController {
             String endTime = ctx.queryParam("endTime");
             String days = ctx.queryParam("days");
             String full = ctx.queryParam("isFull");
+            String semester = ctx.queryParam("semester");
 
             if (query == null){
                 query = "";
@@ -100,6 +101,12 @@ public class SearchController {
             if (full != null) {
                 FullFilter filter = new FullFilter();
                 filter.courseIsFull = Boolean.parseBoolean(full);
+                results = filter.ApplyFilter(results);
+            }
+
+            if (semester != null){
+                SemesterFilter filter = new SemesterFilter();
+                filter.semester = semester;
                 results = filter.ApplyFilter(results);
             }
 
