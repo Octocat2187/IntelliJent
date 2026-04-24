@@ -1,4 +1,24 @@
 {
+  "user2" : {
+    "username" : "user2",
+    "password" : "123456",
+    "major" : "Electrical Engineering"
+  },
+  "asd" : {
+    "username" : "asd",
+    "password" : "123456",
+    "major" : "Computer Science"
+  },
+  "test3" : {
+    "username" : "test3",
+    "password" : "123456",
+    "major" : "Biblical & Religious Studies"
+  },
+  "qw" : {
+    "username" : "qw",
+    "password" : "123123",
+    "major" : "Accounting"
+  },
   "John" : {
     "username" : "John",
     "password" : "Rah586",
@@ -7,6 +27,21 @@
   "josh" : {
     "username" : "josh",
     "password" : "password123",
-    "major" : "Computer Science"
+    "major" : "Communication Arts"
+  },
+  "test1" : {
+    "username" : "test1",
+    "password" : "123456",
+    "major" : "Psychology"
+  },
+  "user" : {
+    "username" : "user",
+    "password" : "123456",
+    "major" : "Biblical & Religious Studies"
+  },
+  "qwe" : {
+    "username" : "qwe",
+    "password" : "123456",
+    "major" : "Exercise Science"
   }
 }

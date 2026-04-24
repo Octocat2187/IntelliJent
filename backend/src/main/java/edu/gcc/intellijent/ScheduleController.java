@@ -110,16 +110,17 @@ public class ScheduleController {
 
             ObjectMapper mapper = new ObjectMapper();
 
-            ArrayList<Course> courseList = mapper.readValue(
-                    ctx.body(),
-                    new TypeReference<ArrayList<Course>>() {}
-            );
+            ArrayList<Course> courseList = new ArrayList<>(courseCatalog.getClasses());
 
             ArrayList<Course> potentialList = new ArrayList<Course>();
             for (Course course : courseList){
                 if (schedule.isCourseSchedulable(course)){
                     potentialList.add(course);
                 }
+            }
+            if (potentialList.isEmpty()) {
+                ctx.status(409).result("No schedulable courses found");
+                return;
             }
             Random rand = new Random();
             Course luckyCourse = potentialList.get(rand.nextInt(potentialList.size()));

@@ -76,5 +76,34 @@ public class AccountController {
             response.put("message", "Account created successfully");
             ctx.status(201).json(response);
         });
+
+        app.post("/changeMajor", ctx -> {
+            Map<String, String> body = ctx.bodyAsClass(Map.class);
+
+            String username = body.get("username");
+            String newMajor = body.get("major");
+
+            Map<String, Object> response = new HashMap<>();
+
+            if (username == null || newMajor == null) {
+                response.put("success", false);
+                response.put("message", "Missing username or major");
+                ctx.status(400).json(response);
+                return;
+            }
+
+            boolean updated = accountStore.changeMajor(username, newMajor);
+
+            if (!updated) {
+                response.put("success", false);
+                response.put("message", "User not found");
+                ctx.status(404).json(response);
+                return;
+            }
+
+            response.put("success", true);
+            response.put("major", newMajor);
+            ctx.status(200).json(response);
+        });
     }
 }

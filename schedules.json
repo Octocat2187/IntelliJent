@@ -26,11 +26,89 @@
       } ],
       "daysOfWeek" : null,
       "semester" : "2025_Spring",
-      "available" : true,
-      "courseCode" : "MATH262"
+      "courseCode" : "MATH262",
+      "available" : true
     } ],
     "courseFull" : false,
-    "courseAdded" : true
+    "courseAdded" : false
+  },
+  "user2" : {
+    "courses" : [ ],
+    "courseFull" : false,
+    "courseAdded" : false
+  },
+  "josh" : {
+    "courses" : [ {
+      "subject" : "BIOL",
+      "number" : 101,
+      "name" : "GENERAL BIOLOGY I",
+      "section" : "A",
+      "location" : "SHAL 108  w/multimedia",
+      "faculty" : [ "Pazehoski, Kristina O." ],
+      "credits" : 4,
+      "open_seats" : 2,
+      "total_seats" : 90,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "courseCode" : "BIOL101",
+      "available" : true
+    }, {
+      "subject" : "MUSI",
+      "number" : 104,
+      "name" : "MUSIC THEORY II",
+      "section" : "A",
+      "location" : "PFAC 112",
+      "faculty" : [ "Hasper, Joseph J. Jr.", "MUSI Staff, -" ],
+      "credits" : 2,
+      "open_seats" : 8,
+      "total_seats" : 30,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "10:00:00",
+        "end_time" : "10:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "10:00:00",
+        "end_time" : "10:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Spring",
+      "courseCode" : "MUSI104",
+      "available" : true
+    }, {
+      "subject" : "PSYC",
+      "number" : 101,
+      "name" : "FOUNDATIONS OF PSYC SCIENCE",
+      "section" : "A",
+      "location" : "On Line Course",
+      "faculty" : [ "Horton, Joseph J." ],
+      "credits" : 3,
+      "open_seats" : 25,
+      "total_seats" : 25,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Early_Summer",
+      "courseCode" : "PSYC101",
+      "available" : true
+    } ],
+    "courseFull" : false,
+    "courseAdded" : false
   },
   "null" : {
     "courses" : [ {
@@ -59,8 +137,8 @@
       } ],
       "daysOfWeek" : null,
       "semester" : "2024_Spring",
-      "available" : true,
-      "courseCode" : "COMP350"
+      "courseCode" : "COMP350",
+      "available" : true
     }, {
       "subject" : "STAT",
       "number" : 412,
@@ -87,8 +165,165 @@
       } ],
       "daysOfWeek" : null,
       "semester" : "2023_Fall",
-      "available" : true,
-      "courseCode" : "STAT412"
+      "courseCode" : "STAT412",
+      "available" : true
+    }, {
+      "subject" : "EDUC",
+      "number" : 203,
+      "name" : "CULTURALLY RELEVANT PEDAGOGY",
+      "section" : "B",
+      "location" : "Staley Hall of Arts & Letters",
+      "faculty" : [ "EDUC Staff, -" ],
+      "credits" : 3,
+      "open_seats" : 28,
+      "total_seats" : 28,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "14:00:00",
+        "end_time" : "15:15:00"
+      }, {
+        "day" : "R",
+        "start_time" : "14:00:00",
+        "end_time" : "15:15:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "courseCode" : "EDUC203",
+      "available" : true
+    }, {
+      "subject" : "WRIT",
+      "number" : 101,
+      "name" : "FOUNDATIONS OF ACADEMIC DISCOURSE",
+      "section" : "A",
+      "location" : "On Line Course",
+      "faculty" : [ "Shepherd, Anne M" ],
+      "credits" : 3,
+      "open_seats" : 18,
+      "total_seats" : 18,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Late_Summer",
+      "courseCode" : "WRIT101",
+      "available" : true
+    } ],
+    "courseFull" : false,
+    "courseAdded" : false
+  },
+  "test1" : {
+    "courses" : [ {
+      "subject" : "COMP",
+      "number" : 422,
+      "name" : "THEORY OF ALGORITHMS",
+      "section" : "A",
+      "location" : "SHAL 204",
+      "faculty" : [ "Dellinger, Brian J." ],
+      "credits" : 3,
+      "open_seats" : 1,
+      "total_seats" : 35,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "15:00:00",
+        "end_time" : "15:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "15:00:00",
+        "end_time" : "15:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "15:00:00",
+        "end_time" : "15:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "courseCode" : "COMP422",
+      "available" : true
+    }, {
+      "subject" : "EDUC",
+      "number" : 330,
+      "name" : "LIT/WRITE FOR SEC CLASSROOM",
+      "section" : "A",
+      "location" : "SHAL 105",
+      "faculty" : [ "Brown, Brian K.", "Nichols, Constance E." ],
+      "credits" : 3,
+      "open_seats" : 12,
+      "total_seats" : 15,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "16:00:00",
+        "end_time" : "18:29:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "courseCode" : "EDUC330",
+      "available" : true
+    }, {
+      "subject" : "COMM",
+      "number" : 405,
+      "name" : "SPECIAL EVENTS AND PROMOTIONS",
+      "section" : "A",
+      "location" : "SHAL 207 COMM Dept - Media Prod Rm",
+      "faculty" : [ "Bandy, Gregory A." ],
+      "credits" : 3,
+      "open_seats" : 4,
+      "total_seats" : 17,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "12:00:00",
+        "end_time" : "12:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "12:00:00",
+        "end_time" : "12:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "12:00:00",
+        "end_time" : "12:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "courseCode" : "COMM405",
+      "available" : true
+    }, {
+      "subject" : "PHYS",
+      "number" : 122,
+      "name" : "LABORATORY WORKSHOP",
+      "section" : "M",
+      "location" : "STEM 245",
+      "faculty" : [ "Clem, James L." ],
+      "credits" : 0,
+      "open_seats" : 26,
+      "total_seats" : 28,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "19:00:00",
+        "end_time" : "21:00:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "courseCode" : "PHYS122",
+      "available" : true
+    }, {
+      "subject" : "BIOL",
+      "number" : 208,
+      "name" : "INTRO TO ENVIRONMENTAL EDUCATION",
+      "section" : "A",
+      "location" : "On Line Course",
+      "faculty" : [ "Gundlach, Alaina Trilece" ],
+      "credits" : 2,
+      "open_seats" : 24,
+      "total_seats" : 25,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Fall",
+      "courseCode" : "BIOL208",
+      "available" : true
     } ],
     "courseFull" : false,
     "courseAdded" : true
@@ -120,8 +355,8 @@
       } ],
       "daysOfWeek" : null,
       "semester" : "2023_Fall",
-      "available" : true,
-      "courseCode" : "ASTR206"
+      "courseCode" : "ASTR206",
+      "available" : true
     } ],
     "courseFull" : false,
     "courseAdded" : false

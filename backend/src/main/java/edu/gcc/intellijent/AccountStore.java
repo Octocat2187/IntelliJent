@@ -64,4 +64,13 @@ public class AccountStore {
     public Account getAccount(String username) {
         return accounts.get(username);
     }
+
+    public boolean changeMajor(String username, String newMajor) {
+        Account acc = accounts.get(username);
+        if (acc == null) return false;
+
+        acc.setMajor(newMajor);
+        saveToFile();
+        return true;
+    }
 }
