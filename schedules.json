@@ -30,7 +30,110 @@
       "courseCode" : "MATH262"
     } ],
     "courseFull" : false,
-    "courseAdded" : true
+    "courseAdded" : false
+  },
+  "user2" : {
+    "courses" : [ ],
+    "courseFull" : false,
+    "courseAdded" : false
+  },
+  "admin" : {
+    "courses" : [ ],
+    "courseFull" : false,
+    "courseAdded" : false
+  },
+  "josh" : {
+    "courses" : [ {
+      "subject" : "MUSI",
+      "number" : 188,
+      "name" : "HARP LESSON (1 HR)",
+      "section" : "A",
+      "location" : "PFAC 31 Classroom",
+      "faculty" : [ "Scott, Julia A.", "MUSI Staff, -" ],
+      "credits" : 2,
+      "open_seats" : 19,
+      "total_seats" : 20,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "MUSI188"
+    }, {
+      "subject" : "ELEE",
+      "number" : 351,
+      "name" : "INTERMEDIATE LABORATORY I",
+      "section" : "L",
+      "location" : "HOYT 212",
+      "faculty" : [ "Christman, Alan M." ],
+      "credits" : 1,
+      "open_seats" : 15,
+      "total_seats" : 30,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "W",
+        "start_time" : "14:00:00",
+        "end_time" : "16:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "ELEE351"
+    }, {
+      "subject" : "WRIT",
+      "number" : 101,
+      "name" : "FOUNDATIONS OF ACADEMIC DISCOURSE",
+      "section" : "G",
+      "location" : "SHAL 101",
+      "faculty" : [ "Waha, Kristen B." ],
+      "credits" : 3,
+      "open_seats" : 2,
+      "total_seats" : 2,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "11:00:00",
+        "end_time" : "12:15:00"
+      }, {
+        "day" : "R",
+        "start_time" : "11:00:00",
+        "end_time" : "12:15:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "available" : true,
+      "courseCode" : "WRIT101"
+    }, {
+      "subject" : "WRIT",
+      "number" : 358,
+      "name" : "NOVEL WRITING",
+      "section" : "A",
+      "location" : "SHAL 323",
+      "faculty" : [ "Miller, Kimberly M." ],
+      "credits" : 3,
+      "open_seats" : 1,
+      "total_seats" : 15,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "09:00:00",
+        "end_time" : "09:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "WRIT358"
+    } ],
+    "courseFull" : false,
+    "courseAdded" : false
   },
   "null" : {
     "courses" : [ {
@@ -89,21 +192,388 @@
       "semester" : "2023_Fall",
       "available" : true,
       "courseCode" : "STAT412"
-    } ],
-    "courseFull" : false,
-    "courseAdded" : true
-  },
-  "user" : {
-    "courses" : [ {
+    }, {
+      "subject" : "EDUC",
+      "number" : 203,
+      "name" : "CULTURALLY RELEVANT PEDAGOGY",
+      "section" : "B",
+      "location" : "Staley Hall of Arts & Letters",
+      "faculty" : [ "EDUC Staff, -" ],
+      "credits" : 3,
+      "open_seats" : 28,
+      "total_seats" : 28,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "14:00:00",
+        "end_time" : "15:15:00"
+      }, {
+        "day" : "R",
+        "start_time" : "14:00:00",
+        "end_time" : "15:15:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "available" : true,
+      "courseCode" : "EDUC203"
+    }, {
+      "subject" : "WRIT",
+      "number" : 101,
+      "name" : "FOUNDATIONS OF ACADEMIC DISCOURSE",
+      "section" : "A",
+      "location" : "On Line Course",
+      "faculty" : [ "Shepherd, Anne M" ],
+      "credits" : 3,
+      "open_seats" : 18,
+      "total_seats" : 18,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Late_Summer",
+      "available" : true,
+      "courseCode" : "WRIT101"
+    }, {
+      "subject" : "HUMA",
+      "number" : 202,
+      "name" : "CIV/LITERATURE",
+      "section" : "F",
+      "location" : "SHAL 201",
+      "faculty" : [ "Harvey, Andrew J." ],
+      "credits" : 3,
+      "open_seats" : 1,
+      "total_seats" : 32,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "09:30:00",
+        "end_time" : "10:45:00"
+      }, {
+        "day" : "R",
+        "start_time" : "09:30:00",
+        "end_time" : "10:45:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "HUMA202"
+    }, {
+      "subject" : "BIOL",
+      "number" : 101,
+      "name" : "GENERAL BIOLOGY I",
+      "section" : "B",
+      "location" : "GCC Main Campus",
+      "faculty" : [ "Pazehoski, Kristina O." ],
+      "credits" : 4,
+      "open_seats" : 27,
+      "total_seats" : 30,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "10:00:00",
+        "end_time" : "10:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "10:00:00",
+        "end_time" : "10:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "10:00:00",
+        "end_time" : "10:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Fall",
+      "available" : true,
+      "courseCode" : "BIOL101"
+    }, {
+      "subject" : "MATH",
+      "number" : 305,
+      "name" : "PUTNAM PROBLEM GROUP",
+      "section" : "A",
+      "location" : "SHAL 209",
+      "faculty" : [ "Thompson, Gary L." ],
+      "credits" : 1,
+      "open_seats" : 11,
+      "total_seats" : 15,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "08:25:00",
+        "end_time" : "09:15:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "MATH305"
+    }, {
+      "subject" : "EXER",
+      "number" : 256,
+      "name" : "PHYSIOLOGY OF EXERCISE",
+      "section" : "A",
+      "location" : "SHAL 109 Tablet Chairs w/multimedia",
+      "faculty" : [ "Prins, Philip J." ],
+      "credits" : 4,
+      "open_seats" : 3,
+      "total_seats" : 20,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "08:00:00",
+        "end_time" : "08:50:00"
+      }, {
+        "day" : "W",
+        "start_time" : "08:00:00",
+        "end_time" : "08:50:00"
+      }, {
+        "day" : "F",
+        "start_time" : "08:00:00",
+        "end_time" : "08:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "EXER256"
+    }, {
+      "subject" : "ECON",
+      "number" : 408,
+      "name" : "HIST ECON THOUGHT SINCE 1870",
+      "section" : "A",
+      "location" : "SHAL 209",
+      "faculty" : [ "Ritenour, Shawn R." ],
+      "credits" : 3,
+      "open_seats" : 10,
+      "total_seats" : 24,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "11:00:00",
+        "end_time" : "12:15:00"
+      }, {
+        "day" : "R",
+        "start_time" : "11:00:00",
+        "end_time" : "12:15:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Spring",
+      "available" : true,
+      "courseCode" : "ECON408"
+    }, {
+      "subject" : "PSYC",
+      "number" : 105,
+      "name" : "PERSPECTIVES ON PSYCHOLOGY",
+      "section" : "A",
+      "location" : "SHAL 210",
+      "faculty" : [ "Homan, Kristin N." ],
+      "credits" : 1,
+      "open_seats" : 44,
+      "total_seats" : 45,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "18:30:00",
+        "end_time" : "19:30:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "available" : true,
+      "courseCode" : "PSYC105"
+    }, {
+      "subject" : "EDUC",
+      "number" : 375,
+      "name" : "SECONDARY FIELD EXPER (3RD LEVEL)",
+      "section" : "A",
+      "location" : "GCC Main Campus",
+      "faculty" : [ "Hoffman, William H." ],
+      "credits" : 1,
+      "open_seats" : 10,
+      "total_seats" : 15,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "EDUC375"
+    }, {
+      "subject" : "MUSI",
+      "number" : 151,
+      "name" : "PIANO LESSON (1/2 HR)",
+      "section" : "D",
+      "location" : "Pew Fine Arts Center",
+      "faculty" : [ "Phelps, Katie Marie", "MUSI Staff, -" ],
+      "credits" : 1,
+      "open_seats" : 3,
+      "total_seats" : 10,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "MUSI151"
+    }, {
+      "subject" : "MUSI",
+      "number" : 193,
+      "name" : "COMPOSITION LESSON (1/2 HOUR)",
+      "section" : "A",
+      "location" : "PFAC 135 Faculty Office",
+      "faculty" : [ "Hasper, Joseph J. Jr.", "MUSI Staff, -" ],
+      "credits" : 1,
+      "open_seats" : 11,
+      "total_seats" : 12,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "available" : true,
+      "courseCode" : "MUSI193"
+    }, {
       "subject" : "ASTR",
       "number" : 206,
       "name" : "INTRO TO SKY MOTIONS & PLANETS",
-      "section" : "A",
-      "location" : "STEM 051",
+      "section" : "B",
+      "location" : "On Line Course",
       "faculty" : [ "Clem, James L." ],
       "credits" : 3,
+      "open_seats" : 7,
+      "total_seats" : 25,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "ASTR206"
+    }, {
+      "subject" : "RELI",
+      "number" : 235,
+      "name" : "BIBLICAL IDEAS",
+      "section" : "A",
+      "location" : "",
+      "faculty" : [ "Moeller, Julie C." ],
+      "credits" : 3,
+      "open_seats" : 16,
+      "total_seats" : 25,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "T",
+        "start_time" : "12:30:00",
+        "end_time" : "13:45:00"
+      }, {
+        "day" : "R",
+        "start_time" : "12:30:00",
+        "end_time" : "13:45:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Fall",
+      "available" : true,
+      "courseCode" : "RELI235"
+    }, {
+      "subject" : "POLS",
+      "number" : 317,
+      "name" : "CONSTITUTIONAL LAW US I",
+      "section" : "A",
+      "location" : "SHAL 305 Seminar-14 Tables-10 Tablet Arm Desks",
+      "faculty" : [ "Verbois, Caleb A." ],
+      "credits" : 3,
+      "open_seats" : 20,
+      "total_seats" : 20,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Fall",
+      "available" : true,
+      "courseCode" : "POLS317"
+    }, {
+      "subject" : "MNGT",
+      "number" : 103,
+      "name" : "PRINCIPLES OF MANAGEMENT",
+      "section" : "A",
+      "location" : "On Line Course",
+      "faculty" : [ "Duca, Stephen V" ],
+      "credits" : 3,
+      "open_seats" : 25,
+      "total_seats" : 25,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Early_Summer",
+      "available" : true,
+      "courseCode" : "MNGT103"
+    }, {
+      "subject" : "MUSI",
+      "number" : 161,
+      "name" : "VOICE LESSON (1/2 HR)",
+      "section" : "A",
+      "location" : "PFAC 137 Faculty Office",
+      "faculty" : [ "Piastro-Tedford, Sasha E.", "MUSI Staff, -" ],
+      "credits" : 1,
+      "open_seats" : 10,
+      "total_seats" : 12,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2025_Spring",
+      "available" : true,
+      "courseCode" : "MUSI161"
+    }, {
+      "subject" : "POLS",
+      "number" : 101,
+      "name" : "FOUNDATIONS OF POLITICAL SCIENCE",
+      "section" : "A",
+      "location" : "On Line Course",
+      "faculty" : [ "Coulter, Michael L." ],
+      "credits" : 3,
       "open_seats" : 23,
-      "total_seats" : 45,
+      "total_seats" : 25,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2024_Late_Summer",
+      "available" : true,
+      "courseCode" : "POLS101"
+    }, {
+      "subject" : "MUSI",
+      "number" : 125,
+      "name" : "PIANO CLASS III",
+      "section" : "A",
+      "location" : "PFAC 119",
+      "faculty" : [ "Huebert, Melva J.", "MUSI Staff, -" ],
+      "credits" : 1,
+      "open_seats" : 10,
+      "total_seats" : 12,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "W",
+        "start_time" : "14:00:00",
+        "end_time" : "14:50:00"
+      } ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "MUSI125"
+    }, {
+      "subject" : "MUSI",
+      "number" : 189,
+      "name" : "STRING LESSON - DBL BASS (1/2 HR)",
+      "section" : "A",
+      "location" : "PFAC 66 Faculty Office",
+      "faculty" : [ "Bellassai, Anthony C.", "MUSI Staff, -" ],
+      "credits" : 1,
+      "open_seats" : 20,
+      "total_seats" : 20,
+      "is_open" : true,
+      "times" : [ ],
+      "daysOfWeek" : null,
+      "semester" : "2023_Fall",
+      "available" : true,
+      "courseCode" : "MUSI189"
+    }, {
+      "subject" : "ENGR",
+      "number" : 274,
+      "name" : "MATHEMATICAL METHODS IN ENGINEERING",
+      "section" : "A",
+      "location" : "HOYT 218",
+      "faculty" : [ "Anderson, Erik J." ],
+      "credits" : 3,
+      "open_seats" : 3,
+      "total_seats" : 30,
       "is_open" : true,
       "times" : [ {
         "day" : "M",
@@ -119,9 +589,29 @@
         "end_time" : "13:50:00"
       } ],
       "daysOfWeek" : null,
+      "semester" : "2024_Spring",
+      "available" : true,
+      "courseCode" : "ENGR274"
+    }, {
+      "subject" : "ENGL",
+      "number" : 402,
+      "name" : "GRAMMAR/HIST OF ENGLISH",
+      "section" : "A",
+      "location" : "SHAL 206",
+      "faculty" : [ "Philson, Cynthia L." ],
+      "credits" : 3,
+      "open_seats" : 20,
+      "total_seats" : 25,
+      "is_open" : true,
+      "times" : [ {
+        "day" : "M",
+        "start_time" : "18:30:00",
+        "end_time" : "21:00:00"
+      } ],
+      "daysOfWeek" : null,
       "semester" : "2023_Fall",
       "available" : true,
-      "courseCode" : "ASTR206"
+      "courseCode" : "ENGL402"
     } ],
     "courseFull" : false,
     "courseAdded" : false
