@@ -3,6 +3,8 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Tooltip from "@mui/material/Tooltip";
+import { ProfessorProvider } from "./context/ProfessorContext";
+import ProfessorName from "./components/ProfessorName";
 
 const localizer = momentLocalizer(moment);
 
@@ -1008,6 +1010,7 @@ export default function CourseSearch() {
     </div>
     </>
   ) : (
+    <ProfessorProvider>
     <div>
         <div
           style={{
@@ -1297,7 +1300,15 @@ export default function CourseSearch() {
               <div>
                 <h3>{course.subject} - {course.number}{course.section}</h3>
                 <p>{course.name}</p>
-                <p>Professor: {course.faculty.join(", ")}</p>
+                <p>
+{/*                     Professor: {course.faculty.join(", ")} */}
+                        Professor: {course.faculty.map((p, i) => (
+                            <span key={i}>
+                              <ProfessorName name={p} />
+                              {i < course.faculty.length - 1 ? ", " : ""}
+                            </span>
+                          ))}
+                </p>
                 <p>Credits: {course.credits}</p>
                 <p>Seats open: {course.open_seats}</p>
 		{Object.values(
@@ -1770,6 +1781,7 @@ export default function CourseSearch() {
 )}
 
     </div>
+    </ProfessorProvider>
   );
 }
 
