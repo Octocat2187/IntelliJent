@@ -205,6 +205,7 @@ export default function CourseSearch() {
   const [prof, setProf] = useState("");
   const [isfull, setFull] = useState("");
   const [days, setDays] = useState([]);
+  const [semester, setSemester] = useState("")
 
   const [startTime, setStartTime] = useState({ hour: 8, minute: 0 });
   const [endTime, setEndTime] = useState({ hour: 17, minute: 0 });
@@ -741,6 +742,8 @@ export default function CourseSearch() {
 
     if (days.length) params.append("days", days.join(","));
 
+    if (semester) params.append("semester", semester);
+
     const url = `http://localhost:7000/search?${params.toString()}`;
 
     fetch(url)
@@ -1240,6 +1243,13 @@ export default function CourseSearch() {
           <option value="">Both Open & Full</option>
           <option value="true">Full Courses</option>
           <option value="false">Open Courses</option>
+        </select>
+
+        <select value={semester} onChange={(e) => setSemester(e.target.value)}>
+            <option value="2023_Fall">Fall 2023</option>
+            <option value="2024_Spring">Spring 2024</option>
+            <option value="2024_Fall">Fall 2024</option>
+            <option value="2025_Spring">Spring 2025</option>
         </select>
 
         {/* TIME FILTERS */}
