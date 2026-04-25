@@ -51,6 +51,11 @@ public class UserScheduleStore {
         }
     }
 
+    public void deleteUserSchedule(String username) {
+        schedules.remove(username);
+        saveToFile();
+    }
+
     private void saveToFile() {
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(file, schedules);

@@ -51,7 +51,7 @@ public class Main {
             majorController.registerRoutes(app);
 
             AccountStore accountStore = new AccountStore();
-            AccountController accountController = new AccountController(accountStore);
+            AccountController accountController = new AccountController(accountStore, userScheduleStore);
             accountController.registerRoutes(app);
 
         } catch (Exception e) {
