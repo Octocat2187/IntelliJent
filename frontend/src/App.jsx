@@ -241,6 +241,9 @@ export default function CourseSearch() {
   const [signupSuccess, setSignupSuccess] = useState("");
   const [major, setMajor] = useState("");
   const [showProfile, setShowProfile] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const [showRoulette, setShowRoulette] = useState(false);
   const [rouletteLoading, setRouletteLoading] = useState(false);
@@ -269,6 +272,12 @@ export default function CourseSearch() {
   }, []);
 
   useEffect(() => {
+    if (isAdmin) {
+      loadUsers();
+    }
+  }, [isAdmin]);
+
+  useEffect(() => {
     if (loggedInUser && major) {
       handleSelectMajor(major);
     }
@@ -293,11 +302,17 @@ export default function CourseSearch() {
   }, []);
 
   function handleSelectMajor(majorName) {
-  setSelectedMajorName(majorName);
+    setSelectedMajorName(majorName);
+    setMajors(prev => {
+    const list = prev.length ? prev : majors;
+    const majorObj = list.find((m) => m.name === majorName);
+    setRequiredCourses(majorObj?.requiredCourses ?? []);
 
-  const major = majors.find((m) => m.name === majorName);
-  setRequiredCourses(major ? major.requiredCourses : []);
+    return list;
+    });
 }
+
+
 
   function extractDropdownData(data) {
     const subjectSet = new Set();
@@ -322,6 +337,18 @@ export default function CourseSearch() {
     setSubjects([...subjectSet].sort());
     setProfessors([...professorSet].sort());
   }
+  function goHome() {
+    setShowProfile(false);
+    setShowRequiredCourses(false);
+    setShowCalendar(false);
+    setShowLogin(false);
+    setShowRoulette(false);
+    setShowAlternativesModal(false);
+  }
+
+  function loggedInUserMajorFallback(data) {
+    return data?.[0]?.name || "";
+  }
 
   function handleLogin() {
     setLoginError("");
@@ -345,6 +372,7 @@ export default function CourseSearch() {
 
         setLoggedInUser(data.username);
         setMajor(data.major);
+        setIsAdmin(data.isAdmin || false);
         setShowLogin(false);
         setUsername("");
         setPassword("");
@@ -365,6 +393,9 @@ export default function CourseSearch() {
     if (!major) {
       setSignupError("Please select a major");
       return;
+
+    setSignupSuccess("Account created successfully. You can now log in.");
+    setAuthMode("login");
     }
 
     fetch("http://localhost:7000/signup", {
@@ -395,6 +426,7 @@ export default function CourseSearch() {
         setSignupSuccess("Account created successfully. You can now log in.");
         setSignupError("");
         setPassword("");
+        setAuthMode("login");
       })
       .catch((err) => {
         setSignupError(err.message);
@@ -408,6 +440,25 @@ export default function CourseSearch() {
         ? prev.filter(d => d !== day)
         : [...prev, day]
     );
+  }
+  function loadUsers() {
+    fetch(`http://localhost:7000/users?username=${loggedInUser}`)
+      .then(res => res.json())
+      .then(data => setUsers(data))
+      .catch(() => alert("Failed to load users"));
+  }
+  function deleteUser(usernameToDelete) {
+    fetch(`http://localhost:7000/users/${usernameToDelete}?username=${loggedInUser}`, {
+      method: "DELETE"
+    })
+      .then(res => {
+        if (res.ok) {
+          setUsers(prev => prev.filter(u => u !== usernameToDelete));
+        } else {
+          alert("Failed to delete user");
+        }
+      })
+      .catch(() => alert("Server error"));
   }
 
   function formatTo12Hour(timeStr) {
@@ -484,9 +535,10 @@ export default function CourseSearch() {
   function addCourse(course) {
 
     if (!loggedInUser) {
-      setErrorMessage("Please log in first");
-      return;
-    }
+        setSelectedCourses(prev => [...prev, course]);
+        return;
+      }
+
 
     fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
@@ -570,8 +622,15 @@ export default function CourseSearch() {
   function removeCourse(course) {
 
     if (!loggedInUser) {
-      return;
-    }
+        setSelectedCourses(prev =>
+          prev.filter(c =>
+            !(c.subject === course.subject &&
+              c.number === course.number &&
+              c.section === course.section)
+          )
+        );
+        return;
+      }
 
     fetch(`http://localhost:7000/schedule?username=${encodeURIComponent(loggedInUser)}`, {
       method: "DELETE",
@@ -583,13 +642,6 @@ export default function CourseSearch() {
     .then(() => {
         loadSched();
     });
-//     .then(() => {
-//
-//       setSelectedCourses(prev =>
-//   	prev.filter(c => !(c.subject === course.subject && c.number === course.number))
-//       );
-//
-//     });
   }
 
   /* SAVE SCHEDULE */
@@ -702,6 +754,16 @@ export default function CourseSearch() {
   }
 
   function handleLucky() {
+      if (!loggedInUser) {
+          if (!courses.length) {
+            alert("No courses available");
+            return;
+          }
+
+          const random = courses[Math.floor(Math.random() * courses.length)];
+          setSelectedCourses(prev => [...prev, random]);
+          return;
+        }
     fetch(`http://localhost:7000/schedule/lucky?username=${encodeURIComponent(loggedInUser)}`, {
       method: "POST",
       headers: {
@@ -726,9 +788,19 @@ export default function CourseSearch() {
 
   function handleRouletteGuess(guess) {
     if (!loggedInUser) {
-      alert("Please log in first");
-      return;
-    }
+        const winningNumber = Math.floor(Math.random() * 50) + 1;
+
+        if (guess === winningNumber) {
+          alert("Success! You guessed correctly");
+          // keep schedule
+        } else {
+          alert("Wrong! Your schedule has been cleared");
+          setSelectedCourses([]);
+        }
+
+        setShowRoulette(false);
+        return;
+      }
 
     setRouletteLoading(true);
 
@@ -757,31 +829,186 @@ export default function CourseSearch() {
         setRouletteLoading(false);
       });
   }
+  if (isAdmin) {
+    return (
+      <>
+        {/* SIGN OUT BUTTON */}
+        <button
+          onClick={() => {
+            setLoggedInUser(null);
+            setIsAdmin(false);
+            setUsers([]);
+          }}
+          style={{
+            position: "fixed",
+            top: "20px",
+            right: "20px",
+            padding: "8px 12px",
+            cursor: "pointer"
+          }}
+        >
+          Sign Out
+        </button>
+
+        <div style={{ padding: "40px", fontFamily: "Arial" }}>
+          <h1>Admin Panel</h1>
+
+          {users.length === 0 ? (
+            <p>No users found</p>
+          ) : (
+            users.map(user => (
+              <div
+                key={user}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                  borderBottom: "1px solid #ddd"
+                }}
+              >
+                <span>{user}</span>
+
+                <button
+                  onClick={() => deleteUser(user)}
+                  style={{
+                    background: "#d9534f",
+                    color: "white",
+                    border: "none",
+                    padding: "4px 10px",
+                    borderRadius: "4px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+      </>
+    );
+  }
 
   return showProfile ? (
-    <div style={{ textAlign: "center", marginTop: "100px" }}>
-      <h2>Account</h2>
+      <>
+          {/* TOP RIGHT BACK BUTTON */}
+          <button
+            onClick={goHome}
+            style={{
+              position: "fixed",
+              top: "20px",
+              right: "20px",
+              zIndex: 3000,
+              padding: "8px 12px",
+              borderRadius: "6px",
+              border: "none",
+              cursor: "pointer"
+            }}
+          >
+            Back to Search
+          </button>
 
-      <p><strong>Username:</strong> {loggedInUser}</p>
-      <p><strong>Major:</strong> {major}</p>
-
-      <button
-        onClick={() => setShowProfile(false)}
-        style={{ marginRight: "10px" }}
-      >
-        Back
-      </button>
-
-      <button
-        onClick={() => {
-          setLoggedInUser(null);
-          setSelectedCourses([]);
-          setShowProfile(false);
+      <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh"
+      }}
+    >
+      <div
+        style={{
+          background: "#2a2a2a",
+          padding: "40px",
+          borderRadius: "12px",
+          width: "400px",
+          textAlign: "center",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.4)"
         }}
       >
-        Sign Out
-      </button>
+        <h2>Account</h2>
+
+        <p><strong>Username:</strong> {loggedInUser}</p>
+
+        <div style={{ marginTop: "15px" }}>
+          <strong>Major:</strong>
+          <select
+            value={major}
+            onChange={(e) => {
+              const newMajor = e.target.value;
+
+              fetch("http://localhost:7000/changeMajor", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  username: loggedInUser,
+                  major: newMajor
+                })
+              })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success) {
+                    setMajor(newMajor);
+
+                    if (showRequiredCourses) {
+                      handleSelectMajor(newMajor);
+                    }
+                  } else {
+                    alert(data.message || "Failed to change major");
+                  }
+                })
+                .catch(() => alert("Server error"));
+            }}
+            style={{ width: "100%", marginTop: "8px", padding: "8px" }}
+          >
+            <option value="">Select Major</option>
+            {majors.map(m => (
+              <option key={m.name} value={m.name}>
+                {m.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ marginTop: "20px" }}>
+          <button
+            onClick={() => {
+              setShowProfile(false);
+              setShowRequiredCourses(true);
+
+              if (!majors.length) {
+                fetch("http://localhost:7000/majors")
+                  .then(res => res.json())
+                  .then(data => {
+                    setMajors(data);
+                    const fallback = major || data?.[0]?.name;
+                    if (fallback) handleSelectMajor(fallback);
+                  });
+              } else {
+                const fallback = major || majors?.[0]?.name;
+                if (fallback) handleSelectMajor(fallback);
+              }
+            }}
+            style={{ width: "100%", marginBottom: "10px" }}
+          >
+            Required Courses
+          </button>
+
+
+          <button
+            onClick={() => {
+              setLoggedInUser(null);
+              setSelectedCourses([]);
+              goHome();
+            }}
+            style={{ width: "100%" }}
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
     </div>
+    </>
   ) : (
     <ProfessorProvider>
     <div>
@@ -812,16 +1039,6 @@ export default function CourseSearch() {
 
             <button
               onClick={() => {
-                const next = !showRequiredCourses;
-                setShowRequiredCourses(next);
-                if (next) setShowCalendar(false);
-              }}
-            >
-              {showRequiredCourses ? "Back to Search" : "Required Courses"}
-            </button>
-
-            <button
-              onClick={() => {
                 setShowRoulette(true);
               }}
               style={{
@@ -847,11 +1064,13 @@ export default function CourseSearch() {
               <button
                 onClick={() => {
                   setShowLogin(true);
+                  setAuthMode("login");
                   setLoginError("");
                   setSignupError("");
                   setSignupSuccess("");
                   setUsername("");
                   setPassword("");
+                  setMajor("")
                 }}
               >
                 Account
@@ -1371,7 +1590,7 @@ export default function CourseSearch() {
         textAlign: "center"
       }}
     >
-      <h2>Login</h2>
+      <h2>{authMode === "signup" ? "Sign Up" : "Login"}</h2>
 
       <input
         placeholder="Username"
@@ -1387,65 +1606,90 @@ export default function CourseSearch() {
         onChange={(e) => setPassword(e.target.value)}
         style={{ width: "100%", marginBottom: "15px", padding: "8px" }}
       />
+      {authMode === "signup" && (
+              <select
+                value={major}
+                onChange={(e) => setMajor(e.target.value)}
+                style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+              >
+                <option value="">Select Major</option>
+                {majors.map((m) => (
+                  <option key={m.name} value={m.name}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            )}
 
-      <select
-        value={major}
-        onChange={(e) => setMajor(e.target.value)}
-        style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
-      >
-        <option value="">Select Major</option>
-        {majors.map((m) => (
-          <option key={m.name} value={m.name}>
-            {m.name}
-          </option>
-        ))}
-      </select>
+            {/* BUTTONS */}
+            {authMode === "signup" ? (
+              <button
+                onClick={handleSignup}
+                style={{ width: "100%", marginBottom: "10px" }}
+              >
+                Sign Up
+              </button>
+            ) : (
+              <button
+                onClick={handleLogin}
+                style={{ width: "100%", marginBottom: "10px" }}
+              >
+                Login
+              </button>
+            )}
 
-      {loginError && (
-        <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
-          {loginError}
+            {/* SWITCH TEXT */}
+            <div style={{ marginTop: "10px", fontSize: "13px" }}>
+              {authMode === "login" ? (
+                <span>
+                  Don’t have an account?{" "}
+                  <span
+                    onClick={() => setAuthMode("signup")}
+                    style={{ color: "blue", cursor: "pointer" }
+                    }
+
+                  >
+                    Sign up
+                  </span>
+                </span>
+              ) : (
+                <span>
+                  Already have an account?{" "}
+                  <span
+                    onClick={() => setAuthMode("login")}
+                    style={{ color: "blue", cursor: "pointer" }}
+                  >
+                    Log in
+                  </span>
+                </span>
+              )}
+            </div>
+
+            <button
+              onClick={() => setShowLogin(false)}
+              style={{ width: "100%", marginTop: "10px" }}
+            >
+              Cancel
+            </button>
+            {loginError && (
+              <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
+                {loginError}
+              </div>
+            )}
+
+            {signupError && (
+              <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
+                {signupError}
+              </div>
+            )}
+
+            {signupSuccess && (
+              <div style={{ color: "green", marginBottom: "10px", fontSize: "14px" }}>
+                {signupSuccess}
+              </div>
+            )}
+          </div>
         </div>
-      )}
-
-  {signupError && (
-    <div style={{ color: "red", marginBottom: "10px", fontSize: "14px" }}>
-      {signupError}
-    </div>
-  )}
-
-  {signupSuccess && (
-    <div style={{ color: "green", marginBottom: "10px", fontSize: "14px" }}>
-      {signupSuccess}
-    </div>
-  )}
-
-      <button
-        onClick={handleLogin}
-        style={{ width: "100%", marginBottom: "10px" }}
-      >
-        Login
-      </button>
-
-      <button
-        onClick={handleSignup}
-        style={{ width: "100%", marginBottom: "10px" }}
-      >
-        Sign Up
-      </button>
-
-      <button
-        onClick={() => {
-          setShowLogin(false);
-          setLoginError("");
-          setSignupError("");
-          setSignupSuccess("");
-        }}
-        style={{ width: "100%" }}
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
 )}
 
 {/* ROULETTE MODAL */}
