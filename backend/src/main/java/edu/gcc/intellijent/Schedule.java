@@ -26,7 +26,10 @@ public class Schedule {
     }
 
     public void AddCourse(Course course){
+        // Reset to avoid leaking the previous add-attempt's state.
+        courseFull = false;
         if (isCourseSchedulable(course)) {
+            // Full courses are allowed to be scheduled, but we flag them so the UI can warn the user.
             courseFull = !course.isAvailable();
             courses.add(course);
             CourseAdded = true;
@@ -59,10 +62,6 @@ public class Schedule {
      * @return true if the course can be scheduled (no overlap and has available seats), false otherwise
      */
     public boolean isCourseSchedulable(Course course){
-
-        if (!course.isAvailable()) {
-            return false;
-        }
         // If course has no class times, it's schedulable
         if (course.getTimes() == null || course.getTimes().isEmpty()) {
             return true;
