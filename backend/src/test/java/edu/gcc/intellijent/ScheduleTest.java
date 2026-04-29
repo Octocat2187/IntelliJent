@@ -58,7 +58,7 @@ class ScheduleTest {
 
     @Test
     void isCourseSchedulable_CourseIsFull() {
-        // A course that is full (no open seats) should not be schedulable
+        // A course that is full (no open seats) is still schedulable (we warn the user elsewhere)
         Schedule schedule = new Schedule();
         Course course = new Course();
         course.setOpen_seats(0);
@@ -71,12 +71,12 @@ class ScheduleTest {
         times.add(time);
         course.setTimes(times);
 
-        Assertions.assertFalse(schedule.isCourseSchedulable(course));
+        Assertions.assertTrue(schedule.isCourseSchedulable(course));
     }
 
     @Test
     void isCourseSchedulable_CourseHasNoAvailableSeats() {
-        // A course with no available seats (full) should not be schedulable
+        // A course with no available seats (full) is still schedulable (we warn the user elsewhere)
         Schedule schedule = new Schedule();
         Course course = new Course();
         course.setOpen_seats(0);
@@ -89,7 +89,7 @@ class ScheduleTest {
         times.add(time);
         course.setTimes(times);
 
-        Assertions.assertFalse(schedule.isCourseSchedulable(course));
+        Assertions.assertTrue(schedule.isCourseSchedulable(course));
     }
 
     @Test

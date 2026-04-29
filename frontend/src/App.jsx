@@ -1465,7 +1465,7 @@ export default function CourseSearch() {
       <div style={{
         position: "fixed",
         top: "20px",
-        right: "20px",
+        right: "320px",
         background: "#ffc107",
         color: "#333",
         padding: "12px 16px",
