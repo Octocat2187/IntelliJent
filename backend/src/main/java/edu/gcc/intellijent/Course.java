@@ -156,4 +156,8 @@ public class Course {
         return semester;
     }
 
+    public void setSemester(String semester){
+        this.semester = semester;
+    }
+
 }

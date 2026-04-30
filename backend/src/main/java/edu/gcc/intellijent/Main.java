@@ -5,7 +5,6 @@ import io.javalin.Javalin;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Scanner;
 
 public class Main {
 
@@ -16,10 +15,8 @@ public class Main {
             // Create Jackson mapper
             ObjectMapper mapper = new ObjectMapper();
 
-            // Load Course JSON
-            InputStream courseInput = Main.class.getClassLoader().getResourceAsStream("allCourseInfo.json");
-
-            CourseCatalog courseCatalog = mapper.readValue(courseInput, CourseCatalog.class);
+            // Load Courses from Supabase via REST API
+            CourseCatalog courseCatalog = SupabaseClient.getCoursesFromSupabase();
 
             List<Course> courses = courseCatalog.getClasses();
 
